@@ -21,6 +21,7 @@ the SUDO platform to improve our knowledge of life in Australia.
 
 ## Directories
 
+```
 team-57-ccc-assignment-2/
 │
 ├── .gitignore
@@ -72,6 +73,7 @@ team-57-ccc-assignment-2/
     │   │   └── Dockerfile
     │   └── docker-compose.yml
     └── README.md
+```
 
 ## Dependencies
 
