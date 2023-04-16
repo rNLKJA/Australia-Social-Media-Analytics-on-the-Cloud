@@ -21,6 +21,58 @@ the SUDO platform to improve our knowledge of life in Australia.
 
 ## Directories
 
+team-57-ccc-assignment-2/
+│
+├── .gitignore
+├── README.md
+├── LICENSE
+│
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   ├── package.json
+│   └── ...
+│   └── README.md
+│
+├── backend/
+│   ├── django_app/
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   ├── wsgi.py
+│   │   └── ...
+│   ├── manage.py
+│   └── requirements.txt
+│
+├── database/
+│   ├── couchdb/
+│   │   ├── design_docs/
+│   │   ├── scripts/
+│   │   └── config.json
+│   └── README.md
+│
+├── data_processing/
+│   ├── scripts/
+│   ├── input/
+│   ├── output/
+│   └── requirements.txt
+│   └── README.md
+│
+└── server_deployment/
+    ├── ansible/
+    │   ├── inventory/
+    │   ├── roles/
+    │   ├── playbooks/
+    │   └── ansible.cfg
+    ├── docker/
+    │   ├── frontend/
+    │   │   └── Dockerfile
+    │   ├── backend/
+    │   │   └── Dockerfile
+    │   ├── database/
+    │   │   └── Dockerfile
+    │   └── docker-compose.yml
+    └── README.md
+
 ## Dependencies
 
 ## License
