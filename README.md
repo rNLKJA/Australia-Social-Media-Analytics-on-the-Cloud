@@ -12,7 +12,7 @@ the SUDO platform to improve our knowledge of life in Australia.
 
 | Name              | Student ID | Email                                    |
 | :---------------- | :--------: | :--------------------------------------- |
-| Zongchao Xie      |            | zongchao.xie@student.unimelb.edu.au      |
+| Zongchao Xie      | 1174047    | zongchao.xie@student.unimelb.edu.au      |
 | Xuan Wang         | 1329456    | xuan.wang19@student.unimelb.edu.au       |
 | Runqiu Fei        | 1166093    | runqiu.fei@student.unimelb.edu.au        |
 | Wei Zhao          | 1118649    | zhao.w2@student.unimelb.edu.au           |
