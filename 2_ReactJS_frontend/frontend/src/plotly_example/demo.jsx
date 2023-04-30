@@ -7,7 +7,9 @@ export default function PlotlyJSDemo() {
   useEffect(() => {
     fetch("./data/sunburst_plot.json")
       .then((response) => response.json())
-      .then((data) => setPlotData(data))
+      .then((data) => {
+        setPlotData(data);
+      })
       .catch((error) => console.error(error));
   }, []);
 
