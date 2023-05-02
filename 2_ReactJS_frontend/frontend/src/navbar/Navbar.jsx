@@ -9,7 +9,7 @@ const logo = require("./unimelb.png");
 const Navbar = () => {
   return (
     <nav
-      className="flex w-screen justify-center items-center"
+      className="flex w-screen justify-center items-center fixed z-10 top-0"
       style={{ backgroundColor: "white" }}
     >
       <div className="container mx-auto flex flex-row justify-between items-center py-2">
