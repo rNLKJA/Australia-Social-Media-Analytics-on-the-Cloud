@@ -1,15 +1,21 @@
 import React from "react";
-import Welcome from "./welcome/welcome";
-import PlotlyJSDemo from "./plotly_example/demo";
+import Navbar from "./navbar/Navbar";
+import Content from "./content/Content";
+import Detail from "./detailed/Detail";
 
 function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="h-auto flex flex-col ">
-        <Welcome />
+    <div className="min-w-screen flex flex-col items-center ">
+      <Navbar />
+      {/* <br />
+      <Title /> */}
+      <br />
+      <Content />
 
-        <PlotlyJSDemo />
-      </div>
+      <br />
+      <Detail />
+
+      <br />
     </div>
   );
 }
