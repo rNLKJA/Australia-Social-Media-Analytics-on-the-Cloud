@@ -132,6 +132,6 @@ dmypy.json
 *.pem
 
 # data
-twitter-huge.json.zip
+*.zip
 /twitter-huge.json
-Mastodon_social.json
+Mastodon_social*.json
