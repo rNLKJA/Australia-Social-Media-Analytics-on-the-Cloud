@@ -1,5 +1,6 @@
 ---
 - name: Deploy Flask application to MRC Unimelb Cloud server
+  user: name="ubuntu" shell="/usr/local/bin/fish"
   hosts: 172.26.128.118
   become: yes
   vars:
@@ -17,6 +18,8 @@
           - git
           - nginx
           - supervisor
+          - python3-virtualenv
+          - gunicorn
         state: present
         update_cache: yes
     - name: Add GitHub's host key to known hosts
@@ -44,9 +47,26 @@
       environment:
         GIT_SSH_COMMAND: "ssh -i /home/ubuntu/.ssh/cloud_backend.key -o StrictHostKeyChecking=no"
 
-    - name: Install Python packages
-      ansible.builtin.pip:
-        requirements: "{{flask_app_directory}}/requirements.txt"
+    # - name: Manually create the initial virtualenv
+    #   command:
+    #     cmd: python3 -m venv {{flask_app_directory}}/flask-backend/venv
+    #     creates: "{{flask_app_directory}}/flask-backend/venv"    
+
+    - name: Install requirements
+      ansible.builtin.pip: 
+        requirements=/{{flask_app_directory}}/requirements.txt 
+
+    # - name: Activate dependencies
+    #   ansible.builtin.shell: 
+    #     cmd: source /home/ubuntu/my_flask_app/flask-backend/venv/bin/activate
+    #   args:
+    #     executable: /bin/bash
+
+    - name: Deploy the flask app on port 8080
+
+      ansible.builtin.shell: 
+        cmd: cd {{flask_app_directory}}/flask-backend/ && screen gunicorn --bind 0.0.0.0:8080 wsgi:app
+
 
     ## TODO: config the nginx and run the flask app on port 8080
 
