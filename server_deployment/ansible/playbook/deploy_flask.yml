@@ -1,0 +1,57 @@
+---
+- name: Deploy Flask application to MRC Unimelb Cloud server
+  hosts: 172.26.128.118
+  become: yes
+  vars:
+    flask_app_name: my_flask_app
+    flask_app_directory: /home/ubuntu/{{ flask_app_name }}
+    flask_app_repo: git@github.com:rNLKJA/Unimelb-Master-2023-COMP90024-Assignment-2.git
+    virtualenv_directory: "{{flask_app_directory}}/flask-backend/venv"
+  tasks:
+    - name: Install required packages
+      apt:
+        name:
+          - python3-pip
+          - python3-venv
+          - python3-flask
+          - git
+          - nginx
+          - supervisor
+        state: present
+        update_cache: yes
+    - name: Add GitHub's host key to known hosts
+      ansible.builtin.known_hosts:
+        name: github.com
+        key: "{{ lookup('pipe', 'ssh-keyscan github.com') }}"
+        state: present
+    
+    - name: Copy the private SSH key to the target server
+      ansible.builtin.copy:
+        ## copy the private SSH key of github to the target server
+        src: /Users/weizhao1/.ssh/id_ed25519
+        dest: /home/ubuntu/.ssh/cloud_backend.key
+        owner: ubuntu
+        group: ubuntu
+        mode: '0600'
+
+
+    - name: Clone the Flask application repository
+      git:
+        repo: git@github.com:rNLKJA/Unimelb-Master-2023-COMP90024-Assignment-2.git
+        dest: "{{ flask_app_directory }}"
+        version: 1-backend
+        update: yes
+      environment:
+        GIT_SSH_COMMAND: "ssh -i /home/ubuntu/.ssh/cloud_backend.key -o StrictHostKeyChecking=no"
+
+    - name: Install Python packages
+      ansible.builtin.pip:
+        requirements: "{{flask_app_directory}}/requirements.txt"
+
+    ## TODO: config the nginx and run the flask app on port 8080
+
+    # - name: Run the flask app on port 8080
+    #   command: cd ~/my_flask_app/flask-backend/
+    #   command: flask run --host 0.0.0.0 --port 8080
+
+

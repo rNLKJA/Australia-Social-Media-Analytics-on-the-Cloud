@@ -36,12 +36,9 @@ team-57-ccc-assignment-2/
 │   └── README.md
 │
 ├── backend/
-│   ├── django_app/
-│   │   ├── settings.py
-│   │   ├── urls.py
-│   │   ├── wsgi.py
+│   ├── flask-backend/
+│   │   ├── app.py
 │   │   └── ...
-│   ├── manage.py
 │   └── requirements.txt
 │
 ├── database/
@@ -75,6 +72,37 @@ team-57-ccc-assignment-2/
     └── README.md
 ```
 
+## How to install ansible
+
+MACOS
+
+```bash
+
+brew install ansible
+
+##or
+
+pip install ansible
+
+```
+
+
+WSL
+
+```bash
+sudo apt-get update && sudo apt-get install software-properties-common
+sudo apt-add-repository --yes --update ppa:ansible/ansible
+sudo apt-get install ansible
+
+```
+## How to deploy the application using ansible playbook.
+
+```bash
+
+## replace the private-key to your local path
+ansible-playbook -i inventory.ini /playbook/deploy_flask.yml --private-key /Users/weizhao1/cloud_backend.key
+
+```
 ## Dependencies
 
 ## License
