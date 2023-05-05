@@ -9,7 +9,7 @@ MACOS
 
 brew install ansible
 
-##or
+## or
 
 pip install ansible
 
@@ -25,6 +25,10 @@ sudo apt-get install ansible
 
 ```
 ## How to deploy the application using ansible playbook.
+
+*Note*:
+
+You need to replace the ssh key path with your own one to use the ansible playbok at your own machine.
 
 ```bash
 
