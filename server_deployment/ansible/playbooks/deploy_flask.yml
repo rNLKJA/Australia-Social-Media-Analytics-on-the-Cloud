@@ -20,6 +20,7 @@
           - supervisor
           - python3-virtualenv
           - gunicorn
+          - docker.io
         state: present
         update_cache: yes
     - name: Add GitHub's host key to known hosts
@@ -31,6 +32,7 @@
     - name: Copy the private SSH key to the target server
       ansible.builtin.copy:
         ## copy the private SSH key of github to the target server
+        ## replay the path with your own private key path
         src: /Users/weizhao1/.ssh/id_ed25519
         dest: /home/ubuntu/.ssh/cloud_backend.key
         owner: ubuntu
@@ -50,11 +52,52 @@
     # - name: Manually create the initial virtualenv
     #   command:
     #     cmd: python3 -m venv {{flask_app_directory}}/flask-backend/venv
-    #     creates: "{{flask_app_directory}}/flask-backend/venv"    
+    #     creates: "{{flask_app_directory}}/flask-backend/venv"   
 
-    - name: Install requirements
-      ansible.builtin.pip: 
-        requirements=/{{flask_app_directory}}/requirements.txt 
+    - name: Build the docker image
+      docker_image:
+        name: flask-backend:1.0
+        source: build
+        build:
+          path: "{{flask_app_directory}}/flask-backend"
+        state: present
+
+
+    - name: Run the docker container
+      docker_container:
+        name: flask-backend
+        image: flask-backend:1.0
+        state: started
+        ports:
+          - "8000:8080"
+
+        restart_policy: always
+
+    - name: config nginx
+      template:
+
+        ## replace the config path to your own config path
+        src:  /Users/weizhao1/Documents/Unimelb-Master-2023-COMP90024-Assignment-2/server_deployment/ansible/roles/flask-backend/templates/nginx.conf.j2
+        dest: /etc/nginx/sites-available/flask
+
+    - name: Enable nginx site
+      file:
+        src: /etc/nginx/sites-available/flask
+        dest: /etc/nginx/sites-enabled/flask
+        state: link
+      notify:
+        - restart nginx
+
+  handlers:
+
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
+
+    # - name: Install requirements
+    #   ansible.builtin.pip: 
+    #     requirements=/{{flask_app_directory}}/requirements.txt 
 
     # - name: Activate dependencies
     #   ansible.builtin.shell: 
@@ -62,10 +105,10 @@
     #   args:
     #     executable: /bin/bash
 
-    - name: Deploy the flask app on port 8080
+    # - name: Deploy the flask app on port 8080
 
-      ansible.builtin.shell: 
-        cmd: cd {{flask_app_directory}}/flask-backend/ && screen gunicorn --bind 0.0.0.0:8080 wsgi:app
+    #   ansible.builtin.shell: 
+    #     cmd: cd {{flask_app_directory}}/flask-backend/ && screen gunicorn --bind 0.0.0.0:8080 wsgi:app
 
 
     ## TODO: config the nginx and run the flask app on port 8080
