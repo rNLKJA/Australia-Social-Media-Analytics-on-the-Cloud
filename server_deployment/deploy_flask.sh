@@ -1,0 +1,1 @@
+ansible-playbook -i ansible/inventory/inventory.ini ansible/playbooks/deploy_flask.yml --private-key /Users/weizhao1/cloud_backend.key
