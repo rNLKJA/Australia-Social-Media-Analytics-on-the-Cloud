@@ -13,6 +13,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application code into the container at /app
 COPY . .
 
-EXPOSE 8000
+EXPOSE 8080
 
-CMD [ "gunicorn", "--bind", "0.0.0.0:8000", "app:app" ]
+CMD [ "gunicorn", "--bind", "0.0.0.0:8080", "app:app" ]
