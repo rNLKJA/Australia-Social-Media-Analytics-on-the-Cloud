@@ -1,7 +1,0 @@
-- hosts: localhost
-  vars_files:
-    - host_vars/deploy.yaml
-  gather_facts: true
-
-  roles:
-    - role: flask-backend

@@ -1,8 +1,8 @@
 ---
 - name: Deploy Flask application to MRC Unimelb Cloud server
   user: name="ubuntu" shell="/usr/local/bin/fish"
-  hosts: 172.26.128.118
-  become: yes
+  hosts: unimelb_cloud_backend
+  become: true
   vars:
     flask_app_name: my_flask_app
     flask_app_directory: /home/ubuntu/{{ flask_app_name }}
@@ -69,7 +69,7 @@
         image: flask-backend:1.0
         state: started
         ports:
-          - "8000:8080"
+          - "8080:8080"
 
         restart_policy: always
 
@@ -85,15 +85,25 @@
         src: /etc/nginx/sites-available/flask
         dest: /etc/nginx/sites-enabled/flask
         state: link
-      notify:
-        - restart nginx
 
-  handlers:
+    - name: delete default nginx site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
 
-    - name: restart nginx
+    - name: delete default nginx site
+      file:
+        path: /etc/nginx/sites-available/default
+        state: absent
+
+
+    - name: Restart Nginx server
       service:
         name: nginx
         state: restarted
+
+  
+
 
     # - name: Install requirements
     #   ansible.builtin.pip: 
