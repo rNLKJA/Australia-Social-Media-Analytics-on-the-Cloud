@@ -7,57 +7,76 @@ import numpy as np
 import argparse
 import time
 import sys
+import os
+from itertools import combinations
 
-# This function gets an input of a list of grater capital cities the auther had tweeted in
-# and output a dictionary stores the number of twitters made in each greater capital cities
-def num_tw_per_gcc(I_lst):
-    num_tw_per_gcc_dict = {}
-    for i in I_lst:
-        # get the greater capital city
-        loc = i[-4:] 
+gccs = [
+    "Canberra",
+    "Sydney",
+    "Darwin",
+    "Brisbane",
+    "Adelaide",
+    "Hobart",
+    "Melbourne",
+    "Perth",
+]
 
-        # if this is the first time this author made twitter in this city,then number of twitter is 1
-        if loc not in num_tw_per_gcc_dict:
-            num_tw_per_gcc_dict[loc] = 1
-        # increase the number of twitters made in that greater capital city
-        else:
-            num_tw_per_gcc_dict[loc] += 1
-    
-    return num_tw_per_gcc_dict
+state_location = dict(
+    zip(
+        [
+            s.lower()
+            for s in [
+                "Australian Capital Territory",
+                "New South Wales",
+                "Northern Territory",
+                "Queensland",
+                "South Australia",
+                "Tasmania",
+                "Victoria",
+                "Western Australia",
+            ]
+        ],
+        [s.lower() for s in ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"]],
+    )
+)
 
-# This function get a dictionary as input and output the information required in question3
-def task3(I_dict):
-    O_dict = {}
-    for author in I_dict.keys():
-        # get the number of greater capital cities that this author has made tweets in
-        num_of_gcc = len(set(I_dict[author]['gcc']))
-        
-        # get the required output information
-        num_of_tw = I_dict[author]['count']
-        num_tw_per_gcc_dict = num_tw_per_gcc(I_dict[author]['gcc'])
-        
-        # get the information in the format of required output table
-        count = 0
-        
-        # the information of how many tweets is made in each greater capital cities(last column)
-        for gcc in num_tw_per_gcc_dict.keys():
-            if count == 0:
-                tweets_distribution = str(num_tw_per_gcc_dict[gcc]) + gcc    
-            else:
-                tweets_distribution += ' ,' + str(num_tw_per_gcc_dict[gcc]) + gcc
-            count += 1
-        # create a dictionary for each author
-        O_dict[author] = {}  
-        # last column
-        O_dict[author]['output'] = (str(num_of_gcc) 
-                            + '(#' + str(num_of_tw) 
-                            + ' tweets - ' 
-                            + tweets_distribution + ')')
-        # these two column needed for sorting
-        O_dict[author]['num_of_tw'] = num_of_tw
-        O_dict[author]['num_of_gcc'] = num_of_gcc
-    
-    return O_dict
+
+def return_words_ngrams(words: list) -> list:
+    """
+    Return a list contains ngram words
+    """
+    return [
+        " ".join(c) for i in range(1, len(words) + 1) for c in combinations(words, i)
+    ]
+
+def normalise_location(location: str) -> str:
+    """
+    Normalise location where the location string should not
+    contains any puntuations also additional white spaces.
+    """
+    text = re.sub(r"[^\w\s]", "", location)
+    text = re.sub(r" - ", "", text)
+
+    if location.split(",")[0] in gccs:
+        text = location.split(",")[0].lower()
+
+    for key, value in state_location.items():
+        text = re.sub(key, value, text)
+
+    return re.sub(" +", " ", text)
+
+
+INVALID_LOCATION = [
+    "act australia",
+    "nsw australia",
+    "nt australia",
+    "qld Australia",
+    "sa australia",
+    "tas australia",
+    "vic australia",
+    "wa australia",
+    "australia",
+]
 
 start_time = time.time() 
 
@@ -71,12 +90,20 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
-with open(args.sal_path) as json_file2:
-    sal_dict = json.load(json_file2)
+DATA_FILE = str('twitter_cleaned_' + str(rank) + '.json')
+
+# start the list if NO harvesting
+with open(DATA_FILE, 'w', encoding='utf-8') as f:
+    f.write('[\n')
+
+with open(args.sal_path) as json_file:
+    sal_dict = json.load(json_file)
 
 # list for task 1,2,3
 twid_lst = []
 author_lst = []
+created_time_lst = []
+text_content_lst = []
 location_lst = []
 gcc_lst = []
 
@@ -93,146 +120,147 @@ with open(args.twitter_file_path, 'rb') as f:
     finish_read = False
     twid = None
     author = None
+    created_time = None
+    text_content = None
     location = None
+    gcc = None
     while not finish_read:
         curr_line = f.readline().decode()
 
         if not curr_line:
             # end of file
+            if (twid and author and created_time and text_content) and (not location):
+                # no position information for current item
+                # record the current item
+                # location_lst.append('')
+                # gcc_lst.append('')
+                location = ''
+                gcc = ''
+
+                # Append the new message to the JSON file
+                item = {"_id": twid.group(1),
+                        "author_id": author.group(1),
+                        "created_at": created_time.group(1),
+                        "text": text_content.group(1),
+                        "location": location,
+                        "possible_suburb": gcc}
+                with open(DATA_FILE, 'a', encoding='utf-8') as output_f:
+                    # Append the new message to the JSON file
+                    json.dump(item, output_f, indent=2, sort_keys=True, default=str)
+                    output_f.write(',\n')
+
             break
 
         # try match tweet id
         if not twid:
             twid = re.search(r'"_id":\s*"([^"]+)"', curr_line)
-            if twid:
-                twid_lst.append(twid.group(1))
-                continue
+            # if twid:
+            #     # twid_lst.append(twid.group(1))
+            #     continue
         
         # try match corresponding author
         if twid and (not author):
             author = re.search(r'"author_id":\s*"([^"]+)"', curr_line)
-            if author:
-                author_lst.append(author.group(1))
-                continue
+            # if author:
+            #     # author_lst.append(author.group(1))
+            #     continue
+
+        # try match corresponding created_time
+        if (twid and author) and (not created_time):
+            created_time = re.search(r'"created_at":\s*"([^"]+)"', curr_line)
+            # if created_time:
+            #     # created_time_lst.append(created_time.group(1))
+
+        # try match corresponding text_content
+        if (twid and author and created_time) and (not text_content):
+            text_content = re.search(r'"text":\s*"([^"]+)"', curr_line)
+            # if text_content:
+            #     # text_content_lst.append(text_content.group(1))
 
         # try match corresponding location
-        if (twid and author) and (not location):
+        if (twid and author and created_time and text_content) and (not location):
             location = re.search(r'"full_name":\s*"([^"]+)"', curr_line)
             if location:
-                location_lst.append(location.group(1))
+                # location_lst.append(location.group(1))
+                normalised_location = normalise_location(location.group(1).lower())
+                ngram_words = return_words_ngrams(normalised_location.split(" "))
+
+                for possible_location in ngram_words:
+                    if sal_dict.get(possible_location):
+                        gcc = {possible_location: sal_dict.get(possible_location)}
+                        # gcc_lst.append(gcc)
+                        break
+                
+                if not gcc:
+                    gcc = ''
+                    # gcc_lst.append('')
+                
+                # Append the new message to the JSON file
+                item = {"_id": twid.group(1),
+                        "author_id": author.group(1),
+                        "created_at": created_time.group(1),
+                        "text": text_content.group(1),
+                        "location": location.group(1),
+                        "possible_suburb": gcc}
+                with open(DATA_FILE, 'a', encoding='utf-8') as output_f:
+                    # Append the new message to the JSON file
+                    json.dump(item, output_f, indent=2, sort_keys=True, default=str)
+                    output_f.write(',\n')
 
                 # reset and head to the next item
                 twid = None
                 author = None
+                created_time = None
+                text_content = None
                 location = None
+                gcc = None
                 continue
 
-        if f.tell() >= end and (not twid) and (not author) and (not location):
+            if re.search(r'"_id":\s*"([^"]+)"', curr_line):
+                # no position information for current item
+                # record the current item
+                # location_lst.append('')
+                # gcc_lst.append('')
+                location = ''
+                gcc = ''
+
+                # Append the new message to the JSON file
+                item = {"_id": twid.group(1),
+                        "author_id": author.group(1),
+                        "created_at": created_time.group(1),
+                        "text": text_content.group(1),
+                        "location": location,
+                        "possible_suburb": gcc}
+                with open(DATA_FILE, 'a', encoding='utf-8') as output_f:
+                    # Append the new message to the JSON file
+                    json.dump(item, output_f, indent=2, sort_keys=True, default=str)
+                    output_f.write(',\n')
+
+                # reset and head to the next item
+                twid = None
+                author = None
+                created_time = None
+                text_content = None
+                location = None
+                gcc = None
+                continue
+
+
+
+        if f.tell() >= end and not (twid or author or created_time or text_content or location):
             # only stop when the current item is complete
             finish_read = True
             break
 
+# replace the last ",\n" with "\n]" to end the list
+with open(DATA_FILE, 'rb+') as f:
+  f.seek(-3, os.SEEK_END)
+  f.truncate()
+
+with open(DATA_FILE, 'a') as f:
+  f.write('\n]')
+
 read_end_time = time.time()
 print(f"Read time: {read_end_time - start_time} seconds at core {rank}")
 
-# map each "location" to corresponding "gcc", map to NAN if not in gcc
-for location in location_lst:
-    address = location.lower().split(", ")
-
-    # check whether the location is in a gcc
-    is_in_gcc = False    
-    for place in address:
-        if place in sal_dict:
-            gcc = sal_dict[place]['gcc']
-            if gcc[-4] != 'r':
-                # this place is INDEED in a gcc
-                is_in_gcc = True
-                gcc_lst.append(gcc)
-                break
-
-    if not is_in_gcc:
-        gcc_lst.append(np.nan)
-
-# dictionary for task 1
-tws_df = pd.DataFrame({'Tweet Id': twid_lst, 'Author Id': author_lst, 'Greater Capital City': gcc_lst})
-tws_author_count = tws_df.groupby('Author Id')['Tweet Id'].count().to_dict()
-
-# dictionary for task 2
-tws_df.dropna(inplace=True)
-num_tw_in_gcc = tws_df.groupby('Greater Capital City')['Tweet Id'].count().to_dict()
-
-
-# dictionary for task 3
-num_tw_per_author = tws_df.groupby('Author Id')['Greater Capital City'].apply(list).to_dict()
-num_tw_per_author = {author: {'count': len(gcc_lst), 'gcc': gcc_lst} for author, gcc_lst in num_tw_per_author.items()}
-
-
-comm.Barrier()
-
-if rank > 0:
-    comm.send(tws_author_count, dest=0, tag=1)   # task 1
-    comm.send(num_tw_in_gcc, dest=0, tag=2)      # task 2
-    comm.send(num_tw_per_author, dest=0, tag=3)  # task 3
-else: 
-    for i in range(size):
-        if i != 0:
-            # task 1
-            tws_author_count = dict(Counter(tws_author_count) + Counter(comm.recv(source=i, tag=1)))
-            # task 2
-            num_tw_in_gcc = dict(Counter(num_tw_in_gcc) + Counter(comm.recv(source=i, tag=2)))
-
-            # task 3
-            tmp = comm.recv(source=i, tag=3)
-            for author in tmp.keys():
-                if author in num_tw_per_author:
-                    num_tw_per_author[author]['count'] += tmp[author]['count']
-                    num_tw_per_author[author]['gcc'].extend(tmp[author]['gcc'])
-                else:
-                    num_tw_per_author[author] = tmp[author]
-
-    
-    # task 1 output
-    TOP_NUM = 11   # threshold: return top ("TOP_NUM" - 1) records
-    df_1 = pd.DataFrame([[author, count] for author, count in tws_author_count.items()], 
-                        columns=['Author Id', 'Number of Tweets Made'])
-    df_1['Rank'] = df_1['Number of Tweets Made'].rank(method='min', ascending=False)
-    df_1 = df_1.sort_values(by=['Rank'], ascending=True, ignore_index=True)
-    df_1 = df_1.loc[df_1[df_1['Rank'] < TOP_NUM].index, ['Rank', 'Author Id', 'Number of Tweets Made']]
-    df_1['Rank'] = [str('#' + str(int(x))) for x in df_1['Rank']]
-    df_1.to_csv(str((args.twitter_file_path).split('.')[0] + '_task1.csv'))
-
-    # task 2 output
-    df_2 = pd.DataFrame(list(num_tw_in_gcc.items()), columns=['Greater Capital City', 'Number of Tweets Made'])
-    df_2 = df_2.sort_values(by=['Greater Capital City'], ascending=True, ignore_index=True)
-    # dictionary for formatting
-    gcc_name_dict = {'1gsyd': '1gsyd (Greater Sydney)',
-                     '2gmel': '2gmel (Greater Melbourne)',
-                     '3gbri': '3gbri (Greater Brisbane)',
-                     '4gade': '4gade (Greater Adelaide)',
-                     '5gper': '5gper (Greater Perth)',
-                     '6ghob': '6ghob (Greater Hobart)',
-                     '7gdar': '7gdar (Greater Darwin)',
-                     '8acte': '8acte (Greater Canberra)',
-                     '9oter': '9oter (Other Territories)'}
-    df_2.replace({'Greater Capital City': gcc_name_dict}, inplace=True)
-    df_2.to_csv(str((args.twitter_file_path).split('.')[0] + '_task2.csv')) 
-
-    # task 3 output 
-    task3_dict = task3(num_tw_per_author)
-    data_3 = []
-    for author in task3_dict.keys():
-        data_3.append([author, task3_dict[author]['num_of_gcc'], task3_dict[author]['num_of_tw'], task3_dict[author]['output']])
-    # build the data frame and rank according to the number of unique city and then number of tweets
-    df_3 = pd.DataFrame(data_3, columns=['Author Id', 'num_of_gcc', 'num_of_tw', 'Number of Unique City Locations and #Tweets'])
-    df_3['Rank'] = df_3[['num_of_gcc', 'num_of_tw']].apply(tuple,axis=1).rank(method='min',ascending=False)
-    df_3 = df_3.sort_values(by=['Rank'], ascending=True, ignore_index=True)
-    df_3 = df_3.loc[df_3[df_3['Rank'] < TOP_NUM].index, ['Rank','Author Id', 'Number of Unique City Locations and #Tweets']]
-    df_3['Rank'] = [str('#' + str(int(x))) for x in df_3['Rank']]
-    df_3.to_csv(str((args.twitter_file_path).split('.')[0] + '_task3.csv'))
-
-    # DONE!
-    end_time = time.time() 
-    elapsed_time = end_time - start_time
-    print(f"Elapsed time: {elapsed_time} seconds")
-
-    sys.exit()
+sys.exit()
