@@ -118,6 +118,7 @@ with open(args.twitter_file_path, 'rb') as f:
 
     # read the file
     finish_read = False
+    one_more_item = True
     twid = None
     author = None
     created_time = None
@@ -154,6 +155,7 @@ with open(args.twitter_file_path, 'rb') as f:
         # try match tweet id
         if not twid:
             twid = re.search(r'"_id":\s*"([^"]+)"', curr_line)
+            continue
             # if twid:
             #     # twid_lst.append(twid.group(1))
             #     continue
@@ -161,6 +163,7 @@ with open(args.twitter_file_path, 'rb') as f:
         # try match corresponding author
         if twid and (not author):
             author = re.search(r'"author_id":\s*"([^"]+)"', curr_line)
+            continue
             # if author:
             #     # author_lst.append(author.group(1))
             #     continue
@@ -168,12 +171,14 @@ with open(args.twitter_file_path, 'rb') as f:
         # try match corresponding created_time
         if (twid and author) and (not created_time):
             created_time = re.search(r'"created_at":\s*"([^"]+)"', curr_line)
+            continue
             # if created_time:
             #     # created_time_lst.append(created_time.group(1))
 
         # try match corresponding text_content
         if (twid and author and created_time) and (not text_content):
             text_content = re.search(r'"text":\s*"([^"]+)"', curr_line)
+            continue
             # if text_content:
             #     # text_content_lst.append(text_content.group(1))
 
@@ -214,7 +219,13 @@ with open(args.twitter_file_path, 'rb') as f:
                 text_content = None
                 location = None
                 gcc = None
-                continue
+
+                if f.tell() >= end:
+                    finish_read = True
+                    break
+                else:
+                    continue
+
 
             if re.search(r'"_id":\s*"([^"]+)"', curr_line):
                 # no position information for current item
@@ -237,13 +248,21 @@ with open(args.twitter_file_path, 'rb') as f:
                     output_f.write(',\n')
 
                 # reset and head to the next item
-                twid = None
-                author = None
-                created_time = None
-                text_content = None
-                location = None
-                gcc = None
-                continue
+                if f.tell() >= end:
+                    if one_more_item:
+                        # one more item to read
+                        twid = re.search(r'"_id":\s*"([^"]+)"', curr_line)
+                        author = None
+                        created_time = None
+                        text_content = None
+                        location = None
+                        gcc = None
+
+                        one_more_item = False
+                        continue
+                    else:
+                        finish_read = True
+                        break
 
 
 
