@@ -1,5 +1,7 @@
 from itertools import combinations
 import re
+import pickle
+from pathlib import Path
 
 def generate_item(twid, author, created_time, text_content, location, gcc):
     item = {
@@ -75,4 +77,11 @@ INVALID_LOCATION = [
     "wa australia",
     "australia",
 ]
+
+def load_pickle_object(path: Path) -> object:
+    """
+    Load pickle object from path
+    """
+    with open(path, "rb") as f:
+        return pickle.load(f)
 
