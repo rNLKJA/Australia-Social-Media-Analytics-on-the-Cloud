@@ -9,7 +9,7 @@ location = re.compile(r'"full_name":"(.*?)"')
 text = re.compile(r'"text":"(.*?)"')
 label = re.compile(r'"tags":"(.*?)"')
 
-NONE = ""
+NONE = None
 
 def get_partition(rank, size, num_partitions=4):
     partition_size = size // 4
@@ -57,6 +57,7 @@ def twitter_processor(file, cs, ce, sal_dict,
                         author=author_id.group(1) if author_id else NONE,
                         date=created_at.group(1) if created_at else NONE,
                         content= content,
+                        location=full_name.group(1) if full_name else NONE,
                         tags=tags.group(1) if tags else NONE,
                         score=sa(content))
 
@@ -70,6 +71,6 @@ def twitter_processor(file, cs, ce, sal_dict,
                         tweet.sal = sal_dict.get(possible_location)
                         break
 
-            if tweet.content != '':
+            if tweet.content and tweet.author and tweet.date:
                 db.upload_document(tweet.to_dict(get_partition(rank, size)))
            
