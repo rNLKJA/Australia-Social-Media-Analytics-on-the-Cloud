@@ -138,3 +138,6 @@ dmypy.json
 
 # job submission scripts
 *.slurm
+
+# TODO: remove gitignore for frontend
+2_ReactJS_frontend/
