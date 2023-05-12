@@ -16,14 +16,15 @@ class Tweet:
         return f"Twitter(tid={self.tid}, author={self.author}, date={self.date}, content={self.content}, " \
                f"location={self.location}, sal={self.sal}, tags={self.tags}"
 
-    def to_dict(self):
+    def to_dict(self, rank):
         return {
+            '_id': f'{rank}:{self.tid}',
             'tid': self.tid,
             'author': self.author,
             'date': self.date,
             'content': self.content,
             'location': self.location,
-            'sal': self.suburb
+            'sal': self.sal
         }
 
     def data_complete(self):
