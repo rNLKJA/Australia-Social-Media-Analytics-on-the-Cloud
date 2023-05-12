@@ -31,6 +31,6 @@ rank, size = comm.Get_rank(), comm.Get_size()
 chunk_start, chunk_end = split_file_into_chunks(twitter_file_path, size)
 db = CouchDB('twitter')
 
-twitter_processor(twitter_file_path, chunk_start[rank], chunk_end[rank], sal_dict, rank, db, sentiment_analysis, normalise_location)
+twitter_processor(twitter_file_path, chunk_start[rank], chunk_end[rank], sal_dict, rank, size, db, sentiment_analysis, normalise_location)
 
 sys.exit()

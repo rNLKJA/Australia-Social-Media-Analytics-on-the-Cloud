@@ -11,8 +11,16 @@ label = re.compile(r'"tags":"(.*?)"')
 
 NONE = ""
 
+def get_partition(rank, size, num_partitions=4):
+    partition_size = size // 4
+    partition_target = int(rank // partition_size)
+    if partition_target == num_partitions:
+        partition_target -= 1
+    return partition_target
+
+
 def twitter_processor(file, cs, ce, sal_dict, 
-                      rank, db, 
+                      rank, size, db, 
                       sa, nl):
     with open(file, mode='rb') as f:
         f.seek(cs)
@@ -63,5 +71,5 @@ def twitter_processor(file, cs, ce, sal_dict,
                         break
 
             if tweet.content != '':
-                db.upload_document(tweet.to_dict(rank))
+                db.upload_document(tweet.to_dict(get_partition(rank, size)))
            
