@@ -11,7 +11,9 @@ label = re.compile(r'"tags":"(.*?)"')
 
 NONE = ""
 
-def twitter_processor(file, cs, ce, sal_dict, rank, db):
+def twitter_processor(file, cs, ce, sal_dict, 
+                      rank, db, 
+                      sa, nl):
     with open(file, mode='rb') as f:
         f.seek(cs)
 
@@ -37,6 +39,8 @@ def twitter_processor(file, cs, ce, sal_dict, rank, db):
                 content = re.sub(r'@\w+\s*', '', content.group(1))
                 content = re.sub(r'#\w+\s*', '', content)
                 content = re.sub(r'https?:\/\/\S+', '', content)
+
+                content = nl(content)
             else:
                 continue
 
@@ -45,7 +49,8 @@ def twitter_processor(file, cs, ce, sal_dict, rank, db):
                         author=author_id.group(1) if author_id else NONE,
                         date=created_at.group(1) if created_at else NONE,
                         content= content,
-                        tags=tags.group(1) if tags else NONE)
+                        tags=tags.group(1) if tags else NONE,
+                        score=sa(content))
 
             # find possible gcc locations
             if full_name:
