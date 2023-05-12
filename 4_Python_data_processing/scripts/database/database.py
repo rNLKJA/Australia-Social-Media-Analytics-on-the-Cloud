@@ -34,9 +34,20 @@ class CouchDB:
             return self.server[dbname]
 
     def upload_document(self, data, verbose=False):
+        doc_id = data.get('_id')
+        
+        # Check if the document with the specified ID exists
+        existing_doc = self.get_document(doc_id)
+        if existing_doc:
+            # Get the current revision of the existing document
+            data['_rev'] = existing_doc['_rev']
+
+        # Save the new or updated document
         doc_id, doc_rev = self.db.save(data)
+        
         if verbose:
             print(f"Document uploaded with ID: {doc_id}", end='\r')
+        
         return doc_id
 
     def get_document(self, doc_id):
