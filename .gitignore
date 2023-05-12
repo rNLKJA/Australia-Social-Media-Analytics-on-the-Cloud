@@ -134,4 +134,7 @@ dmypy.json
 # data
 *.zip
 /twitter-huge.json
-Mastodon_social*.json
+*.json
+
+# job submission scripts
+*.slurm
