@@ -9,27 +9,72 @@ COUCHDB_PORT = os.environ['COUCHDB_PORT']
 COUCHDB_USERNAME = os.environ['COUCHDB_USERNAME']
 COUCHDB_PASSWORD = os.environ['COUCHDB_PASSWORD']
 
-instance_url = f"http://{COUCHDB_USERNAME}:{COUCHDB_PASSWORD}@{COUCHDB_HOST}:{COUCHDB_PORT}"
-server = couchdb.Server(instance_url)
+class CouchDB:
+    def __init__(self, host=COUCHDB_HOST, port=COUCHDB_PORT, 
+                 username=COUCHDB_USERNAME, password=COUCHDB_PASSWORD):
+        self.host = host,
+        self.port = port,
+        self.username = username
+        self.password = password
 
-db_name = 'twitter'
-# create a twitter database if not exist
-if db_name in server:
-    db = server[db_name]
-    print(f"Database '{db_name}' already exists")
-else:
-    db = server.create(db_name)
-    print(f"Database '{db_name}' created")
-
-def upload_document(data: dict, db: couchdb.client.Database=db):
-    """
-    Args:
-        data (dict): dictionary like object
-        db (couchdb.client.Database): target CouchDB database
-    Return:
-        _id: documentation id
-        rev: revision id
-    """
-    doc_id, doc_rev = db.save(data)
-    print(f"Document uploaded with ID: {doc_id}", end='\r')
+        self.instance_url = f"http://{self.username}:{self.password}@{self.host}:{self.port}"
+        self.server = "Server Disconnected"
+    
+    def connect(self):
+        self.server = couchdb.Server(self.instance_url)
+        print(self.server)
         
+    def __repr__(self):
+        return f"{self.server}"
+        
+    def connect(self):
+        self.server = couchdb.Server(self.instance_url)
+        print(self.server)
+        
+    def upload_document(self, db, data, verbose=False):
+        doc_id, doc_rev = db.save(data)
+        if verbose:
+            print(f"Document uploaded with ID: {doc_id}", end='\r')
+    
+    def create_database(self, dbname):
+        try:
+            db = self.server.create(dbname)
+            print(f"Database '{dbname}' created successfully.")
+            return db
+        except couchdb.http.PreconditionFailed:
+            print(f"Database '{dbname}' already exists.")
+            return self.server[dbname]
+
+    def get_document(self, db, doc_id):
+        try:
+            doc = db[doc_id]
+            return doc
+        except couchdb.http.ResourceNotFound:
+            print(f"Document with ID '{doc_id}' not found.")
+            return None
+    
+    def delete_document(self, db, doc_id):
+        try:
+            doc = db[doc_id]
+            db.delete(doc)
+            print(f"Document with ID '{doc_id}' deleted successfully.")
+        except couchdb.http.ResourceNotFound:
+            print(f"Document with ID '{doc_id}' not found.")
+    
+    def update_document(self, db, doc_id, updated_data):
+        doc = self.get_document(db, doc_id)
+        if doc:
+            doc.update(updated_data)
+            db.save(doc)
+            print(f"Document with ID '{doc_id}' updated successfully.")
+        else:
+            print(f"Document with ID '{doc_id}' not found.")
+
+    def list_databases(self):
+        return self.server.all_dbs()
+
+    def list_documents(self, db):
+        return [doc for doc in db.view("_all_docs")]
+
+
+
