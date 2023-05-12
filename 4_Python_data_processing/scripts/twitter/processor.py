@@ -11,18 +11,20 @@ label = re.compile(r'"tags":"(.*?)"')
 
 NONE = ""
 
-def meet_break_condition(curr, ce):
-    if curr >= ce:
-        return True
-
-def twitter_processor(file, cs, ce, sal_dict):
+def twitter_processor(file, cs, ce, sal_dict, rank, db):
     with open(file, mode='rb') as f:
         f.seek(cs)
 
-        while True:
+        while f.tell() < ce:
             line = f.readline().decode()
 
             _id = tweet_id.search(line)
+
+            if not _id:    # if no _id found, continue
+                continue   # this (ideal) ignore the first line
+            if len(_id.group(1)) < 15:
+                continue
+
             author_id = author.search(line)
             created_at = date.search(line)
             full_name = location.search(line)
@@ -40,10 +42,10 @@ def twitter_processor(file, cs, ce, sal_dict):
 
             # define the base tweet
             tweet = Tweet(tid=_id.group(1) if _id else NONE,
-                          author=author_id.group(1) if author_id else NONE,
-                          date=created_at.group(1) if created_at else NONE,
-                          content= content,
-                          tags=tags.group(1) if tags else NONE)
+                        author=author_id.group(1) if author_id else NONE,
+                        date=created_at.group(1) if created_at else NONE,
+                        content= content,
+                        tags=tags.group(1) if tags else NONE)
 
             # find possible gcc locations
             if full_name:
@@ -55,8 +57,6 @@ def twitter_processor(file, cs, ce, sal_dict):
                         tweet.sal = sal_dict.get(possible_location)
                         break
 
-            if tweet.tags:
-                print(tweet)            
-
-            if meet_break_condition(f.tell(), ce):
-                break
+            if tweet.content != '':
+                db.upload_document(tweet.to_dict(rank))
+           
