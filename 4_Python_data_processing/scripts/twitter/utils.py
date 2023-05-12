@@ -3,7 +3,7 @@ from itertools import combinations
 
 class Tweet:
     def __init__(self, tid=None, author=None, date=None, content=None, 
-                 location=None, sal=None, tags=None):
+                 location=None, sal=None, tags=None, score=None):
         self.tid = tid
         self.author = author
         self.date = date
@@ -11,6 +11,7 @@ class Tweet:
         self.location = location
         self.sal = sal
         self.tags = tags
+        self.score = score
 
     def __repr__(self):
         return f"Twitter(tid={self.tid}, author={self.author}, date={self.date}, content={self.content}, " \
@@ -24,7 +25,8 @@ class Tweet:
             'date': self.date,
             'content': self.content,
             'location': self.location,
-            'sal': self.sal
+            'sal': self.sal,
+            'score': self.score
         }
 
     def data_complete(self):
