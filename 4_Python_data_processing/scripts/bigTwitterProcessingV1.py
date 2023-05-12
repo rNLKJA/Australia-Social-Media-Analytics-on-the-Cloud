@@ -15,6 +15,7 @@ from utils import generate_item, return_words_ngrams, normalise_location, load_p
 from mpi.utils import split_file_into_chunks
 from twitter.processor import twitter_processor
 from database.database import CouchDB
+from sentimental_analysis.analyzer import sentiment_analysis, normalize_string
 
 twitter_file_path = Path().absolute()/'data'/f'{args.twitter_file}.json'
 
@@ -30,6 +31,6 @@ rank, size = comm.Get_rank(), comm.Get_size()
 chunk_start, chunk_end = split_file_into_chunks(twitter_file_path, size)
 db = CouchDB('twitter')
 
-twitter_processor(twitter_file_path, chunk_start[rank], chunk_end[rank], sal_dict, rank, db)
+twitter_processor(twitter_file_path, chunk_start[rank], chunk_end[rank], sal_dict, rank, db, sentiment_analysis, normalise_location)
 
 sys.exit()
