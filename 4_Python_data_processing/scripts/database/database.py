@@ -49,13 +49,26 @@ class CouchDB:
             print(f"Document uploaded with ID: {doc_id}", end='\r')
         
         return doc_id
+    
+    def upload_bulk_documents(self, data_list, verbose=False):
+        # Get the current revision of the existing documents
+        # for data in data_list:
+        #     doc_id = data.get('_id')
+        #     existing_doc = self.get_document(doc_id)
+        #     if existing_doc:
+        #         data['_rev'] = existing_doc['_rev']
+        
+        results = self.db.update(data_list)
+        if verbose:
+            print(f"{len(data_list)} documents uploaded in bulk.")
+        return results
 
     def get_document(self, doc_id):
         try:
             doc = self.db[doc_id]
             return doc
         except couchdb.http.ResourceNotFound:
-            print(f"Document with ID '{doc_id}' not found.")
+            print(f"Document with ID '{doc_id}' not found.", end='\n')
             return None
 
     def delete_document(self, doc_id):

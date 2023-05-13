@@ -15,7 +15,7 @@ from utils import generate_item, return_words_ngrams, normalise_location, load_p
 from mpi.utils import split_file_into_chunks
 from twitter.processor import twitter_processor
 from database.database import CouchDB
-from sentimental_analysis.analyzer import sentiment_analysis, normalize_string
+from sentimental_analysis.analyzer import sentiment_analysis, normalize_string, language_identifier
 
 twitter_file_path = Path().absolute()/'data'/f'{args.twitter_file}.json'
 
@@ -29,8 +29,8 @@ rank, size = comm.Get_rank(), comm.Get_size()
 
 # return a list of specified file bytes each process need to processed
 chunk_start, chunk_end = split_file_into_chunks(twitter_file_path, size)
-db = CouchDB('twitter')
+db = CouchDB('twitter_clean')
 
-twitter_processor(twitter_file_path, chunk_start[rank], chunk_end[rank], sal_dict, rank, size, db, sentiment_analysis, normalise_location)
+twitter_processor(twitter_file_path, chunk_start[rank], chunk_end[rank], sal_dict, rank, size, db, normalize_string, sentiment_analysis, language_identifier)
 
 sys.exit()
