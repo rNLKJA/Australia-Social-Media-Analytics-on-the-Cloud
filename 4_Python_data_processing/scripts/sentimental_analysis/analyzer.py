@@ -1,20 +1,24 @@
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 from nltk.stem import WordNetLemmatizer
+from nltk.classify.textcat import TextCat
 
-nltk.download('vader_lexicon')
-nltk.download('wordnet')
-nltk.download('punkt')
+from langdetect import detect
 
+# nltk.download('vader_lexicon')
+# nltk.download('wordnet')
+# nltk.download('punkt')
+
+
+lemmatizer = WordNetLemmatizer()
 def normalize_string(input_string):
-    lemmatizer = WordNetLemmatizer()
     tokens = nltk.word_tokenize(input_string)
     normalized_tokens = [lemmatizer.lemmatize(token) for token in tokens]
     normalized_string = ' '.join(normalized_tokens)
     return normalized_string
 
+sia = SentimentIntensityAnalyzer()
 def sentiment_analysis(text):
-    sia = SentimentIntensityAnalyzer()
     sentiment = sia.polarity_scores(text)
     compound_score = sentiment['compound']
     
@@ -52,3 +56,11 @@ def sentiment_description(score):
     }
     
     return sentiment_dict.get(score, "Invalid score")
+
+
+def language_identifier(text):
+    try:
+        lang_code = detect(text)
+        return lang_code
+    except Exception as e:
+        return f"Error: {str(e)}"
