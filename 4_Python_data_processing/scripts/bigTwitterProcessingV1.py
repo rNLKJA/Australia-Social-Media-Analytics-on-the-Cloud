@@ -29,7 +29,7 @@ rank, size = comm.Get_rank(), comm.Get_size()
 
 # return a list of specified file bytes each process need to processed
 chunk_start, chunk_end = split_file_into_chunks(twitter_file_path, size)
-db = CouchDB('twitter_clean')
+db = CouchDB('twitter_clean_10000')
 
 twitter_processor(twitter_file_path, chunk_start[rank], chunk_end[rank], sal_dict, rank, size, db, normalize_string, sentiment_analysis, language_identifier)
 
