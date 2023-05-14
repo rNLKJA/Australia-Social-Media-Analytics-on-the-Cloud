@@ -34,41 +34,17 @@ class CouchDB:
             return self.server[dbname]
 
     def upload_document(self, data, verbose=False):
-        doc_id = data.get('_id')
-        
-        # Check if the document with the specified ID exists
-        existing_doc = self.get_document(doc_id)
-        if existing_doc:
-            # Get the current revision of the existing document
-            data['_rev'] = existing_doc['_rev']
-
-        # Save the new or updated document
         doc_id, doc_rev = self.db.save(data)
-        
         if verbose:
             print(f"Document uploaded with ID: {doc_id}", end='\r')
-        
         return doc_id
-    
-    def upload_bulk_documents(self, data_list, verbose=False):
-        # Get the current revision of the existing documents
-        # for data in data_list:
-        #     doc_id = data.get('_id')
-        #     existing_doc = self.get_document(doc_id)
-        #     if existing_doc:
-        #         data['_rev'] = existing_doc['_rev']
-        
-        results = self.db.update(data_list)
-        if verbose:
-            print(f"{len(data_list)} documents uploaded in bulk.")
-        return results
 
     def get_document(self, doc_id):
         try:
             doc = self.db[doc_id]
             return doc
         except couchdb.http.ResourceNotFound:
-            print(f"Document with ID '{doc_id}' not found.", end='\n')
+            print(f"Document with ID '{doc_id}' not found.")
             return None
 
     def delete_document(self, doc_id):
@@ -88,5 +64,31 @@ class CouchDB:
         else:
             print(f"Document with ID '{doc_id}' not found.")
 
-    def list_documents(self):
-        return [doc for doc in self.db.view("_all_docs")]
+    def list_documents(self, limit=1):
+        try:
+            result = self.db.view("_all_docs", descending=True, limit=limit)
+            latest_doc_id = result.rows[0].id
+            latest_doc = self.get_document(latest_doc_id)
+            return [latest_doc] if latest_doc else []
+        except couchdb.http.ResourceNotFound:
+            print("No documents found.")
+            return []
+        
+    def get_document_by_id(self, doc_id):
+        doc = self.get_document(doc_id)
+        if doc:
+            return dict(doc)
+        else:
+            return None
+
+    def extract_and_get_data(self, response):
+        match = re.search(r"\(doc._id == \"([^']+)\"\)", response)
+        if match:
+            doc_id = match.group(1)
+            return self.get_document_by_id(doc_id)
+        else:
+            return None
+
+    def get_last_document(self):
+        response = str(self.list_documents()[0])
+        return self.extract_and_get_data(response)
