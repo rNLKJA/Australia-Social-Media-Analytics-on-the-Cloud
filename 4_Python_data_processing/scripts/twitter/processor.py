@@ -190,6 +190,9 @@ def twitter_processor_v1(file, cs, ce, sal_dict,
                             tweet.sal = sal_dict.get(possible_location)
                             break
 
+                if not tweet.sal:
+                    continue
+
                 if tweet.content and tweet.author and tweet.date:
 
                     # output_f.write(tweet.to_json(rank) + '\n')
