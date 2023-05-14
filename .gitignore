@@ -129,3 +129,4 @@ dmypy.json
 4_Python_data_processing/data/sal.json
 4_Python_data_processing/data/sal.json.tar.gz
 4_Python_data_processing/data/twitter_cleaned_full.zip
+flask-backend/.DS_Store
