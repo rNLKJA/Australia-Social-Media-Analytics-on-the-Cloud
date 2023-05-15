@@ -102,7 +102,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+# .env
 .venv
 env/
 venv/
@@ -138,3 +138,8 @@ dmypy.json
 
 # job submission scripts
 *.slurm
+
+# TODO: remove gitignore for frontend
+2_ReactJS_frontend/
+4_Python_data_processing/data/sedaXDi2d
+4_Python_data_processing/data/sal.json.tar.gz
