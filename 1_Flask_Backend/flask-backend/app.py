@@ -3,6 +3,8 @@ from flask import Flask
 from flask_apscheduler import APScheduler
 from apscheduler.schedulers.background import BackgroundScheduler
 import subprocess
+from datetime import datetime
+from pytz import utc
 
 app = Flask(__name__)
 
@@ -12,10 +14,10 @@ scheduler = APScheduler(BackgroundScheduler())
 app.config["SCHEDULER_API_ENABLED"] = True
 
 def run_Harvestor():
-    output = subprocess.run(["python3", "mastodon/Harvestor.py"], capture_output=True)
-    print(output.stdout.decode())  # Print the stdout from the Harvestor script
+    output = subprocess.run(["python3", "mastodon/Haverstor.py"], stdout=subprocess.PIPE)
+    print(output.stdout) 
 
-scheduler.add_job(id="Harvestor", func=run_Harvestor, trigger="interval", seconds=60)
+scheduler.add_job(id="Harvestor", func=run_Harvestor, trigger="interval", seconds=600,next_run_time=datetime.now(utc))
 
 scheduler.start()
 
