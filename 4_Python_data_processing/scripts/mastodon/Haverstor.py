@@ -24,11 +24,11 @@ db_social = CouchDB('mastodon_social')
 db_au = CouchDB('mastodon_au')
 db_tictoc = CouchDB('mastodon_tictoc')
 
-for client, db in zip([mastodon_social, mastodon_au, mastodon_tictoc], [db_social, db_au, db_tictoc]):
-    # obtain the latest id in the database
-    latest_id = db.get_last_tid()
-    response = get_40_response(client, latest_id)
+while True:
+    for client, db in zip([mastodon_social, mastodon_au, mastodon_tictoc], [db_social, db_au, db_tictoc]):
+        # obtain the latest id in the database
+        latest_id = db.get_last_tid()
+        response = get_40_response(client, latest_id)
 
-    for res in response:
-        print(res)
-        db.upload_document(res)
+        print(response[-1])
+        db.upload_bulk_documents(response, verbose=True)
