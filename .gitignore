@@ -131,3 +131,4 @@ dmypy.json
 4_Python_data_processing/data/twitter_cleaned_full.zip
 flask-backend/.DS_Store
 flask-backend/.DS_Store
+.DS_Store
