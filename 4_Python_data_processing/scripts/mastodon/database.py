@@ -1,6 +1,7 @@
 import couchdb
 import dotenv
 import os
+import re
 
 dotenv.load_dotenv()
 
@@ -33,14 +34,15 @@ class CouchDB:
             print(f"Database '{dbname}' already exists.")
             return self.server[dbname]
 
-    def upload_document(self, data, verbose=False):
+    def upload_document(self, data, verbose=False, check=False):
         doc_id = data.get('_id')
         
-        # Check if the document with the specified ID exists
-        existing_doc = self.get_document(doc_id)
-        if existing_doc:
-            # Get the current revision of the existing document
-            data['_rev'] = existing_doc['_rev']
+        if check:
+            # Check if the document with the specified ID exists
+            existing_doc = self.get_document(doc_id)
+            if existing_doc:
+                # Get the current revision of the existing document
+                data['_rev'] = existing_doc['_rev']
 
         # Save the new or updated document
         doc_id, doc_rev = self.db.save(data)
@@ -106,13 +108,11 @@ class CouchDB:
             return None
 
     def extract_and_get_data(self, response):
-        match = re.search(r"\(doc._id == \"([^']+)\"\)", response)
-        if match:
-            doc_id = match.group(1)
-            return self.get_document_by_id(doc_id)
-        else:
-            return None
-        
-    def get_last_document(self):
+        match = re.search(r"'tid':\s*(\d+)", response)
+        return match.group(1)
+
+    def get_last_tid(self):
         response = str(self.list_documents()[0])
+        print(response)
         return self.extract_and_get_data(response)
+

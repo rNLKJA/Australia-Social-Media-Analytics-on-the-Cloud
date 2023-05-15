@@ -1,3 +1,6 @@
+from utils import *
+from bs4 import BeautifulSoup
+
 class Toot:
     def __init__(self, tid=None, date=None, author=None, 
                  lang=None, content=None, score=None):
@@ -23,5 +26,6 @@ def extract_mastodon_info(res):
     lang = res.language
     content = normalize_string(BeautifulSoup(res.content, 'html.parser').text)
     score = sentiment_analysis(content)
+    author = res['account']['id']
     
-    return Toot(tid=toot_id, date=date, lang=lang, content=content, score=score)
+    return Toot(tid=toot_id, date=date, lang=lang, content=content, score=score, author=author)
