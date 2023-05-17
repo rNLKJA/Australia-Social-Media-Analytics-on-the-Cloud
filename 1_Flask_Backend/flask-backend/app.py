@@ -6,6 +6,8 @@ import subprocess
 from datetime import datetime
 from pytz import utc
 
+
+
 app = Flask(__name__)
 
 # initialize apscheduler
@@ -13,11 +15,12 @@ scheduler = APScheduler(BackgroundScheduler())
 
 app.config["SCHEDULER_API_ENABLED"] = True
 
-def run_Harvestor():
-    output = subprocess.run(["python3", "mastodon/Haverstor.py"], stdout=subprocess.PIPE)
-    print(output.stdout) 
+def run_mastodon_harvester():
+    subprocess.Popen(["python", "mastodon/Haverstor.py"])
 
-scheduler.add_job(id="Harvestor", func=run_Harvestor, trigger="interval", seconds=600,next_run_time=datetime.now(utc))
+    
+
+scheduler.add_job(id="Harvestor", func=run_mastodon_harvester, next_run_time=datetime.now(utc))
 
 scheduler.start()
 

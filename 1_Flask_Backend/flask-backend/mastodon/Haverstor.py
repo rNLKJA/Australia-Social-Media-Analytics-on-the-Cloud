@@ -10,8 +10,9 @@ from utils import *
 from mastodon_api import *
 from database import *
 import pandas as pd
-
+from logger import logger
 load_dotenv()
+
 
 MASTODON_SERVERS = ["SOCIAL", "AU", "TICTOC_SOCIAL"]
 MASTODON_SERVERS = [MastodonData(server) for server in MASTODON_SERVERS]
@@ -30,5 +31,5 @@ while True:
         latest_id = db.get_last_tid()
         response = get_40_response(client, latest_id)
 
-        print(response[-1])
+        logger.info(response[-1])
         db.upload_bulk_documents(response, verbose=True)
