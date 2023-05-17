@@ -144,3 +144,15 @@ dmypy.json
 4_Python_data_processing/data/sedaXDi2d
 4_Python_data_processing/data/sal.json.tar.gz
 4_Python_data_processing/notebooks/plot.html
+4_Python_data_processing/data/shapefile/AUS_2021_AUST_GDA94.xml
+4_Python_data_processing/data/shapefile/GCCSA_2021_AUST_GDA94.xml
+4_Python_data_processing/data/shapefile/MB_2021_AUST_GDA2020.dbf
+4_Python_data_processing/data/shapefile/MB_2021_AUST_GDA2020.prj
+4_Python_data_processing/data/shapefile/MB_2021_AUST_GDA2020.shp
+4_Python_data_processing/data/shapefile/MB_2021_AUST_GDA2020.shx
+4_Python_data_processing/data/shapefile/MB_2021_AUST_GDA2020.xml
+*.xml
+*.dbf
+*.prj
+*.shp
+*.shx
