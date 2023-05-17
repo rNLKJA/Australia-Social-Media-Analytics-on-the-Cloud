@@ -30,3 +30,15 @@ code {
 h1 {
   color: #094183;
 }
+
+.scrollbar-hide::-webkit-scrollbar {
+  width: 0.5em;
+}
+
+.scrollbar-hide::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.scrollbar-hide::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
