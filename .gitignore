@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 2_ReactJS_frontend/frontend/public/sudo_data/map/crime_lga.json
 2_ReactJS_frontend/frontend/public/sudo_data/map/median_income_sa2.json
+mnt/ext100/twitter-huge.json
