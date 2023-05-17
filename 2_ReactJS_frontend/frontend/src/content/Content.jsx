@@ -27,6 +27,7 @@ export default function Content({
           mastodonData={mastodonData}
         />
       </div>
+
       <div className="col-span-3 h-full rounded-md grid grid-cols-1 gap-3 overflow-y-auto scrollbar-hide">
         <TwitterPlot
           twitterData={twitterData}

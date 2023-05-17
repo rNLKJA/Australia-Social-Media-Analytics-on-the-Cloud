@@ -4,7 +4,6 @@ import { Typography, CircularProgress } from "@mui/material";
 import Plot from "react-plotly.js";
 import pako from "pako";
 import localForage from "localforage";
-const defaultSudoData = require("./defaultSudoData.jsx");
 
 function SudoPlotHeader({ sudoData }) {
   return (

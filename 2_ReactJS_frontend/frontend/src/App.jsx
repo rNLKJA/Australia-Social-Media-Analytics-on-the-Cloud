@@ -14,7 +14,9 @@ function App() {
 
   return (
     <>
-      <Navbar setSudoData={setSudoData} />
+      <div className="w-full">
+        <Navbar setSudoData={setSudoData} />
+      </div>
 
       <br />
       <div className="min-w-screen flex flex-col items-center ">

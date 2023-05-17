@@ -1,0 +1,19 @@
+[
+  {
+    "sudo": "median_income_sa2",
+    "data": [
+      "The income dataset from sudo provides insights into income distribution across Australia for the financial year of 2015-2016. It is based on the Statistical Area Level 2 (SA2) regions according to the 2016 edition of the Australian Statistical Geography Standard. The analysis focuses on the mean, median, sum, and median age of earners, using the SA2 code 2016 column to join with the shapefile for visualization purposes.",
+      "Out of the original 2288 SA2 regions, 2234 remain after removing entries with null values. The dataset is then grouped by Greater Capital City Statistical Areas (GCCSAs) to match the granularity of the available Twitter data. The summary statistics reveal no outliers in the income mean, median, and sum columns, so no outlier removal is necessary.",
+      "Upon examination, the Rest of West Australia (5RWAU) region exhibits the highest income mean of 71.5k AUD, while the Rest of Victoria (2RVIC) has the lowest income mean at 49.6k AUD. This indicates a higher average income in the Northwest compared to the Southeast. The Australian Capital Territory (8ACTE) boasts the highest median income of 60.2k AUD, which is expected given that the capital, Canberra, is located there. In contrast, the Rest of Victoria (2RVIC) records the lowest median income of 41.4k AUD. Greater capital cities generally have a median income of around 50k AUD.",
+      "The sum of income shows an opposite trend to the average income, with eastern regions being higher than western regions. This suggests a higher population in the eastern regions compared to the western ones. As for the median age of earners, the regions are quite similar, with the exception of the Australian Capital Territory (8ACTE), which appears to have a younger earning population."
+    ]
+  },
+  {
+    "sudo": "crime_lga",
+    "data": [
+      "The crime dataset from sudo provides a comprehensive overview of criminal incidents by principal offense recorded on the Victoria Police Law Enforcement Assistance Program (LEAP) and is aggregated to the 2011 Australian Statistical Geography Standard (ASGS) Local Government Areas (LGA). Analysis is focused on the total number of all kinds of offences, using the LGA code 2011 for spatial representation.",
+      "Upon examining the data, outliers were identified and subsequently removed for a more accurate analysis. The total number of offences for each category was calculated, and a summary table was generated.",
+      "The distribution of different types of offences across the region was found to be quite similar. Brimbank had the highest number of cases among all types of offences. Several suburbs near the Central Business District (CBD) such as Wyndham, Melton, and Whittlesea showed relatively high crime rates; however, this could be attributed to their larger population sizes. Apart from these suburbs near the CBD, other areas with high numbers of offences included Mildura, Ballarat, Greater Bendigo, Greater Shepparton, Latrobe, Frankston, and Mornington Peninsula. These areas may be considered more dangerous districts due to their elevated crime rates."
+    ]
+  }
+]
