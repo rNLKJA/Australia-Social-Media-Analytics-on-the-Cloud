@@ -3,6 +3,7 @@ import React from "react";
 import Twitter from "./TwitterDropdown";
 import Mastodon from "./MastodonDropdown";
 import Sudo from "./SUDODropdown";
+import GPTPopUp from "./GPTPopUp";
 
 const logo = require("./unimelb.png");
 
@@ -19,7 +20,7 @@ const Navbar = ({
       className="flex w-screen justify-center items-center fixed z-10 top-0"
       style={{ backgroundColor: "white" }}
     >
-      <div className="container mx-auto flex flex-row justify-between items-center py-2">
+      <div className="container min-w-full mx-auto flex flex-row items-center justify-between py-2  pl-10 pr-10">
         <div className="flex flex-row items-center text-center text-black">
           <img src={logo} alt="unimelb logo" className="h-8 mr-3" />
           <h1 className="font-bold" style={{ fontSize: "24px" }}>
@@ -34,6 +35,7 @@ const Navbar = ({
           />
           <Twitter twitterData={twitterData} setTwitterData={setTwitterData} />
           <Sudo sudoData={sudoData} setSudoData={setSudoData} />
+          {/* <GPTPopUp /> */}
         </div>
       </div>
     </nav>
