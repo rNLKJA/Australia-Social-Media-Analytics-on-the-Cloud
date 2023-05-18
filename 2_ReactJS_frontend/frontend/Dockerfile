@@ -1,8 +1,5 @@
 # Stage 1: Build the React app
-FROM node:14
-
-RUN apt-mark hold git
-RUN apt-mark hold git-man
+FROM node:14 as build
 
 # Set working directory
 WORKDIR /app
