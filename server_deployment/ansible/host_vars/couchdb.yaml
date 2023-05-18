@@ -1,0 +1,12 @@
+---
+volume:
+  - device: /dev/vdb
+    mountpoint: /home/ubuntu/couchdb/data
+
+db_dir: couchdb
+
+db_user: GROUP57
+db_password: GROUP57
+
+nodename: "{{ ansible_eth0.ipv4.address }}"
+
