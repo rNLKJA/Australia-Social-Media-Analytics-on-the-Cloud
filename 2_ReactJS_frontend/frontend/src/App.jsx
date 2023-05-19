@@ -16,12 +16,22 @@ function App() {
     valid: true,
     map: "twitter_vic_sal_2022_02_2022_07",
   });
-  const [mastodonData, setMastodonData] = useState("Mastodon Data"); // State to store the data for the Twitter graph
+  const [mastodonData, setMastodonData] = useState({
+    title: "Mastodon Social",
+    valid: true,
+    map: "",
+    bar: "",
+    heatmap: "",
+  }); // State to store the data for the Twitter graph
 
   return (
     <>
       <div className="w-full">
-        <Navbar setSudoData={setSudoData} />
+        <Navbar
+          setSudoData={setSudoData}
+          setTwitterData={setTwitterData}
+          setMastodonData={setMastodonData}
+        />
       </div>
 
       <br />

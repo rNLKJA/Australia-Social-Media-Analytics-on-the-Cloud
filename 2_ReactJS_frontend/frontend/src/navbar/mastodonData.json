@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Mastodon Social",
+    "valid": true,
+    "map": "",
+    "bar": "",
+    "heatmap": ""
+  },
+  {
+    "title": "Mastodon AU",
+    "valid": true,
+    "map": "crime_lga",
+    "bar": "crime_lga_bar",
+    "heatmap": ""
+  },
+  {
+    "title": "Mastodon TicToc",
+    "valid": true,
+    "map": "",
+    "bar": "",
+    "heatmap": ""
+  }
+]
