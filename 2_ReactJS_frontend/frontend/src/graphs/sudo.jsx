@@ -52,6 +52,7 @@ export default function SudoPlot({ sudoData }) {
             to: "string",
           });
           const data = JSON.parse(decompressedData);
+          // console.log(data);
 
           // Update the map center to Melbourne
           if (data.layout && data.layout.mapbox) {
@@ -106,7 +107,7 @@ export default function SudoPlot({ sudoData }) {
           className="w-full h-auto"
         />
       ) : (
-        <p>No plot data available.</p>
+        <p className="px-8">No plot data available.</p>
       )}
     </div>
   );

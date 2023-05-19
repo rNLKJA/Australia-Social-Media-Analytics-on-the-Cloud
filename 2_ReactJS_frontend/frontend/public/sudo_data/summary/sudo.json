@@ -9,7 +9,7 @@
     ]
   },
   {
-    "sudo": "crime_lga",
+    "sudo": "crime_vic_lga",
     "data": [
       "The crime dataset from sudo provides a comprehensive overview of criminal incidents by principal offense recorded on the Victoria Police Law Enforcement Assistance Program (LEAP) and is aggregated to the 2011 Australian Statistical Geography Standard (ASGS) Local Government Areas (LGA). Analysis is focused on the total number of all kinds of offences, using the LGA code 2011 for spatial representation.",
       "Upon examining the data, outliers were identified and subsequently removed for a more accurate analysis. The total number of offences for each category was calculated, and a summary table was generated.",

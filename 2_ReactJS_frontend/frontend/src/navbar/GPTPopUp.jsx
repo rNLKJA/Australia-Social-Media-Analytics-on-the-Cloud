@@ -79,7 +79,7 @@ const GPTPopUp = () => {
         <div className="popup-container">
           <div className="popup-content">
             <div className="popup-header">
-              <h3>Chat with GPT-4</h3> // Updated header
+              <h3>Chat with GPT</h3>
               <button className="close-button" onClick={handleCloseClick}>
                 &times;
               </button>
