@@ -1,0 +1,11 @@
+[
+  {
+    "sudo": "median_income_sa2",
+    "data": []
+  },
+  {
+    "sudo": "crime_lga",
+    "data": [],
+    "bar": "employ_income_2018_2019.json.gz"
+  }
+]

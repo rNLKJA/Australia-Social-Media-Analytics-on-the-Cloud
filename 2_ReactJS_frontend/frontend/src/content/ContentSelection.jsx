@@ -32,7 +32,9 @@ function TwitterContent({ twitterData }) {
       }}
     >
       <CardContent>
-        <ContentHeader string={twitterData}>
+        <ContentHeader
+          string={twitterData.title ? twitterData.title : "Twitter Summary"}
+        >
           <BsTwitter
             style={{ color: "#094183", fontSize: "24px", margin: "10px" }}
           />
@@ -55,7 +57,9 @@ function MastodonContent({ mastodonData }) {
       }}
     >
       <CardContent>
-        <ContentHeader string={mastodonData}>
+        <ContentHeader
+          string={mastodonData.title ? mastodonData.title : "Mastodon Summary"}
+        >
           <BsMastodon
             style={{ color: "#094183", fontSize: "24px", margin: "10px" }}
           />
@@ -69,6 +73,7 @@ function MastodonContent({ mastodonData }) {
 export default SummarisedContent;
 
 function ContentHeader({ string, children }) {
+  console.log(string);
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
       {children}

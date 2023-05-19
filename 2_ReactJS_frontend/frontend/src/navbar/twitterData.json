@@ -1,0 +1,12 @@
+[
+  {
+    "title": "Twitter Sentimental Summary Data from 2022-02 to 2022-07",
+    "valid": true,
+    "map": "twitter_vic_sal_2022_02_2022_07"
+  },
+  {
+    "title": "Twitter Sentimental Summary Data from 2022-07 to 2022-08",
+    "valid": false,
+    "map": "twitter_vic_sal_2022_07_2022_08"
+  }
+]

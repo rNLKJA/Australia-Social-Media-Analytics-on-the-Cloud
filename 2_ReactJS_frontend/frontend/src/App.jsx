@@ -8,8 +8,14 @@ function App() {
       "ABS - Jobs In Australia - Employee Jobs and Income by Industry (SA2) 2018-19",
     valid: true,
     map: "median_income_sa2",
+    bar: "median_income_sa2_bar",
+    heatmap: "",
   }); // State to store the data for the SUDO graph
-  const [twitterData, setTwitterData] = useState("Twitter Data"); // State to store the data for the Twitter graph
+  const [twitterData, setTwitterData] = useState({
+    title: "Twitter Sentimental Summary Data from 2022-02 to 2022-07",
+    valid: true,
+    map: "twitter_vic_sal_2022_02_2022_07",
+  });
   const [mastodonData, setMastodonData] = useState("Mastodon Data"); // State to store the data for the Twitter graph
 
   return (
