@@ -41,3 +41,10 @@
   pip:
     name: docker-compose
     state: present
+
+- name: Add user to docker group
+  become: yes
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes

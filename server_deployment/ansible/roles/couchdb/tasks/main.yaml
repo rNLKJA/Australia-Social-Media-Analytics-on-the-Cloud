@@ -10,6 +10,7 @@
     recurse: yes # Specifies whether or not to create all directories leading up to the specified path
     state: directory # The desired state of the path (directory in this case)
 
+
 # Create a Docker Compose configuration file using a Jinja2 template
 - name: Generate Docker Compose configuration
   tags: 'couchdb'
@@ -19,6 +20,48 @@
     dest: "{{ db_dir }}/docker-compose.yaml" # The destination of the file to be created
     owner: "{{ ansible_user }}" # The name of the user who should own the file
     group: "{{ ansible_user }}" # The name of the group who should own the file
+
+- name: copy the dockerfile
+  tags: 'couchdb'
+  template:
+    src: Dockerfile
+    dest: "{{ db_dir }}/Dockerfile"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: copy the script 
+  tags: 'couchdb'
+  copy:
+    src: /Users/weizhao1/Documents/Unimelb-Master-2023-COMP90024-Assignment-2/server_deployment/ansible/roles/couchdb/templates/init_db.sh
+    dest: "{{ db_dir }}/init_db.sh"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: copy the local.ini
+  tags: 'couchdb'
+  copy:
+    src: /Users/weizhao1/Documents/Unimelb-Master-2023-COMP90024-Assignment-2/server_deployment/ansible/roles/couchdb/templates/local.ini
+    dest: "{{ db_dir }}/local.ini"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+- name: copy the vm.args
+  tags: 'couchdb'
+  copy:
+    src: /Users/weizhao1/Documents/Unimelb-Master-2023-COMP90024-Assignment-2/server_deployment/ansible/roles/couchdb/templates/vm.args
+    dest: "{{ db_dir }}/vm.args"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Delete _nodes.couch config file
+  become: true
+  file:
+    path: "{{ db_dir }}/data/_nodes.couch"
+    state: absent
+
 
 # Start the Docker Compose project based on the configuration file created in the previous task
 - name: Deploy CouchDB using Docker Compose
@@ -41,3 +84,6 @@
     mode: '0777' # The desired permissions
   with_items:
     - "{{ volume }}" # The list of volumes for which to set permissions
+
+
+

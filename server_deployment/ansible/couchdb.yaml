@@ -8,5 +8,3 @@
     - role: couchdb-common
     - role: couchdb-volume
     - role: couchdb
-
-  

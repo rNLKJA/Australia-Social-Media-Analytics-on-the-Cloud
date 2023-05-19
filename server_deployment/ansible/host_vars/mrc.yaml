@@ -8,7 +8,7 @@ instance_network: qh2-uom-internal
 ## Volume:
 volumes:
   - vol_name: data@database-4
-    vol_size: 80
+    vol_size: 50
   - vol_name: data@database-5
     vol_size: 50
 

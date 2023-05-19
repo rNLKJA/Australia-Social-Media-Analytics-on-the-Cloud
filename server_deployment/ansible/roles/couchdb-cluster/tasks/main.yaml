@@ -1,0 +1,5 @@
+- name: Run the cluster script
+  tags: couchdb
+  become: yes
+  shell: |
+    bash /home/ubuntu/couchdb/init_db.sh
