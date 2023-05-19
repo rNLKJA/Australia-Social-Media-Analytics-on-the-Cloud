@@ -28,15 +28,15 @@ export default function Content({
         />
       </div>
 
-      <div className="col-span-3 h-full rounded-md grid grid-cols-1 gap-3 overflow-y-auto scrollbar-hide">
+      <div
+        className="col-span-3 h-full rounded-md grid grid-cols-1 gap-3 overflow-y-auto scrollbar-hide"
+        id="plotContainer"
+      >
         <TwitterPlot
           twitterData={twitterData}
           setTwitterData={setTwitterData}
         />
-        <SudoPlot
-          sudoData={sudoData}
-          setSudoData={(data) => setSudoData(data)}
-        />
+        <SudoPlot sudoData={sudoData} setSudoData={setSudoData} />
       </div>
     </div>
   );

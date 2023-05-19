@@ -85,7 +85,7 @@ export default function SudoPlot({ sudoData }) {
   }, [sudoData]);
 
   return (
-    <div className="bg-white h-full rounded-md p-4 w-full">
+    <div className="bg-white h-auto rounded-md p-4 w-full">
       <SudoPlotHeader sudoData={sudoData} />
       {loading ? (
         <div className="flex justify-center items-center h-full">
@@ -103,7 +103,7 @@ export default function SudoPlot({ sudoData }) {
             },
           }}
           useResizeHandler
-          className="w-full h-full"
+          className="w-full h-auto"
         />
       ) : (
         <p>No plot data available.</p>
