@@ -9,8 +9,8 @@
   {
     "title": "VIC CSA - Crime Statistics - Criminal Incidents by Principal Offence (LGA) 2010-2019",
     "valid": true,
-    "map": "crime_lga",
-    "bar": "crime_lga_bar",
+    "map": "crime_vic_lga",
+    "bar": "crime_vic_lga_bar",
     "heatmap": ""
   },
   {
