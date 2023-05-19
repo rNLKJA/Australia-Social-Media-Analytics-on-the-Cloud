@@ -5,8 +5,9 @@ volume:
 
 db_dir: couchdb
 
-db_user: GROUP57
-db_password: GROUP57
+db_user: group57
+db_password: group57
 
 nodename: "{{ ansible_eth0.ipv4.address }}"
+cookie: a192aeb9904e6590849337933b000c99
 

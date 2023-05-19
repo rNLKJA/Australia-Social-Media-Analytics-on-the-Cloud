@@ -2,7 +2,7 @@
 - name: Deploy React application to MRC Unimelb Cloud server
   user: name="ubuntu" shell="/usr/local/bin/fish"
   hosts: ccc-frontend
-  become: true
+  become: yes
   vars:
     react_app_name: reactapp
     react_app_directory: /home/ubuntu/{{ react_app_name }}
@@ -39,6 +39,7 @@
 
 
     - name: Clone the React application repository
+      become: yes
       git:
         repo: git@github.com:rNLKJA/Unimelb-Master-2023-COMP90024-Assignment-2.git
         dest: "{{ react_app_directory }}"

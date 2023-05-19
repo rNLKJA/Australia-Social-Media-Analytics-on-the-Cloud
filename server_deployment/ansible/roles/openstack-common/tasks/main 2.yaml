@@ -1,7 +1,5 @@
 ---
-
 # Install dependencies on the host
-
 - name: Install pip
   become: yes
   ansible.builtin.apt:
