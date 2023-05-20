@@ -10,19 +10,22 @@ function App() {
     map: "median_income_sa2",
     bar: "median_income_sa2_bar",
     heatmap: "",
-  }); // State to store the data for the SUDO graph
+  });
   const [twitterData, setTwitterData] = useState({
     title: "Twitter Sentimental Summary Data from 2022-02 to 2022-07",
     valid: true,
     map: "twitter_vic_sal_2022_02_2022_07",
+    plots: [
+      "twitter_all_sentiment",
+      "twitter_crime_sentiment",
+      "twitter_income_sentiment",
+    ],
   });
   const [mastodonData, setMastodonData] = useState({
     title: "Mastodon Social",
     valid: true,
-    map: "",
-    bar: "",
-    heatmap: "",
-  }); // State to store the data for the Twitter graph
+    plots: ["mastodon_social_income", "mastodon_social_sentiment"],
+  });
 
   return (
     <>

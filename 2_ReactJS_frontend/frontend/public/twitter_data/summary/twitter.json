@@ -1,11 +1,11 @@
 [
   {
-    "sudo": "median_income_sa2",
-    "data": []
-  },
-  {
-    "sudo": "crime_lga",
-    "data": [],
-    "bar": "employ_income_2018_2019.json.gz"
+    "twitter": "twitter_vic_sal_2022_02_2022_07",
+    "data": [
+      "Based on the analysis of Twitter data in Victoria, it was found that the distribution of tweets mentioning income-related terms is highly uneven across SA2 regions. Approximately 73% of the regions have only 1-10 tweets related to income, while 22% have 10-100 tweets, and only 4.7% have more than 100 tweets. Notably, Melbourne stands out with a significant concentration of income-related tweets, totaling 23.281k tweets, surpassing other regions by a large margin. However, the SUDO data, which indicates median income, does not show a similar concentration in high-income regions around Melbourne.",
+      "The average sentiment scores of tweets discussing income-related topics exhibit an even distribution, ranging from 1 to 9, without any clear clusters or patterns. Therefore, there is no clear indication that people in higher or lower median income areas tweet more frequently about income-related topics, and no significant correlation between sentiment and income-related tweets was found.",
+      "Regarding crime-related topics, no significant clusters or patterns were identified in the average sentiment scores of tweets discussing crime. However, in the second scenario, it was observed that Ballarat, with a relatively high occurrence of offenses and a significant number of tweets mentioning crime-related terms, has a higher probability of being a dangerous region. Nonetheless, there is no significant correlation between the sentiment of tweets and crime-related topics.",
+      "In summary, the analysis of Twitter data does not provide strong evidence to suggest that people in higher or lower median income areas tweet more about income-related topics or that sentiment of tweets is correlated with income. Similarly, no significant correlation between sentiment and crime-related tweets was found, although Ballarat stands out as a region with a higher probability of being dangerous based on crime occurrence and tweets mentioning crime-related terms."
+    ]
   }
 ]

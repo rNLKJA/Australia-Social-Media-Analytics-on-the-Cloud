@@ -3,14 +3,19 @@ import { Card, CardContent, Typography } from "@mui/material";
 import { BsTwitter, BsMastodon } from "react-icons/bs";
 
 import SudoContent from "./sudoCard";
+import MastodonContent from "./mastodonCard";
+import TwitterContent from "./twitterCard";
 
 const minHeight = 370;
 
 function SummarisedContent({ sudoData, twitterData, mastodonData }) {
   return (
     <div className="flex flex-col h-auto gap-4 overflow-y-auto">
-      <TwitterContent twitterData={twitterData} />
-      <MastodonContent mastodonData={mastodonData} />
+      <TwitterContent twitterData={twitterData} ContentHeader={ContentHeader} />
+      <MastodonContent
+        mastodonData={mastodonData}
+        ContentHeader={ContentHeader}
+      />
       <SudoContent
         sudoData={sudoData}
         minHeight={minHeight}
@@ -20,60 +25,10 @@ function SummarisedContent({ sudoData, twitterData, mastodonData }) {
   );
 }
 
-function TwitterContent({ twitterData }) {
-  return (
-    <Card
-      sx={{
-        backgroundColor: "white",
-        borderRadius: "8px",
-        padding: "12px",
-        minHeight: `${minHeight}px`,
-        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      <CardContent>
-        <ContentHeader
-          string={twitterData.title ? twitterData.title : "Twitter Summary"}
-        >
-          <BsTwitter
-            style={{ color: "#094183", fontSize: "24px", margin: "10px" }}
-          />
-        </ContentHeader>
-        {/* Sudo card content */}
-      </CardContent>
-    </Card>
-  );
-}
-
-function MastodonContent({ mastodonData }) {
-  return (
-    <Card
-      sx={{
-        backgroundColor: "white",
-        borderRadius: "8px",
-        padding: "12px",
-        minHeight: `${minHeight}px`,
-        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      <CardContent>
-        <ContentHeader
-          string={mastodonData.title ? mastodonData.title : "Mastodon Summary"}
-        >
-          <BsMastodon
-            style={{ color: "#094183", fontSize: "24px", margin: "10px" }}
-          />
-        </ContentHeader>
-        {/* Sudo card content */}
-      </CardContent>
-    </Card>
-  );
-}
-
 export default SummarisedContent;
 
 function ContentHeader({ string, children }) {
-  console.log(string);
+  // console.log(string);
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
       {children}
