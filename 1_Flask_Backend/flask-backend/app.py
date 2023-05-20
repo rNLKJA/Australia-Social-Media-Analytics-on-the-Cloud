@@ -13,9 +13,6 @@ import geopandas as gpd
 import pandas as pd
 import plotly.graph_objects as go
 import json
-import matplotlib.pyplot as plt
-
-
 
 app = Flask(__name__)
 
@@ -37,18 +34,6 @@ def run_mastodon_harvester():
 def hello_world():
     return 'Hello, World!</p> <br /> <p> This is a test of the Flask backend using nginx and gunicorn.'
 
-@app.route('/mastodon/<string:mastodon_server>', methods=['GET'])
-def mastodon_scraper(mastodon_server):
-    return f"Hello, {mastodon_server}!"
-
-
-@app.route('/try', methods=['GET'])
-def try_couchdb():
-    db = CouchDB('twitter_clean_geo_only')
-    result = db.list_documents()
-    print(result)
-
-    return jsonify(result)
 
 @app.route('/api/sudo/crime/', methods=['GET'])
 def get_sudo_crime_data():
@@ -90,115 +75,161 @@ def get_sudo_income_data():
 
     return send_file(compressed_file_path, as_attachment=True)    
 
-
 @app.route('/api/twitter/<forceupdate>', methods=['GET'])
 def get_twitter_Image_data(forceupdate):
+    """
+    This Flask route generates or fetches previously generated data related to Twitter statistics, 
+    and returns a compressed json file containing a choropleth map of tweet data.
+
+    Args:
+        forceupdate (str): If 'true', force the system to update the Twitter data views. Otherwise, use existing data if available.
+
+    Returns:
+        flask.Response: A compressed json file containing a choropleth map of Twitter data. In case of error, it returns a json message with status code.
+    """
+    # Create a CouchDB connection
     db = CouchDB('twitter_clean_geo_only')
 
+    # View and file path definitions
     view_name = ['_design/sentimentLocation/_view/sentimentLocation',
                  '_design/incomeMentioned/_view/incomeMentioned',
                  '_design/sentimentCrime/_view/crimeMentioned']
     file_path = ['twitterData/sentimentLocation.json',
                  'twitterData/incomeMentioned.json',
                  'twitterData/crimeMentioned.json']
+    
+    # Reduce and group level for view fetching
     reduce = True
     group_level = 1
 
-    try:
-        if forceupdate.lower() == 'true':
-            forceupdate = True
-        else:
-            forceupdate = False
+    # Handle 'forceupdate' parameter
+    if forceupdate.lower() == 'true':
+        forceupdate = True
+    else:
+        forceupdate = False
 
-        for view, filename in zip(view_name, file_path):
-            file_path = os.path.join(app.root_path, filename)
+    # Process each CouchDB view
+    for view, filename in zip(view_name, file_path):
+        file_path = os.path.join(app.root_path, filename)
 
-            if not forceupdate:
-                if os.path.exists(file_path):
-                    print(f"File '{filename}' already exists. Skipping...")
-                    continue
+        # Skip existing files unless 'forceupdate' is True
+        if not forceupdate and os.path.exists(file_path):
+            print(f"File '{filename}' already exists. Skipping...")
+            continue
 
+        # Fetch and save view data
+        try:
             result = db.db.view(view, reduce=reduce, group_level=group_level)
             view_data = [{"key": row.key, "value": row.value} for row in result]
 
             with open(file_path, 'w', buffering=8192) as file:
                 json.dump(view_data, file)
+        except couchdb.http.ResourceNotFound:
+            # Handle view not found error
+            return jsonify({"message": "Error: View not found.", "status": 404},404)
+        except Exception as e:
+            # Handle general exceptions
+            return jsonify({"message": f"Error: {str(e)}", "status": 500},500)
 
-    except couchdb.http.ResourceNotFound:
-        return jsonify({"message": "Error: View not found.", "status": 404})
-
-    except Exception as e:
-        return jsonify({"message": f"Error: {str(e)}", "status": 500})
-
-    
+    # Create choropleth map if it does not exist
     graph_json_path = 'twitterData/twitter_vic_sal.json'
     full_path = os.path.join(app.root_path, graph_json_path)
 
     if os.path.exists(full_path):
-        print(f"File '{graph_json_path}' already exists.")
+        if forceupdate:
+            print(f"Creating choropleth map...")
+            create_choropleth_map_twitter()
+        else:
+            print(f"File '{graph_json_path}' already exists.")
     else:
+        print(f"Creating choropleth map...")
         create_choropleth_map_twitter()
 
+    # Compress the choropleth map file
     compressed_file = 'twitterData/twitter_vic_sal.json.gz'
     compressed_file_path = os.path.join(app.root_path, compressed_file)
 
-    if not os.path.exists(compressed_file_path):
+
+    if not os.path.exists(compressed_file_path) or forceupdate :
+        print(f"Compressing choropleth map...")
         with open(full_path, 'rb') as f_in:
             with gzip.open(compressed_file_path, 'wb') as f_out:
                 f_out.writelines(f_in)
 
+    # Send the compressed file
     return send_file(compressed_file_path, as_attachment=True)
 
 
-import geopandas as gpd
-import pandas as pd
-import plotly.graph_objects as go
-import json
-
-
-
 def create_choropleth_map_twitter():
+    """
+    This function creates a choropleth map of tweets categorized by sentiment, income, and crime, 
+    focusing on the area of Victoria, Australia. The resulting plotly figure is saved as a JSON file.
+    """
     def ready_for_join(df, name):
+        """
+        Prepare the dataframes for merging, setting keys and renaming columns as required.
+
+        Args:
+            df (pandas.DataFrame): DataFrame containing key and value columns
+            name (str): Name of the dataset, used for column renaming.
+
+        Returns:
+            pandas.DataFrame: Transformed DataFrame ready for merging.
+        """
+
+        # Set the key for joining by taking the first element of the existing key
         df['key'] = df['key'].apply(lambda x: x[0])
+        
+        # Rename columns for clarity and to prevent clashes in the merged dataframe
         df.rename(columns={'key': 'SAL_CODE21'}, inplace=True)
         df.rename(columns={'value.count': 'count' + ' ' + name}, inplace=True)
+        
+        # Ensure the join key is of type string
         df = df.astype({'SAL_CODE21': str})
+        
+        # Calculate the average sentiment and round it to two decimal places
         df['average_sentiment' + '(' + name + ')'] = (df['value.sum'] / df['count' + ' ' + name]).round(2)
+
         return df
 
-    with open('twitterData/crimeMentioned.json') as file:
-        data = json.load(file)
-    rows_data = data
-    df_crime = pd.json_normalize(rows_data)
-    df_crime = ready_for_join(df_crime, 'crime')
 
-    with open('twitterData/incomeMentioned.json') as file:
-        data = json.load(file)
-    rows_data = data
-    df_income = pd.json_normalize(rows_data)
-    df_income = ready_for_join(df_income, 'income')
+    # Load, normalize, and prepare each dataset
+    for filename, topic in zip(['crimeMentioned.json', 'incomeMentioned.json', 'sentimentLocation.json'], ['crime', 'income', 'sentiment']):
+        with open(f'twitterData/{filename}') as file:
+            data = json.load(file)
+        df = pd.json_normalize(data)
+        df = ready_for_join(df, topic)
+        if topic == 'crime':
+            df_crime = df
+        elif topic == 'income':
+            df_income = df
+        elif topic == 'sentiment':
+            df_sentiment = df
 
-    with open('twitterData/sentimentLocation.json') as file:
-        data = json.load(file)
-    rows_data = data
-    df_sentiment = pd.json_normalize(rows_data)
-    df_sentiment = ready_for_join(df_sentiment, 'sentiment')
-
+    # Load and process shape file for Victoria
     sf_sal = gpd.read_file("SAL_2021_AUST_GDA94_SHP/SAL_2021_AUST_GDA94.shp")
     sf_sal['geometry'] = sf_sal['geometry'].to_crs("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
 
+    # Merge dataframes on 'SAL_CODE21'
     merged = pd.merge(sf_sal, df_crime[['count crime', 'average_sentiment(crime)', 'SAL_CODE21']], on='SAL_CODE21', how='left')
     merged = pd.merge(merged, df_income[['count income', 'average_sentiment(income)', 'SAL_CODE21']], on='SAL_CODE21', how='left')
     merged = pd.merge(merged, df_sentiment[['count sentiment', 'average_sentiment(sentiment)', 'SAL_CODE21']], on='SAL_CODE21', how='left')
 
+    # Filter for rows pertaining to Victoria
     df_vic = merged[merged['STE_NAME21'] == 'Victoria']
     columns = ['count crime', 'count income', 'count sentiment', 'average_sentiment(crime)', 'average_sentiment(income)', 'average_sentiment(sentiment)']
+
+    # Drop rows with all NaN values in the columns listed above
     df_vic = df_vic.dropna(how='all', subset=columns)
+
+    # Set index for the dataframe
     df_vic.set_index('SAL_NAME21', inplace=True)
 
+     # Initialize an empty figure
     fig = go.Figure()
     plot = ['count crime', 'count income', 'count sentiment', 'average_sentiment(crime)', 'average_sentiment(income)', 'average_sentiment(sentiment)']
 
+    # Add a choropleth map trace for each topic
     for col in plot:
         fig.add_trace(go.Choroplethmapbox(
             geojson=df_vic.geometry.__geo_interface__,
@@ -219,6 +250,7 @@ def create_choropleth_map_twitter():
     fig.data[0].visible = True
 
     buttons = []
+    # Create an interactive button for each topic
     for i, col in enumerate(plot):
         visible = [False] * len(plot)
         visible[i] = True
@@ -229,7 +261,7 @@ def create_choropleth_map_twitter():
                 args=[{'visible': visible}, {'title': f'{col} Distribution Across Australia'}]
             )
         )
-
+    # Update the layout of the figure
     fig.update_layout(
         mapbox_style="carto-positron",
         mapbox_zoom=9,
@@ -241,7 +273,7 @@ def create_choropleth_map_twitter():
         )],
         title=dict(text='Twitter Content Distribution Across Melbourne SALs')
     )
-
+    # Save the figure as a JSON file
     fig.write_json('twitterData/twitter_vic_sal.json')
 
 
