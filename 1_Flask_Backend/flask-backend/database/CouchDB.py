@@ -1,6 +1,8 @@
 import couchdb
 import dotenv
 import os
+import re
+from logger import logger
 
 dotenv.load_dotenv()
 
@@ -27,26 +29,27 @@ class CouchDB:
     def get_or_create_database(self, dbname):
         try:
             db = self.server.create(dbname)
-            print(f"Database '{dbname}' created successfully.")
+            logger.info(f"Database '{dbname}' created successfully.")
             return db
         except couchdb.http.PreconditionFailed:
-            print(f"Database '{dbname}' already exists.")
+            logger.info(f"Database '{dbname}' already exists.")
             return self.server[dbname]
 
-    def upload_document(self, data, verbose=False):
+    def upload_document(self, data, verbose=False, check=False):
         doc_id = data.get('_id')
         
-        # Check if the document with the specified ID exists
-        existing_doc = self.get_document(doc_id)
-        if existing_doc:
-            # Get the current revision of the existing document
-            data['_rev'] = existing_doc['_rev']
+        if check:
+            # Check if the document with the specified ID exists
+            existing_doc = self.get_document(doc_id)
+            if existing_doc:
+                # Get the current revision of the existing document
+                data['_rev'] = existing_doc['_rev']
 
         # Save the new or updated document
         doc_id, doc_rev = self.db.save(data)
         
         if verbose:
-            print(f"Document uploaded with ID: {doc_id}", end='\r')
+            logger.info(f"Document uploaded with ID: {doc_id}", end='\r')
         
         return doc_id
     
@@ -60,7 +63,7 @@ class CouchDB:
         
         results = self.db.update(data_list)
         if verbose:
-            print(f"{len(data_list)} documents uploaded in bulk.")
+            logger.info(f"{len(data_list)} documents uploaded in bulk.")
         return results
 
     def get_document(self, doc_id):
@@ -68,25 +71,25 @@ class CouchDB:
             doc = self.db[doc_id]
             return doc
         except couchdb.http.ResourceNotFound:
-            print(f"Document with ID '{doc_id}' not found.", end='\n')
+            logger.info(f"Document with ID '{doc_id}' not found.", end='\n')
             return None
 
     def delete_document(self, doc_id):
         try:
             doc = self.db[doc_id]
             self.db.delete(doc)
-            print(f"Document with ID '{doc_id}' deleted successfully.")
+            logger.info(f"Document with ID '{doc_id}' deleted successfully.")
         except couchdb.http.ResourceNotFound:
-            print(f"Document with ID '{doc_id}' not found.")
+            logger.info(f"Document with ID '{doc_id}' not found.")
 
     def update_document(self, doc_id, updated_data):
         doc = self.get_document(doc_id)
         if doc:
             doc.update(updated_data)
             self.db.save(doc)
-            print(f"Document with ID '{doc_id}' updated successfully.")
+            logger.info(f"Document with ID '{doc_id}' updated successfully.")
         else:
-            print(f"Document with ID '{doc_id}' not found.")
+            logger.info(f"Document with ID '{doc_id}' not found.")
 
     def list_documents(self, limit=1):
         try:
@@ -95,7 +98,7 @@ class CouchDB:
             latest_doc = self.get_document(latest_doc_id)
             return [latest_doc] if latest_doc else []
         except couchdb.http.ResourceNotFound:
-            print("No documents found.")
+            logger.info("No documents found.")
             return []
         
     def get_document_by_id(self, doc_id):
@@ -106,13 +109,11 @@ class CouchDB:
             return None
 
     def extract_and_get_data(self, response):
-        match = re.search(r"\(doc._id == \"([^']+)\"\)", response)
-        if match:
-            doc_id = match.group(1)
-            return self.get_document_by_id(doc_id)
-        else:
-            return None
-        
-    def get_last_document(self):
+        match = re.search(r"'tid':\s*(\d+)", response)
+        return match.group(1)
+
+    def get_last_tid(self):
         response = str(self.list_documents()[0])
+        logger.info(response)
         return self.extract_and_get_data(response)
+
