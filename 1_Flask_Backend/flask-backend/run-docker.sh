@@ -1,3 +1,3 @@
-docker build -t my-flask-app .
+docker build -t redpeony159/flaskapp .
 docker run -p 8080:8080 my-flask-app
 
