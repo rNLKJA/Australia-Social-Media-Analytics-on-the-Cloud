@@ -64,7 +64,7 @@ export default function MastodonContent({
           await localForage.setItem(mastodonData.plots[1], data2);
         }
 
-        const response = await fetch("/mastodon_data/sudo.json");
+        const response = await fetch("/mastodon_data/mastodon.json");
         const data = await response.json();
         setContent(data);
       } catch (error) {
@@ -85,10 +85,10 @@ export default function MastodonContent({
       return (
         <>
           {content.map((item) => {
-            if (item.mastodon === mastodonData.map) {
+            if (item.mastodon === "mastodon") {
               return (
                 <React.Fragment key={item.mastodon}>
-                  {item.data.slice(0, 3).map((line, index) => (
+                  {item.data.map((line, index) => (
                     <React.Fragment key={index}>
                       <Typography
                         className={`mt-${

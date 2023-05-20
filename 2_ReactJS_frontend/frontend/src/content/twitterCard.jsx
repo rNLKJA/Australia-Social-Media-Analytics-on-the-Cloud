@@ -102,7 +102,7 @@ export default function TwitterContent({
             if (item.twitter === twitterData.map) {
               return (
                 <React.Fragment key={item.twitter}>
-                  {item.data.slice(0, 3).map((line, index) => (
+                  {item.data.map((line, index) => (
                     <React.Fragment key={index}>
                       <Typography
                         className={`mt-${
