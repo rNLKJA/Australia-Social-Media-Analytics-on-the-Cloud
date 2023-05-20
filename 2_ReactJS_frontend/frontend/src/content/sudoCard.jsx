@@ -71,7 +71,7 @@ export default function SudoContent({ sudoData, minHeight, ContentHeader }) {
             if (item.sudo === sudoData.map) {
               return (
                 <React.Fragment key={item.sudo}>
-                  {item.data.slice(0, 3).map((line, index) => (
+                  {item.data.map((line, index) => (
                     <React.Fragment key={index}>
                       <Typography
                         className={`mt-${
