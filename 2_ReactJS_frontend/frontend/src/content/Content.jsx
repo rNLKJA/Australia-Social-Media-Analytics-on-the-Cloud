@@ -17,7 +17,7 @@ export default function Content({
 
   return (
     <div
-      className="h-screen min-w-screen max-w-screen grid grid-cols-5 gap-3 pt-12 pb-4"
+      className="h-screen min-w-screen max-w-screen grid grid-cols-5 gap-3 pt-12"
       style={{ height: contentHeight }}
     >
       <div className="col-span-2 h-full rounded-md overflow-y-auto scrollbar-hide">
