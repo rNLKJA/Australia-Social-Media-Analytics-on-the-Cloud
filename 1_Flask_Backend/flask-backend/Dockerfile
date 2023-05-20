@@ -1,6 +1,11 @@
 # Use the official Python image as a parent image
-FROM python:3.10.6-slim-buster
+FROM python:3.11.3
 
+
+# Install GDAL dependencies
+RUN apt-get update \
+    && apt-get install -y gdal-bin libgdal-dev
+    
 # Set the working directory to /app
 WORKDIR /flask-backend
 
@@ -15,4 +20,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD [ "gunicorn", "--bind", "0.0.0.0:8080", "app:app" ]
+CMD [ "gunicorn","-w","4","--bind", "0.0.0.0:8080", "app:app" ,"--timeout", "300"]
