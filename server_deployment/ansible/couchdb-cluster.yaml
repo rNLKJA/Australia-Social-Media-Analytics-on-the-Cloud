@@ -1,9 +1,0 @@
-- hosts: ccc-dbMaster
-  gather_facts: true
-  become: true
-  vars_files:
-    - host_vars/couchdb.yaml
-
-  roles:
-
-    - role: couchdb-cluster
