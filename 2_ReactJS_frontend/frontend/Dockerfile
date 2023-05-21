@@ -1,5 +1,5 @@
-# Stage 1: Build the React app
-FROM node:14 as build
+# Stage 1: Build react application
+FROM node:14 as builder
 
 # Set working directory
 WORKDIR /app
@@ -10,27 +10,18 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-# Copy the entire application
-COPY . .
+# Copy other source code to work directory
+COPY . ./
 
-# Build the React app
+# Build the application
 RUN npm run build
 
+# Stage 2: Serve app with Nginx server
 
-# Stage 2: Serve the built React app using Nginx
-FROM nginx:1.21
+FROM nginx:alpine
 
-# Copy the built app from the previous stage
-COPY --from=build /app/build /usr/share/nginx/html
+# Copy build output to replace the default nginx contents.
+COPY --from=builder /app/build /usr/share/nginx/html
 
-# Remove the default Nginx configuration
-RUN rm /etc/nginx/conf.d/default.conf
-
-# Copy custom Nginx configuration
-COPY nginx.conf /etc/nginx/conf.d
-
-# Expose port 3000
-EXPOSE 3000
-
-# Start Nginx server
-CMD ["nginx", "-g", "daemon off;"]
+# Copy the nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
