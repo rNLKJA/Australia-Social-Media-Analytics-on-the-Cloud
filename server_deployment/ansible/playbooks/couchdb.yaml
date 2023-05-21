@@ -1,0 +1,10 @@
+- hosts: ccc-db
+  gather_facts: true
+  vars_files:
+    - ../host_vars/couchdb.yaml
+
+  roles:
+
+    - role: ../roles/couchdb-common
+    - role: ../roles/couchdb-volume
+    - role: ../roles/couchdb
