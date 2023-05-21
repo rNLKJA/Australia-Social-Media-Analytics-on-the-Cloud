@@ -1,1 +1,0 @@
-ansible-playbook -i inventory/inventory.ini playbooks/deploy_service.yaml

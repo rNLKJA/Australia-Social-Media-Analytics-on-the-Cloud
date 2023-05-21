@@ -2,4 +2,4 @@
 
 ansible-galaxy collection install openstack.cloud
 
-. ~/openrc.sh; ansible-playbook mrc.yaml
+. ~/openrc.sh; ansible-playbook playbooks/mrc.yaml
