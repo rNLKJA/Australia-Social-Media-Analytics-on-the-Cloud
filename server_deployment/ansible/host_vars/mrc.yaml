@@ -50,6 +50,13 @@ security_groups:
     port_range_max: 4369
     remote_ip_prefix: 0.0.0.0/0
 
+  - name: docker-swarm
+    description: "ports for docker swarm"
+    protocol: tcp
+    port_range_min: 2377
+    port_range_max: 2377
+    remote_ip_prefix: 0.0.0.0/0
+
 instances:
   - name : database-4
     volumes: ["data@database-4"]

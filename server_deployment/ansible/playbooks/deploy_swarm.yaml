@@ -1,0 +1,102 @@
+- name: Deploy Applications
+  hosts: swarm_manager
+  vars_files:
+    - "../host_vars/docker_images.yaml"
+  gather_facts: true
+  become: true
+
+  tasks:
+    - name: Install Docker
+      # Install Docker on the host machine
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Ensure pip is installed
+      # Install pip, a package manager for Python, on the host machine
+      apt:
+        name: python3-pip
+        state: present
+
+    - name: Ensure jsondiff is installed
+      # Install the jsondiff Python package using pip
+      pip:
+        name: jsondiff
+
+    - name: Start Docker service
+      # Start the Docker service on the host machine
+      service:
+        name: docker
+        state: started
+
+    - name: Install Nginx
+      # Install Nginx, a web server, on the host machine
+      apt:
+        name: nginx
+        state: present
+
+    - name: Copy Nginx configuration
+      # Copy the Nginx configuration file to the appropriate location on the host machine
+      copy:
+        src: nginx.conf
+        dest: /etc/nginx/nginx.conf
+
+    - name: Start Nginx service
+      # Start the Nginx service on the host machine
+      service:
+        name: nginx
+        state: started
+
+    - name: Remove stack
+      # Remove the Docker stack named "ccc"
+      command: docker stack rm ccc
+
+    - name: Wait for services to be removed
+      # Pause the playbook execution for 10 seconds to allow time for services to be removed
+      pause:
+        seconds: 10
+
+    - name: Create Network for Docker Stack
+      # Create a Docker network named "app_stack_default" for the Docker stack
+      docker_network:
+        name: app_stack_default
+        state: present
+
+    - name: Deploy Stack
+      # Deploy the Docker stack named "ccc" using the specified Docker Compose configuration.
+      # The stack consists of two services: "react_app" and "flask_app", with their respective images, ports, and replicas.
+      # Both services are connected to the "app_stack_default" network.
+      docker_stack:
+        state: present
+        name: ccc
+        compose:
+          - version: '3'
+            services:
+              react_app:
+                image: "{{ webapp_image }}"
+                ports:
+                  - "3000:3000"
+                deploy:
+                  replicas: 3
+                  restart_policy:
+                    condition: any
+                networks:
+                  - app_stack_default
+              flask_app:
+                image: "{{ backend_image }}"
+                ports:
+                  - "8080:8080"
+                deploy:
+                  replicas: 3
+                  restart_policy:
+                    condition: any
+                networks:
+                  - app_stack_default
+            networks:
+              app_stack_default: {}
+
+    - name: Restart Nginx service
+      # Restart the Nginx service on the host machine
+      service:
+        name: nginx
+        state: restarted

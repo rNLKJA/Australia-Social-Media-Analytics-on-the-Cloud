@@ -1,0 +1,77 @@
+- name: Install Docker and Docker Compose, and Create Docker Swarm
+  hosts: swarm_manager
+  gather_facts: true
+  become: true
+
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+      tags: docker
+
+    - name: Install Docker Compose
+      apt:
+        name: docker-compose
+        state: present
+        update_cache: yes
+      tags: docker
+
+    - name: Initialize Swarm
+      run_once: true
+      command: docker swarm init --advertise-addr={{ hostvars[groups['swarm_manager'][0]]['ansible_host'] }}
+      delegate_to: "{{ groups['swarm_manager'][0] }}"
+      tags: docker_swarm
+      ignore_errors: true
+    
+    - name: Get Swarm manager join token
+      command: docker swarm join-token manager -q
+      register: docker_swarm_manager_token
+      delegate_to: "{{ groups['swarm_manager'][0] }}"
+      when: inventory_hostname in groups['swarm_manager']
+
+    - name: Join Swarm manager nodes
+      command: docker swarm join --token {{ docker_swarm_manager_token.stdout }} {{ hostvars[groups['swarm_manager'][0]].ansible_default_ipv4.address }}:2377
+      when: inventory_hostname in groups['swarm_manager']
+      tags: docker_swarm
+      ignore_errors: true
+
+    - name: Check Swarm Initialized
+      wait_for:
+        host: "{{ hostvars[groups['swarm_manager'][0]]['ansible_host'] }}"
+        port: 2377
+        state: started
+      tags: docker_swarm
+
+- name: Join Workers to Swarm
+  hosts: swarm_worker
+  gather_facts: true
+  become: true
+
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+      tags: docker
+
+    - name: Install Docker Compose
+      apt:
+        name: docker-compose
+        state: present
+        update_cache: yes
+      tags: docker
+
+    - name: Get Swarm worker join token
+      command: docker swarm join-token worker -q
+      register: docker_swarm_worker_token
+      delegate_to: "{{ groups['swarm_manager'][0] }}"
+      when: inventory_hostname in groups['swarm_worker']
+
+    - name: Join Swarm worker nodes
+      command: docker swarm join --token {{ docker_swarm_worker_token.stdout }} {{ hostvars[groups['swarm_manager'][0]].ansible_default_ipv4.address }}:2377
+      when: inventory_hostname in groups['swarm_worker']
+      tags: docker_swarm
+      ignore_errors: true
