@@ -2,4 +2,4 @@
 webapp_image: redpeony159/myreactapp:latest
 
 
-backend_image: redpeony159/myflaskapp:latest
+backend_image: redpeony159/myflaskapp:1.0
