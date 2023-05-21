@@ -39,7 +39,9 @@ export default function SudoPlot({ sudoData }) {
           const signal = controller.signal;
 
           const response = await fetch(
-            `/sudo_data/map/${sudoData.map}.json.gz`,
+            "`http:172.26.128.118:8080/api/sudo/income"
+              ? sudoData.map === "median_income_sa2"
+              : "http:172.26.128.118:8080/api/sudo/crime",
             { signal },
           );
 

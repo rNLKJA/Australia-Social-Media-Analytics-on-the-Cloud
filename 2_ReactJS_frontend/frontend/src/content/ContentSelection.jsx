@@ -1,6 +1,5 @@
 import React from "react";
-import { Card, CardContent, Typography } from "@mui/material";
-import { BsTwitter, BsMastodon } from "react-icons/bs";
+import { Typography } from "@mui/material";
 
 import SudoContent from "./sudoCard";
 import MastodonContent from "./mastodonCard";
