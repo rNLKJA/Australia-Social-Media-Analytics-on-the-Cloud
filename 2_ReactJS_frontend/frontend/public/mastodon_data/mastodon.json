@@ -1,0 +1,12 @@
+[
+  {
+    "mastodon": "mastodon",
+    "data": [
+      "Three Mastodon servers are utilized: Mastodon AU, Mastodon Social, and Mastodon TikTok.",
+      "Mastodon AU instances specifically cater to the Australian user base, providing a platform for Australians to connect, share content, and engage in discussions. Each Mastodon AU instance may have its own rules, moderation policies, and community guidelines, fostering a diverse and localized online community experience for Australian users.",
+      "Mastodon Social is one of the largest and most popular instances on the Mastodon network. It is known for its diverse user base and active community. It offers features like customizable profiles, timeline filtering, and private messaging, while adhering to Mastodon's decentralized and federated structure.",
+      "Mastodon TikTok allows users to engage in decentralized social networking, share content, and connect with other users within the instance. ",
+      "The data structure of each toot in all three servers is identical, comprising a toot ID (TID), a precise timestamp indicating the date and time of creation (date), the username of the author (author), the language of the toot (lang), the content of the toot (content), and a sentiment score for each toot (score). Unlike Twitter data, Mastodon lacks geoinformation and does not provide any indication of the location where the toot was created."
+    ]
+  }
+]
