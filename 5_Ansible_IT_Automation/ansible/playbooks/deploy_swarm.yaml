@@ -24,24 +24,6 @@
         name: docker
         state: started
 
-    - name: Install Nginx
-      # Install Nginx on the host machine
-      apt:
-        name: nginx
-        state: present
-
-    - name: Copy Nginx configuration
-      # Copy the Nginx configuration file to the appropriate location on the host machine
-      copy:
-        src: nginx.conf
-        dest: /etc/nginx/nginx.conf
-
-    - name: Restart Nginx service
-      # Restart the Nginx service on the host machine to load the new configuration
-      service:
-        name: nginx
-        state: restarted
-
     - name: Remove stack
       # Remove the Docker stack named "ccc"
       command: docker stack rm ccc

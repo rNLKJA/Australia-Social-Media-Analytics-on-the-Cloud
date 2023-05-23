@@ -33,7 +33,7 @@
 - name: copy the script 
   tags: 'couchdb'
   copy:
-    src: /Users/weizhao1/Documents/Unimelb-Master-2023-COMP90024-Assignment-2/server_deployment/ansible/roles/couchdb/templates/init_db.sh
+    src: ./init_db.sh
     dest: "{{ db_dir }}/init_db.sh"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
@@ -42,7 +42,7 @@
 - name: copy the local.ini
   tags: 'couchdb'
   copy:
-    src: /Users/weizhao1/Documents/Unimelb-Master-2023-COMP90024-Assignment-2/server_deployment/ansible/roles/couchdb/templates/local.ini
+    src: ./local.ini
     dest: "{{ db_dir }}/local.ini"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
@@ -50,7 +50,7 @@
 - name: copy the vm.args
   tags: 'couchdb'
   copy:
-    src: /Users/weizhao1/Documents/Unimelb-Master-2023-COMP90024-Assignment-2/server_deployment/ansible/roles/couchdb/templates/vm.args
+    src: ./vm.args
     dest: "{{ db_dir }}/vm.args"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
