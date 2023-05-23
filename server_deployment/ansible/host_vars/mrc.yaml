@@ -58,6 +58,12 @@ security_groups:
     remote_ip_prefix: 0.0.0.0/0
 
 instances:
+  - name: swarm-master1
+    volumes: []
+  
+  - name: swarm-worker1
+    volumes: []
+    
   - name : database-4
     volumes: ["data@database-4"]
   - name : database-5

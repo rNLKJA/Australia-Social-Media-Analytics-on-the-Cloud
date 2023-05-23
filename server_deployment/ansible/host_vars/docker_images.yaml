@@ -1,5 +1,8 @@
 ---
-webapp_image: redpeony159/myreactapp:1.0
+webapp_image: redpeony159/myreactapp:1.1
 
+backend_image: redpeony159/myflaskapp:1.1
 
-backend_image: redpeony159/myflaskapp:1.0
+couchdb_image: redpeony159/mycouchdb:1.0
+
+harvester_image: redpeony159/harvester:1.0

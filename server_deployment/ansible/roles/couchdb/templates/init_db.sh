@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "== Set variables =="
-nodes=(172.26.134.248 172.26.136.164)
+nodes=(172.26.134.248 172.26.133.214)
 export masternode="${nodes[0]}"
 export othernodes=("${nodes[@]:1}")
 export size="${#nodes[@]}"

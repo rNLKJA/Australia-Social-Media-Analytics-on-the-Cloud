@@ -92,8 +92,31 @@
                     condition: any
                 networks:
                   - app_stack_default
+              harvester:
+                image: "{{ harvester_image }}"
+                deploy:
+                  replicas: 1
+                  restart_policy:
+                    condition: any
+                networks:
+                  - app_stack_default
             networks:
               app_stack_default: {}
+
+    - name: Force update of React App service
+      command: docker service update --force --image="{{ webapp_image }}" ccc_react_app
+      become: true
+      register: update_react
+
+    - name: Force update of Flask App service
+      command: docker service update --force --image="{{ backend_image }}" ccc_flask_app
+      become: true
+      register: update_flask
+
+    - name: Force update of Harvester service
+      command: docker service update --force --image="{{ harvester_image }}" ccc_harvester
+      become: true
+      register: update_harvester
 
     - name: Restart Nginx service
       # Restart the Nginx service on the host machine
