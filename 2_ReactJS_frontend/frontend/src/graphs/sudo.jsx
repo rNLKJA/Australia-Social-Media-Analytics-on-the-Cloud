@@ -25,6 +25,8 @@ export default function SudoPlot({ sudoData }) {
   const [plotData, setPlotData] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  console.log(sudoData);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -39,9 +41,7 @@ export default function SudoPlot({ sudoData }) {
           const signal = controller.signal;
 
           const response = await fetch(
-            "http://172.26.128.118:8080/api/sudo/income"
-              ? sudoData.map === "median_income_sa2"
-              : "http://172.26.128.118:8080/api/sudo/crime",
+            `/sudo_data/map/${sudoData.map}.json.gz`,
             { signal },
           );
 
@@ -54,7 +54,6 @@ export default function SudoPlot({ sudoData }) {
             to: "string",
           });
           const data = JSON.parse(decompressedData);
-          // console.log(data);
 
           // Update the map center to Melbourne
           if (data.layout && data.layout.mapbox) {
