@@ -21,3 +21,9 @@ mpiexec -n [NUM_OF_PROCESSOR] python3 scripts/bigTwitterProcessingV1.py -t twitt
 ```
 
 ## Mastodon Havestor API
+
+Mastodon APIs were wrapped in `notebooks` folder. You could also access utility scripts under `scripts` folder.
+
+The general use case of Mastodon API is to fetch data from a target Mastodon server based on provided access token and api connection url.
+
+To stream processing fetched data to data base, you need to initialise the CouchDB API. Using the connection string you could easily complete any CRUD operations.
