@@ -1,0 +1,13 @@
+version: "3"
+services:
+  couchdb:
+    image: "ibmcom/couchdb3:3.2.1"
+    # restart: always
+    volumes:
+      - /mnt/couchdb:/opt/couchdb/data:rw
+    environment:
+      - COUCHDB_USER=group58
+      - COUCHDB_PASSWORD=group58
+      - NODENAME=172.26.134.180
+    container_name: couchdb
+    network_mode: "host"
