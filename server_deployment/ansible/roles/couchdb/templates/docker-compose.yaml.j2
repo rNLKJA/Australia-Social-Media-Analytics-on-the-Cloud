@@ -1,18 +1,19 @@
 version: "3"
 services:
   couchdb:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: always
+    image: redpeony159/mycouchdb:1.0
     volumes:
+      - ./vm.args:/opt/couchdb/etc/vm.args
+      - ./local.ini:/opt/couchdb/etc/local.d/local.ini
+      - ./local.ini:/opt/couchdb/etc/local.ini
       - ./data:/opt/couchdb/data:rw
+    restart: always
     environment:
       - COUCHDB_USER={{db_user}}
       - COUCHDB_PASSWORD={{db_password}}
       - NODENAME={{nodename}}
       - ERL_FLAGS=-setcookie '{{cookie}}' -name 'couchdb@{{nodename}}' -kernel 'inet_dist_listen_min 9100' -kernel 'inet_dist_listen_max 9200'
-    container_name: couchdb
+    container_name: ccc
     ports:
       - "5984:5984"
       - "4369:4369"

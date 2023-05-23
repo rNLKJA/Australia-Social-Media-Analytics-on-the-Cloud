@@ -5,33 +5,10 @@ nodes=(172.26.134.248 172.26.136.164)
 export masternode="${nodes[0]}"
 export othernodes=("${nodes[@]:1}")
 export size="${#nodes[@]}"
-export user='group57'
-export pass='group57'
-export VERSION='3.2.1'
+export user='group58'
+export pass='group58'
+export VERSION='1.0'
 export cookie='a192aeb9904e6590849337933b000c99'
-
-
-echo "== Create docker container =="
-
-for node in "${nodes[@]}" 
-  do
-    if [ ! -z $(docker ps --all --filter "name=couchdb${node}" --quiet) ] 
-       then
-         docker stop $(docker ps --all --filter "name=couchdb${node}" --quiet) 
-         docker rm $(docker ps --all --filter "name=couchdb${node}" --quiet)
-    fi 
-done
-
-for node in "${nodes[@]}" 
-  do
-    docker create\
-      --name couchdb${node}\
-      --env COUCHDB_USER=${user}\
-      --env COUCHDB_PASSWORD=${pass}\
-      --env COUCHDB_SECRET=${cookie}\
-      --env ERL_FLAGS="-setcookie \"${cookie}\" -name \"couchdb@${node}\""\
-      ibmcom/couchdb3:${VERSION}
-done
 
 
 echo "== Add nodes to cluster =="

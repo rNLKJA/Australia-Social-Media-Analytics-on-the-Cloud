@@ -1,5 +1,5 @@
 ---
-webapp_image: redpeony159/myreactapp:latest
+webapp_image: redpeony159/myreactapp:1.0
 
 
 backend_image: redpeony159/myflaskapp:1.0
