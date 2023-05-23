@@ -1,4 +1,4 @@
-- hosts: ccc-db
+- hosts: ccc_db
   gather_facts: true
   vars_files:
     - ../host_vars/couchdb.yaml

@@ -1,5 +1,5 @@
 - name: run the script to set up CouchDB cluster
-  hosts: ccc-dbMaster
+  hosts: ccc_dbMaster
   gather_facts: true
   vars_files:
     - ../host_vars/couchdb.yaml
