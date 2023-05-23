@@ -11,6 +11,7 @@ import geopandas as gpd
 import pandas as pd
 import plotly.graph_objects as go
 import json
+import datetime
 
 app = Flask(__name__)
 
@@ -18,7 +19,24 @@ app = Flask(__name__)
 def hello_world():
     return 'Hello, World!</p> <br /> <p> This is a test of the Flask backend using nginx and gunicorn.'
 
+def get_ip_and_container_id():
+    ip = request.remote_addr
+    container_id = os.uname().nodename
+    return ip, container_id
 
+# This route is used to test the connection to the backend
+@app.route('/ping/')
+def ping():
+    try:
+
+        ip, container_id = get_ip_and_container_id()
+        access_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        response = f"Ping from {ip} on container {container_id} at {access_time}"
+    except AttributeError:
+        response = "The app is not running on docker container."
+    return response
+
+# This route is used to get the crime sentiment zipped json file
 @app.route('/api/sudo/crime/', methods=['GET'])
 def get_sudo_crime_data():
     graph_json_path = 'sudo/crime_vic_lga.json'
@@ -39,6 +57,7 @@ def get_sudo_crime_data():
 
     return send_file(compressed_file_path, as_attachment=True)    
 
+# This route is used to get the income sentiment zipped json file
 @app.route('/api/sudo/income/', methods=['GET'])
 def get_sudo_income_data():
     graph_json_path = 'sudo/income_vic_sa2.json'
