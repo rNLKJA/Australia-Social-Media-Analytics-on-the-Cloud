@@ -1,0 +1,8 @@
+The crime dataset from sudo presents the footprint of the number of criminal incidents by principal offense recorded on the Victoria Police Law Enforcement Assistance Program (LEAP) and is aggregated to 2011 Australian Statistical Geography Standard (ASGS) Local Government Areas (LGA). Among all attributes in this dataset, analysis is chosen to be focus on the columns of total of all kinds of offences where the column of the LGA code 2011 will be used to join with the shapefile to plot the heat map. 
+
+For the missing number, it is filled with 0, which means no such offences occurred. Then a box plot is plotted to check if there is any outliers.
+
+As shown in the plot, each kind of offences have outliers, so we dropped them. Then we add up all types of offences to get a total number of offences and perform a summary table. 
+
+In addition, a heat map is plot for each column. From the map we can see that the distribution of the number of different types of offences are almost identical. Of all types of offences, Brimbank has the most cases. Overall, the number of cases in several suburbs near the CBD such as Wyndham, Melton, Whittlesea is relatively high, but this is likely because the population 
+of suburbs near the CBD is large. In addition to these suburbs near CBD, Mildura, Ballarat, Greater Bendigo, Greater Sheppaton, Latrobe, Frankston, Mornington Peninsula are also suburbs with a high number of offences and they are more likely to be actually dangerous districts.
