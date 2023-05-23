@@ -25,6 +25,8 @@ export default function SudoPlot({ sudoData }) {
   const [plotData, setPlotData] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  console.log(sudoData);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -52,7 +54,6 @@ export default function SudoPlot({ sudoData }) {
             to: "string",
           });
           const data = JSON.parse(decompressedData);
-          // console.log(data);
 
           // Update the map center to Melbourne
           if (data.layout && data.layout.mapbox) {
