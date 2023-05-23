@@ -18,11 +18,6 @@
         name: python3-pip
         state: present
 
-    - name: Ensure jsondiff is installed
-      # Install the jsondiff Python package using pip
-      pip:
-        name: jsondiff
-
     - name: Start Docker service
       # Start the Docker service on the host machine
       service:
@@ -30,7 +25,7 @@
         state: started
 
     - name: Install Nginx
-      # Install Nginx, a web server, on the host machine
+      # Install Nginx on the host machine
       apt:
         name: nginx
         state: present
@@ -41,11 +36,11 @@
         src: nginx.conf
         dest: /etc/nginx/nginx.conf
 
-    - name: Start Nginx service
-      # Start the Nginx service on the host machine
+    - name: Restart Nginx service
+      # Restart the Nginx service on the host machine to load the new configuration
       service:
         name: nginx
-        state: started
+        state: restarted
 
     - name: Remove stack
       # Remove the Docker stack named "ccc"
@@ -63,21 +58,18 @@
         state: present
 
     - name: Deploy Stack
-      # Deploy the Docker stack named "ccc" using the specified Docker Compose configuration.
-      # The stack consists of two services: "react_app" and "flask_app", with their respective images, ports, and replicas.
-      # Both services are connected to the "app_stack_default" network.
       docker_stack:
         state: present
         name: ccc
         compose:
-          - version: '3'
+          - version: '3.2'
             services:
               react_app:
                 image: "{{ webapp_image }}"
                 ports:
                   - "3000:80"
                 deploy:
-                  replicas: 3
+                  replicas: 2
                   restart_policy:
                     condition: any
                 networks:
@@ -87,11 +79,12 @@
                 ports:
                   - "8080:8080"
                 deploy:
-                  replicas: 3
+                  replicas: 2
                   restart_policy:
                     condition: any
                 networks:
                   - app_stack_default
+
               harvester:
                 image: "{{ harvester_image }}"
                 deploy:
@@ -103,23 +96,3 @@
             networks:
               app_stack_default: {}
 
-    - name: Force update of React App service
-      command: docker service update --force --image="{{ webapp_image }}" ccc_react_app
-      become: true
-      register: update_react
-
-    - name: Force update of Flask App service
-      command: docker service update --force --image="{{ backend_image }}" ccc_flask_app
-      become: true
-      register: update_flask
-
-    - name: Force update of Harvester service
-      command: docker service update --force --image="{{ harvester_image }}" ccc_harvester
-      become: true
-      register: update_harvester
-
-    - name: Restart Nginx service
-      # Restart the Nginx service on the host machine
-      service:
-        name: nginx
-        state: restarted
