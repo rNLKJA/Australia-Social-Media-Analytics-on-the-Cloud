@@ -32,4 +32,5 @@ while True:
         response = get_40_response(client, latest_id)
 
         logger.info(response[-1])
+        print(response[-1])
         db.upload_bulk_documents(response, verbose=True)
