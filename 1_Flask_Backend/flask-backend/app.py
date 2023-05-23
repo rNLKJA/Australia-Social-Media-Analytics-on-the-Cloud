@@ -1,7 +1,5 @@
 from flask import Flask, jsonify, request, send_from_directory, send_file
 
-from flask_apscheduler import APScheduler
-from apscheduler.schedulers.background import BackgroundScheduler
 import subprocess
 from datetime import datetime
 from pytz import utc
@@ -15,20 +13,6 @@ import plotly.graph_objects as go
 import json
 
 app = Flask(__name__)
-
-# initialize apscheduler
-scheduler = APScheduler(BackgroundScheduler())
-
-app.config["SCHEDULER_API_ENABLED"] = True
-
-def run_mastodon_harvester():
-    subprocess.Popen(["python", "mastodon/Haverstor.py"])
-
-    
-
-# scheduler.add_job(id="Harvestor", func=run_mastodon_harvester, next_run_time=datetime.now(utc))
-
-# scheduler.start()
 
 @app.route('/')
 def hello_world():
