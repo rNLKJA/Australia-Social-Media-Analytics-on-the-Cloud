@@ -44,7 +44,7 @@ See README in each folder for detailed implementations.
 - Backend: http://172.26.128.118:8080
 - Database: 
     - CouchDB Fauxton: http://172.26.134.180:5984/_utils/
-    - CouchDB Photon: http://172.26.134.180:5984/photon/_design/photon/index  
+    - CouchDB Photon: http://172.26.134.180:5984/photon/_design/photon/index.html#  
     
     For database access, username and password are required where username == password == group58 (although we are group 57).
 
