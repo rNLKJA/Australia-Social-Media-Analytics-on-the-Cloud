@@ -79,4 +79,4 @@ See README in each folder for detailed implementations.
 The code will be public after 27th May 2023. For @copyright information please refer to MIT License.
 
 ---
-<p alignright>Team 57</p>
+<p align=right>Team 57</p>
