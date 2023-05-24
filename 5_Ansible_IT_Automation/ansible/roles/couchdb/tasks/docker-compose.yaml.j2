@@ -1,7 +1,7 @@
 version: "3"
 services:
   couchdb:
-    image: redpeony159/mycouchdb:1.0
+    image: ibmcom/couchdb3:3.2.1
     volumes:
       - ./vm.args:/opt/couchdb/etc/vm.args
       - ./local.ini:/opt/couchdb/etc/local.d/local.ini
