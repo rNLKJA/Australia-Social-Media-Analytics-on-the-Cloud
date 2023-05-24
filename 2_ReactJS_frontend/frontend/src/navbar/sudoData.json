@@ -1,0 +1,23 @@
+[
+  {
+    "title": "ABS - Jobs In Australia - Employee Jobs and Income by Industry (SA2) 2018-19",
+    "valid": true,
+    "map": "median_income_sa2",
+    "bar": "median_income_sa2_bar",
+    "heatmap": ""
+  },
+  {
+    "title": "VIC CSA - Crime Statistics - Criminal Incidents by Principal Offence (LGA) 2010-2019",
+    "valid": true,
+    "map": "crime_vic_lga",
+    "bar": "crime_vic_lga_bar",
+    "heatmap": ""
+  },
+  {
+    "title": "PHIDU - Cancer Incidence - Persons (PHA) 2006-2010",
+    "valid": false,
+    "map": "",
+    "bar": "",
+    "heatmap": ""
+  }
+]

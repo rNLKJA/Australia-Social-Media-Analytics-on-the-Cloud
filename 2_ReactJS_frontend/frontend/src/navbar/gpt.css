@@ -1,0 +1,110 @@
+.popup-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  height: 100vh;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  z-index: 9999;
+}
+
+.popup-content {
+  width: 400px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.popup-header {
+  background-color: #f0f0f0;
+  padding: 10px;
+  text-align: center;
+}
+
+.popup-messages {
+  flex-grow: 1;
+  overflow-y: scroll;
+  padding: 10px;
+}
+
+.message {
+  margin-bottom: 10px;
+}
+
+.user-message {
+  background-color: #e1f5fe;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.gpt-message {
+  background-color: #f3f3f3;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.popup-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+}
+
+.popup-input input {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  padding: 5px;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.popup-input button {
+  padding: 5px 10px;
+  border: none;
+  outline: none;
+  background-color: #094183;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.popup-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  z-index: 9999;
+}
+
+.popup-content {
+  width: 400px;
+  height: 100vh;
+  border-left: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  background-color: #fff;
+  box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 18px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
