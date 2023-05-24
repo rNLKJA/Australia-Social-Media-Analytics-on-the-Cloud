@@ -11,6 +11,8 @@ volumes:
     vol_size: 50
   - vol_name: data@database-5
     vol_size: 50
+  - vol_name: data@database-3
+    vol_size: 80
 
 ## Security group
 
@@ -77,7 +79,9 @@ instances:
   
   - name: swarm-worker1
     volumes: []
-    
+
+  - name:  database-3
+    volumes: ["data@database-3"]
   - name : database-4
     volumes: ["data@database-4"]
   - name : database-5

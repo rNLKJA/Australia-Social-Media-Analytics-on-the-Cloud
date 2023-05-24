@@ -1,55 +1,61 @@
----
+# This playbook performs the following actions:
+
+# -- Installs 'xfsprogs', which provides utilities for managing XFS file systems, commonly used for high-performance environments.
+# -- Creates an XFS file system on the device specified in the 'volume' variable.
+# -- Checks if the directories specified as mount points in the 'volume' variable exist, and registers the results.
+# -- If any of the directories specified in the 'volume' variable do not exist, they are created.
+# -- Finally, the playbook mounts the device specified in the 'volume' variable at the corresponding mount point.
+
 # Install 'xfsprogs' package which provides tools to manage XFS file systems.
 - name: Install XFS file system tools
+  tags: 'volume'
   become: yes
   apt:
     name: ['xfsprogs']
     state: latest
+    install_recommends: no
     update_cache: yes
 
-# Create an XFS file system on the device specified in the 'volume' variable if it doesn't exist.
+# Create an XFS file system on the device specified in the 'volume' variable.
 - name: Create XFS file system on specified device
+  tags: 'volume'
   become: yes
   filesystem:
     fstype: xfs
     dev: "{{ item.device }}"
-  with_items: "{{ volume }}"
-  when: ansible_devices[item.device.split('/')[-1]].partitions == {}
+  with_items:
+    - "{{ volume }}"
 
 # Check if the directories specified as mount points in the 'volume' variable exist.
 - name: Check if the specified mount point directories exist
+  tags: 'volume'
   become: yes
   stat:
     path: "{{ item.mountpoint }}"
   register: directory_stats
-  with_items: "{{ volume }}"
+  with_items:
+    - "{{ volume }}"
 
 # Create the directories specified in the 'volume' variable if they do not exist.
 - name: Create mount point directories if they do not exist
+  tags: 'volume'
   become: yes
   file:
     path: "{{ item.item.mountpoint }}"
+    recurse: yes
     state: directory
   when: item.stat.exists == false
-  with_items: "{{ directory_stats.results }}"
+  with_items:
+    - "{{ directory_stats.results }}"
 
-# Add fstab entries for the mounts
-- name: Add fstab entries for the mounts
-  become: yes
-  lineinfile:
-    path: /etc/fstab
-    line: "{{ item.device }} {{ item.mountpoint }} xfs defaults 0 0"
-    state: present
-  with_items: "{{ volume }}"
-
-# Mount the device specified in the 'volume' variable at the corresponding mount point if not already mounted.
+# Mount the device specified in the 'volume' variable at the corresponding mount point.
 - name: Mount the specified device at the corresponding mount point
+  tags: 'volume'
   become: yes
   mount:
     path: "{{ item.mountpoint }}"
     src: "{{ item.device }}"
     fstype: xfs
-    opts: defaults
     state: mounted
-  with_items: "{{ volume }}"
-  when: ansible_mounts | selectattr('mount', 'equalto', item.mountpoint) | list | count == 0
+  with_items:
+    - "{{ volume }}"

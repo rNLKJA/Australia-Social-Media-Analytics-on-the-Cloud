@@ -1,15 +1,15 @@
 #!/bin/bash
 
 echo "== Set variables =="
-nodes=(172.26.134.248 172.26.133.214)
-export masternode="${nodes[0]}"
-export othernodes=("${nodes[@]:1}")
+nodes=(172.26.134.248 172.26.133.214 172.26.128.114)
+export masternode=`echo ${nodes} | cut -f1 -d' '`
+export declare othernodes=`echo ${nodes[@]} | sed s/${masternode}//`
+
 export size="${#nodes[@]}"
 export user='group58'
 export pass='group58'
-export VERSION='1.0'
+export VERSION='3.2.1'
 export cookie='a192aeb9904e6590849337933b000c99'
-
 
 echo "== Add nodes to cluster =="
 for node in ${othernodes} 
@@ -36,8 +36,10 @@ curl -XPOST "http://${user}:${pass}@${masternode}:5984/_cluster_setup"\
     --header "Content-Type: application/json" --data "{\"action\": \"finish_cluster\"}"
 
 
+
 echo "==Check cluster status =="
 for node in "${nodes[@]}"; do  curl -X GET "http://${user}:${pass}@${node}:5984/_membership"; done
+
 
 
 echo "== add Photon web admin =="
