@@ -31,6 +31,15 @@ do
 done
 
 
+for node in ${othernodes}
+do
+    curl -XPOST "http://${user}:${pass}@${masternode}:5984/_cluster_setup"\
+      --header "Content-Type: application/json"\
+      --data "{\"action\": \"add_node\", \"host\":\"${node}\",\
+             \"port\": \"5984\", \"username\": \"${user}\", \"password\":\"${pass}\"}"
+done
+
+
 echo "== Finish cluster setup =="
 curl -XPOST "http://${user}:${pass}@${masternode}:5984/_cluster_setup"\
     --header "Content-Type: application/json" --data "{\"action\": \"finish_cluster\"}"
@@ -39,7 +48,6 @@ curl -XPOST "http://${user}:${pass}@${masternode}:5984/_cluster_setup"\
 
 echo "==Check cluster status =="
 for node in "${nodes[@]}"; do  curl -X GET "http://${user}:${pass}@${node}:5984/_membership"; done
-
 
 
 echo "== add Photon web admin =="
