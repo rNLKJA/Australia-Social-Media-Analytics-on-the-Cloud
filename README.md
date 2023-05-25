@@ -12,12 +12,11 @@ the SUDO platform to improve our knowledge of life in Australia.
 
 | Name              | Student ID | Email                                    |
 | :---------------- | :--------: | :--------------------------------------- |
-| Zongchao Xie      | 1174047    | zongchao.xie@student.unimelb.edu.au      |
-| Xuan Wang         | 1329456    | xuan.wang19@student.unimelb.edu.au       |
-| Runqiu Fei        | 1166093    | runqiu.fei@student.unimelb.edu.au        |
-| Wei Zhao          | 1118649    | zhao.w2@student.unimelb.edu.au           |
-| Sunchuangyu Huang | 1118472    | sunchuangy.huangh@student.unimelb.edu.au |
-
+| Zongchao Xie      |  1174047   | zongchao.xie@student.unimelb.edu.au      |
+| Xuan Wang         |  1329456   | xuan.wang19@student.unimelb.edu.au       |
+| Runqiu Fei        |  1166093   | runqiu.fei@student.unimelb.edu.au        |
+| Wei Zhao          |  1118649   | zhao.w2@student.unimelb.edu.au           |
+| Sunchuangyu Huang |  1118472   | sunchuangy.huangh@student.unimelb.edu.au |
 
 ## Directories
 
@@ -78,5 +77,6 @@ See README in each folder for detailed implementations.
 
 The code will be public after 27th May 2023. For @copyright information please refer to MIT License.
 
----
+
 <p align=right>Team 57</p>
+

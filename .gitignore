@@ -102,7 +102,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-# .env
+.env
 .venv
 env/
 venv/
@@ -127,6 +127,14 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+4_Python_data_processing/data/sal.json
+4_Python_data_processing/data/sal.json.tar.gz
+4_Python_data_processing/data/twitter_cleaned_full.zip
+flask-backend/.DS_Store
+flask-backend/.DS_Store
+.DS_Store
+
 
 2_ReactJS_frontend/frontend/public/sudo_data/map/crime_lga.json
 2_ReactJS_frontend/frontend/public/sudo_data/map/median_income_sa2.json
@@ -160,4 +168,3 @@ mnt/ext100/twitter-huge.json
 *.prj
 *.shp
 *.shx
-
