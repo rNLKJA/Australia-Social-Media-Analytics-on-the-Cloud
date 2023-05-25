@@ -1,19 +1,24 @@
 # Team 57 - Ansible Deployment
 
 
-## [Demo](https://youtu.be/qermcMn7x1M)
+## [Ansible Demostration Video](https://youtu.be/qermcMn7x1M)
 
+## Scaling issue
+
+- To scaling the current instance resources, please use the MRC dashboard to resize the instance
+- To create a joined instances (e.g. add a cluster slave):
+  - If add a new instance: you join the couchdb cluster manually 
+  - If start from scratch, change the variable in `ansible/roles/[dependencies]/[init_script.sh]`
 
 ## How to install ansible
 
 MACOS
 
 ```bash
-
+# for macos
 brew install ansible
 
-## or
-
+# or 
 pip install ansible
 
 ```
@@ -25,8 +30,8 @@ WSL
 sudo apt-get update && sudo apt-get install software-properties-common
 sudo apt-add-repository --yes --update ppa:ansible/ansible
 sudo apt-get install ansible
-
 ```
+
 ## How to deploy the application using ansible playbook.
 
 *Note*:
