@@ -17,7 +17,7 @@
         state: present
         update_cache: yes
       tags: docker
-
+    
     - name: Initialize Swarm
       run_once: true
       command: docker swarm init --advertise-addr={{ hostvars[groups['swarm_manager'][0]]['ansible_host'] }}
