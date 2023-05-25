@@ -24,7 +24,7 @@ function App() {
   const [mastodonData, setMastodonData] = useState({
     title: "Mastodon Social",
     valid: true,
-    plots: ["mastodon_social_income", "mastodon_social_sentiment"],
+    plots: ["mastodon_social_sentiment", "mastodon_social_income"],
   });
 
   return (
