@@ -2,16 +2,16 @@
   {
     "title": "Mastodon Social",
     "valid": true,
-    "plots": ["mastodon_social_income", "mastodon_social_sentiment"]
+    "plots": ["mastodon_social_sentiment", "mastodon_social_income"]
   },
   {
     "title": "Mastodon AU",
     "valid": true,
-    "plots": ["mastodon_au_income", "mastodon_au_sentiment"]
+    "plots": ["mastodon_au_sentiment", "mastodon_au_income"]
   },
   {
     "title": "Mastodon TicToc",
     "valid": true,
-    "plots": ["mastodon_tictoc_income", "mastodon_tictoc_sentiment"]
+    "plots": ["mastodon_tictoc_sentiment", "mastodon_tictoc_income"]
   }
 ]
