@@ -74,8 +74,8 @@ ansible-playbook -i inventory.ini /playbook/deploy_flask.yml --private-key /User
 - Frontend: http://172.26.130.83:3000
 - Backend: http://172.26.128.118:8080
 - Database: 
-    - CouchDB Fauxton: http://172.26.134.180:5984/_utils/
-    - CouchDB Photon: http://172.26.134.180:5984/photon/_design/photon/index.html#  
+    - CouchDB Fauxton: http://172.26.134.248:5984/_utils/
+    - CouchDB Photon: http://172.26.134.248:5984/photon/_design/photon/index.html#
     
     For database access, username and password are required where username == password == group58 (although we are group 57).
 
