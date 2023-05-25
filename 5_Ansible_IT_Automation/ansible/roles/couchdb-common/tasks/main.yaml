@@ -1,0 +1,50 @@
+---
+# Gather all host facts, including hardware, network, OS, and more.
+- name: Gather all host facts
+  setup:
+    gather_subset: all
+
+# Install necessary dependencies for CouchDB, Docker, and Python.
+- name: Install necessary CouchDB, Docker and Python dependencies
+  become: true
+  apt:
+    name:
+      - build-essential  
+      - erlang           
+      - erlang-dev       
+      - libicu-dev       
+      - wget            
+      - curl             
+      - git              
+      - python3          
+      - python3-pip     
+      - docker.io        
+    state: present       # Ensure these packages are installed
+
+# Ensure Python's package manager pip is installed.
+- name: Ensure Python3's package manager pip is installed
+  become: yes
+  apt:
+    name: python3-pip
+    state: present
+
+# Install Docker SDK for Python, used by Ansible to control Docker.
+- name: Install Docker SDK for Python for Ansible Docker control
+  become: yes
+  pip:
+    name: docker
+    state: present
+
+# Install Docker Compose Python library, used by Ansible to control Docker Compose.
+- name: Install Docker Compose Python library for Ansible Docker Compose control
+  become: yes
+  pip:
+    name: docker-compose
+    state: present
+
+- name: Add user to docker group
+  become: yes
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
