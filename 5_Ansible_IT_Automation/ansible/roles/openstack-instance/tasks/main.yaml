@@ -1,10 +1,9 @@
 ---
-
 - name: Create an instance
   openstack.cloud.server:
     auto_ip: false
     availability_zone: "{{ availability_zone }}"
-    flavor: "{{ instance_flavor }}"
+    flavor: "{{ item.instance_flavor | default(instance_flavor) }}"
     image: "{{ instance_image }}"
     key_name: "{{ instance_key_name }}"
     name: "{{ item.name }}"

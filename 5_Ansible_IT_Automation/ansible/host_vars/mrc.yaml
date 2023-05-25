@@ -76,13 +76,18 @@ security_groups:
 instances:
   - name: swarm-master1
     volumes: []
+    instance_flavor: uom.mse.2c9g
   
   - name: swarm-worker1
     volumes: []
+    instance_flavor: uom.mse.2c9g
 
-  - name:  database-3
-    volumes: ["data@database-3"]
-  - name : database-4
+  - name : db-master
     volumes: ["data@database-4"]
-  - name : database-5
+    instance_flavor: uom.mse.2c9g
+
+  - name:  db-worker1
     volumes: ["data@database-5"]
+
+  - name : db-worker2
+    volumes: ["data@database-3"]
