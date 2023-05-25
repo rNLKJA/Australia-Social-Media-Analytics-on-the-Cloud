@@ -1,0 +1,1 @@
+ansible-playbook -i inventory/inventory.ini playbooks/service_scale.yaml

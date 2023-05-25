@@ -1,0 +1,17 @@
+- name: Scale Services
+  hosts: swarm_manager
+  gather_facts: true
+  become: true
+
+  vars_prompt:
+    - name: "service_name"
+      prompt: "Enter the service name (react_app, flask_app, harvester):"
+      private: false
+
+    - name: "replica_count"
+      prompt: "Enter the number of replicas:"
+      private: false
+
+  tasks:
+    - name: Scale Service
+      command: "docker service scale ccc_{{ service_name }}={{ replica_count }}"

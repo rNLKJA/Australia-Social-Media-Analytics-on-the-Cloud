@@ -1,0 +1,80 @@
+- name: Deploy Applications
+  hosts: swarm_manager
+  vars_files:
+    - "../host_vars/docker_images.yaml"
+  gather_facts: true
+  become: true
+
+  tasks:
+    - name: Install Docker
+      # Install Docker on the host machine
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Ensure pip is installed
+      # Install pip, a package manager for Python, on the host machine
+      apt:
+        name: python3-pip
+        state: present
+
+    - name: Start Docker service
+      # Start the Docker service on the host machine
+      service:
+        name: docker
+        state: started
+
+    - name: Remove stack
+      # Remove the Docker stack named "ccc"
+      command: docker stack rm ccc
+
+    - name: Wait for services to be removed
+      # Pause the playbook execution for 10 seconds to allow time for services to be removed
+      pause:
+        seconds: 10
+
+    - name: Create Network for Docker Stack
+      # Create a Docker network named "app_stack_default" for the Docker stack
+      docker_network:
+        name: app_stack_default
+        state: present
+
+    - name: Deploy Stack
+      docker_stack:
+        state: present
+        name: ccc
+        compose:
+          - version: '3.2'
+            services:
+              react_app:
+                image: "{{ webapp_image }}"
+                ports:
+                  - "3000:80"
+                deploy:
+                  replicas: 2
+                  restart_policy:
+                    condition: any
+                networks:
+                  - app_stack_default
+              flask_app:
+                image: "{{ backend_image }}"
+                ports:
+                  - "8080:8080"
+                deploy:
+                  replicas: 2
+                  restart_policy:
+                    condition: any
+                networks:
+                  - app_stack_default
+
+              harvester:
+                image: "{{ harvester_image }}"
+                deploy:
+                  replicas: 1
+                  restart_policy:
+                    condition: any
+                networks:
+                  - app_stack_default
+            networks:
+              app_stack_default: {}
+

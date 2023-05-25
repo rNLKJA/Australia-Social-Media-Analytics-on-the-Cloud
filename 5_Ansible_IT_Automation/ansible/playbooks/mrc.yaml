@@ -1,0 +1,11 @@
+- hosts: localhost
+  vars_files:
+    - ../host_vars/mrc.yaml
+  gather_facts: true
+
+  roles:
+    - role: ../roles/openstack-common
+    - role: ../roles/openstack-image
+    - role: ../roles/openstack-volume
+    - role: ../roles/openstack-security-group
+    - role: ../roles/openstack-instance
