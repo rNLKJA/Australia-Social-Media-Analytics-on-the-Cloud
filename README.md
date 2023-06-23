@@ -8,6 +8,8 @@ corpus (that will be provided) to tell interesting stories of life in Australian
 social media data can be used alongside/compared with/augment the official data available within
 the SUDO platform to improve our knowledge of life in Australia.
 
+<!-- We achieved 36.5/40 in this project -->
+
 ## Team 57
 
 | Name              | Student ID | Email                                    |
@@ -19,7 +21,6 @@ the SUDO platform to improve our knowledge of life in Australia.
 | Sunchuangyu Huang |  1118472   | sunchuangy.huangh@student.unimelb.edu.au |
 
 ## Directories
-
 
 From listing folder, there are five parts of our project. Therefore:
 1. For Backend Application, access 1_Flask_Backend
