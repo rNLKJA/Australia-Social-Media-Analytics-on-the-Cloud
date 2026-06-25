@@ -1,25 +1,35 @@
-import couchdb
-import dotenv
 import os
 import re
+
+import couchdb
+import dotenv
 from logger import logger
 
 dotenv.load_dotenv()
 
-COUCHDB_HOST = os.environ['COUCHDB_HOST']
-COUCHDB_PORT = os.environ['COUCHDB_PORT']
-COUCHDB_USERNAME = os.environ['COUCHDB_USERNAME']
-COUCHDB_PASSWORD = os.environ['COUCHDB_PASSWORD']
+COUCHDB_HOST = os.environ["COUCHDB_HOST"]
+COUCHDB_PORT = os.environ["COUCHDB_PORT"]
+COUCHDB_USERNAME = os.environ["COUCHDB_USERNAME"]
+COUCHDB_PASSWORD = os.environ["COUCHDB_PASSWORD"]
+
 
 class CouchDB:
-    def __init__(self, dbname, host=COUCHDB_HOST, port=COUCHDB_PORT,
-                 username=COUCHDB_USERNAME, password=COUCHDB_PASSWORD):
+    def __init__(
+        self,
+        dbname,
+        host=COUCHDB_HOST,
+        port=COUCHDB_PORT,
+        username=COUCHDB_USERNAME,
+        password=COUCHDB_PASSWORD,
+    ):
         self.host = host
         self.port = port
         self.username = username
         self.password = password
 
-        self.instance_url = f"http://{self.username}:{self.password}@{self.host}:{self.port}"
+        self.instance_url = (
+            f"http://{self.username}:{self.password}@{self.host}:{self.port}"
+        )
         self.server = couchdb.Server(self.instance_url)
         self.db = self.get_or_create_database(dbname)
 
@@ -36,23 +46,23 @@ class CouchDB:
             return self.server[dbname]
 
     def upload_document(self, data, verbose=False, check=False):
-        doc_id = data.get('_id')
-        
+        doc_id = data.get("_id")
+
         if check:
             # Check if the document with the specified ID exists
             existing_doc = self.get_document(doc_id)
             if existing_doc:
                 # Get the current revision of the existing document
-                data['_rev'] = existing_doc['_rev']
+                data["_rev"] = existing_doc["_rev"]
 
         # Save the new or updated document
         doc_id, doc_rev = self.db.save(data)
-        
+
         if verbose:
-            logger.info(f"Document uploaded with ID: {doc_id}", end='\r')
-        
+            logger.info(f"Document uploaded with ID: {doc_id}", end="\r")
+
         return doc_id
-    
+
     def upload_bulk_documents(self, data_list, verbose=False):
         # Get the current revision of the existing documents
         # for data in data_list:
@@ -60,7 +70,7 @@ class CouchDB:
         #     existing_doc = self.get_document(doc_id)
         #     if existing_doc:
         #         data['_rev'] = existing_doc['_rev']
-        
+
         results = self.db.update(data_list)
         if verbose:
             logger.info(f"{len(data_list)} documents uploaded in bulk.")
@@ -71,7 +81,7 @@ class CouchDB:
             doc = self.db[doc_id]
             return doc
         except couchdb.http.ResourceNotFound:
-            logger.info(f"Document with ID '{doc_id}' not found.", end='\n')
+            logger.info(f"Document with ID '{doc_id}' not found.", end="\n")
             return None
 
     def delete_document(self, doc_id):
@@ -100,7 +110,7 @@ class CouchDB:
         except couchdb.http.ResourceNotFound:
             logger.info("No documents found.")
             return []
-        
+
     def get_document_by_id(self, doc_id):
         doc = self.get_document(doc_id)
         if doc:
@@ -116,4 +126,3 @@ class CouchDB:
         response = str(self.list_documents()[0])
         logger.info(response)
         return self.extract_and_get_data(response)
-

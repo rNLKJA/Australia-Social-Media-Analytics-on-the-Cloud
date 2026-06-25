@@ -1,7 +1,8 @@
-from itertools import combinations
-import re
 import pickle
+import re
+from itertools import combinations
 from pathlib import Path
+
 
 def generate_item(twid, author, created_time, text_content, location, gcc):
     item = {
@@ -14,6 +15,7 @@ def generate_item(twid, author, created_time, text_content, location, gcc):
     }
     return item
 
+
 def return_words_ngrams(words: list) -> list:
     """
     Return a list containing ngram words
@@ -21,6 +23,7 @@ def return_words_ngrams(words: list) -> list:
     return [
         " ".join(c) for i in range(1, len(words) + 1) for c in combinations(words, i)
     ]
+
 
 def normalise_location(location: str) -> str:
     """
@@ -37,6 +40,7 @@ def normalise_location(location: str) -> str:
 
     return re.sub(" +", " ", text)
 
+
 # List of major cities
 gccs = [
     "Canberra",
@@ -52,16 +56,19 @@ gccs = [
 # State and abbreviation dictionary
 state_location = dict(
     zip(
-        [s.lower() for s in [
-            "Australian Capital Territory",
-            "New South Wales",
-            "Northern Territory",
-            "Queensland",
-            "South Australia",
-            "Tasmania",
-            "Victoria",
-            "Western Australia",
-        ]],
+        [
+            s.lower()
+            for s in [
+                "Australian Capital Territory",
+                "New South Wales",
+                "Northern Territory",
+                "Queensland",
+                "South Australia",
+                "Tasmania",
+                "Victoria",
+                "Western Australia",
+            ]
+        ],
         [s.lower() for s in ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"]],
     )
 )
@@ -78,10 +85,10 @@ INVALID_LOCATION = [
     "australia",
 ]
 
+
 def load_pickle_object(path: Path) -> object:
     """
     Load pickle object from path
     """
     with open(path, "rb") as f:
         return pickle.load(f)
-

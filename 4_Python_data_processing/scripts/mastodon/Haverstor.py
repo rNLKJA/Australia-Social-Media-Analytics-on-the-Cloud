@@ -1,14 +1,15 @@
 # pylint: disable=import-error
 
-from mastodon import Mastodon
 import os
-from dotenv import load_dotenv
+
 import pytz
 from bs4 import BeautifulSoup
+from database import *
+from dotenv import load_dotenv
+from mastodon import Mastodon
+from mastodon.mastodon import *
 from mastodon.toot import *
 from utils import *
-from mastodon.mastodon import *
-from database import *
 
 load_dotenv()
 

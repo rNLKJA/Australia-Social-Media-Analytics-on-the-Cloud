@@ -1,11 +1,21 @@
+import json
 import re
 from itertools import combinations
-import json
 
 
 class Tweet:
-    def __init__(self, tid=None, author=None, date=None, lang=None, content=None, 
-                 location=None, sal=None, tags=None, score=None):
+    def __init__(
+        self,
+        tid=None,
+        author=None,
+        date=None,
+        lang=None,
+        content=None,
+        location=None,
+        sal=None,
+        tags=None,
+        score=None,
+    ):
         self.tid = tid
         self.author = author
         self.date = date
@@ -17,34 +27,37 @@ class Tweet:
         self.score = score
 
     def __repr__(self):
-        return f"Twitter(tid={self.tid}, author={self.author}, date={self.date}, content={self.content}, " \
-               f"location={self.location}, sal={self.sal}, tags={self.tags}"
-    
+        return (
+            f"Twitter(tid={self.tid}, author={self.author}, date={self.date}, content={self.content}, "
+            f"location={self.location}, sal={self.sal}, tags={self.tags}"
+        )
+
     def to_json(self, rank):
         tweet_dict = self.to_dict(rank)
         return json.dumps(tweet_dict)
 
     def to_dict(self, rank):
         return {
-            '_id': f'{rank}:{self.tid}',
-            'tid': self.tid,
-            'author': self.author,
-            'date': self.date,
-            'lang': self.lang,
-            'content': self.content,
-            'location': self.location,
-            'sal': self.sal,
-            'score': self.score,
-            'tags': self.tags
+            "_id": f"{rank}:{self.tid}",
+            "tid": self.tid,
+            "author": self.author,
+            "date": self.date,
+            "lang": self.lang,
+            "content": self.content,
+            "location": self.location,
+            "sal": self.sal,
+            "score": self.score,
+            "tags": self.tags,
         }
 
     def data_complete(self):
         return (
-            self.tid is not None and
-            self.author is not None and
-            self.date is not None and
-            self.content is not None
+            self.tid is not None
+            and self.author is not None
+            and self.date is not None
+            and self.content is not None
         )
+
 
 def return_words_ngrams(words: list) -> list:
     """
@@ -53,6 +66,7 @@ def return_words_ngrams(words: list) -> list:
     return [
         " ".join(c) for i in range(1, len(words) + 1) for c in combinations(words, i)
     ]
+
 
 def normalise_location(location: str) -> str:
     """
@@ -69,6 +83,7 @@ def normalise_location(location: str) -> str:
 
     return re.sub(" +", " ", text)
 
+
 # List of major cities
 gccs = [
     "Canberra",
@@ -84,16 +99,19 @@ gccs = [
 # State and abbreviation dictionary
 state_location = dict(
     zip(
-        [s.lower() for s in [
-            "Australian Capital Territory",
-            "New South Wales",
-            "Northern Territory",
-            "Queensland",
-            "South Australia",
-            "Tasmania",
-            "Victoria",
-            "Western Australia",
-        ]],
+        [
+            s.lower()
+            for s in [
+                "Australian Capital Territory",
+                "New South Wales",
+                "Northern Territory",
+                "Queensland",
+                "South Australia",
+                "Tasmania",
+                "Victoria",
+                "Western Australia",
+            ]
+        ],
         [s.lower() for s in ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"]],
     )
 )

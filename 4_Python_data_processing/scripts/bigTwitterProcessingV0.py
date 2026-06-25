@@ -1,14 +1,15 @@
-import json
-from mpi4py import MPI
-import re
-from collections import Counter
-import pandas as pd
-import numpy as np
 import argparse
-import time
-import sys
+import json
 import os
+import re
+import sys
+import time
+from collections import Counter
 from itertools import combinations
+
+import numpy as np
+import pandas as pd
+from mpi4py import MPI
 
 gccs = [
     "Canberra",
@@ -49,6 +50,7 @@ def return_words_ngrams(words: list) -> list:
         " ".join(c) for i in range(1, len(words) + 1) for c in combinations(words, i)
     ]
 
+
 def normalise_location(location: str) -> str:
     """
     Normalise location where the location string should not
@@ -78,11 +80,11 @@ INVALID_LOCATION = [
     "australia",
 ]
 
-start_time = time.time() 
+start_time = time.time()
 
-parser = argparse.ArgumentParser(description='ass1_args')
-parser.add_argument('twitter_file_path', type=str, help='twitter_file_path')
-parser.add_argument('sal_path', type=str, help='sal_path')
+parser = argparse.ArgumentParser(description="ass1_args")
+parser.add_argument("twitter_file_path", type=str, help="twitter_file_path")
+parser.add_argument("sal_path", type=str, help="sal_path")
 args = parser.parse_args()
 
 # Initialize MPI
@@ -90,11 +92,11 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
-DATA_FILE = str('twitter_cleaned_' + str(rank) + '.json')
+DATA_FILE = str("twitter_cleaned_" + str(rank) + ".json")
 
 # start the list if NO harvesting
-with open(DATA_FILE, 'w', encoding='utf-8') as f:
-    f.write('[\n')
+with open(DATA_FILE, "w", encoding="utf-8") as f:
+    f.write("[\n")
 
 with open(args.sal_path) as json_file:
     sal_dict = json.load(json_file)
@@ -108,7 +110,7 @@ location_lst = []
 gcc_lst = []
 
 # Open the file
-with open(args.twitter_file_path, 'rb') as f:
+with open(args.twitter_file_path, "rb") as f:
     # seek for the corresponding chuck for the core to read
     file_size = f.seek(0, 2)
     chunk_size = file_size // size
@@ -135,20 +137,22 @@ with open(args.twitter_file_path, 'rb') as f:
                 # record the current item
                 # location_lst.append('')
                 # gcc_lst.append('')
-                location = ''
-                gcc = ''
+                location = ""
+                gcc = ""
 
                 # Append the new message to the JSON file
-                item = {"_id": twid.group(1),
-                        "author_id": author.group(1),
-                        "created_at": created_time.group(1),
-                        "text": text_content.group(1),
-                        "location": location,
-                        "possible_suburb": gcc}
-                with open(DATA_FILE, 'a', encoding='utf-8') as output_f:
+                item = {
+                    "_id": twid.group(1),
+                    "author_id": author.group(1),
+                    "created_at": created_time.group(1),
+                    "text": text_content.group(1),
+                    "location": location,
+                    "possible_suburb": gcc,
+                }
+                with open(DATA_FILE, "a", encoding="utf-8") as output_f:
                     # Append the new message to the JSON file
                     json.dump(item, output_f, indent=2, sort_keys=True, default=str)
-                    output_f.write(',\n')
+                    output_f.write(",\n")
 
             break
 
@@ -159,7 +163,7 @@ with open(args.twitter_file_path, 'rb') as f:
             # if twid:
             #     # twid_lst.append(twid.group(1))
             #     continue
-        
+
         # try match corresponding author
         if twid and (not author):
             author = re.search(r'"author_id":\s*"([^"]+)"', curr_line)
@@ -195,22 +199,24 @@ with open(args.twitter_file_path, 'rb') as f:
                         gcc = {possible_location: sal_dict.get(possible_location)}
                         # gcc_lst.append(gcc)
                         break
-                
+
                 if not gcc:
-                    gcc = ''
+                    gcc = ""
                     # gcc_lst.append('')
-                
+
                 # Append the new message to the JSON file
-                item = {"_id": twid.group(1),
-                        "author_id": author.group(1),
-                        "created_at": created_time.group(1),
-                        "text": text_content.group(1),
-                        "location": location.group(1),
-                        "possible_suburb": gcc}
-                with open(DATA_FILE, 'a', encoding='utf-8') as output_f:
+                item = {
+                    "_id": twid.group(1),
+                    "author_id": author.group(1),
+                    "created_at": created_time.group(1),
+                    "text": text_content.group(1),
+                    "location": location.group(1),
+                    "possible_suburb": gcc,
+                }
+                with open(DATA_FILE, "a", encoding="utf-8") as output_f:
                     # Append the new message to the JSON file
                     json.dump(item, output_f, indent=2, sort_keys=True, default=str)
-                    output_f.write(',\n')
+                    output_f.write(",\n")
 
                 # reset and head to the next item
                 twid = None
@@ -226,26 +232,27 @@ with open(args.twitter_file_path, 'rb') as f:
                 else:
                     continue
 
-
             if re.search(r'"_id":\s*"([^"]+)"', curr_line):
                 # no position information for current item
                 # record the current item
                 # location_lst.append('')
                 # gcc_lst.append('')
-                location = ''
-                gcc = ''
+                location = ""
+                gcc = ""
 
                 # Append the new message to the JSON file
-                item = {"_id": twid.group(1),
-                        "author_id": author.group(1),
-                        "created_at": created_time.group(1),
-                        "text": text_content.group(1),
-                        "location": location,
-                        "possible_suburb": gcc}
-                with open(DATA_FILE, 'a', encoding='utf-8') as output_f:
+                item = {
+                    "_id": twid.group(1),
+                    "author_id": author.group(1),
+                    "created_at": created_time.group(1),
+                    "text": text_content.group(1),
+                    "location": location,
+                    "possible_suburb": gcc,
+                }
+                with open(DATA_FILE, "a", encoding="utf-8") as output_f:
                     # Append the new message to the JSON file
                     json.dump(item, output_f, indent=2, sort_keys=True, default=str)
-                    output_f.write(',\n')
+                    output_f.write(",\n")
 
                 # reset and head to the next item
                 if f.tell() >= end:
@@ -264,20 +271,20 @@ with open(args.twitter_file_path, 'rb') as f:
                         finish_read = True
                         break
 
-
-
-        if f.tell() >= end and not (twid or author or created_time or text_content or location):
+        if f.tell() >= end and not (
+            twid or author or created_time or text_content or location
+        ):
             # only stop when the current item is complete
             finish_read = True
             break
 
 # replace the last ",\n" with "\n]" to end the list
-with open(DATA_FILE, 'rb+') as f:
-  f.seek(-3, os.SEEK_END)
-  f.truncate()
+with open(DATA_FILE, "rb+") as f:
+    f.seek(-3, os.SEEK_END)
+    f.truncate()
 
-with open(DATA_FILE, 'a') as f:
-  f.write('\n]')
+with open(DATA_FILE, "a") as f:
+    f.write("\n]")
 
 read_end_time = time.time()
 print(f"Read time: {read_end_time - start_time} seconds at core {rank}")

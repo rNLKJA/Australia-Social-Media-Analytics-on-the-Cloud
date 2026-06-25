@@ -1,7 +1,7 @@
 ---
 # Create a directory for the CouchDB Docker container
 - name: Set up CouchDB directory
-  tags: 'couchdb'
+  tags: "couchdb"
   become: yes
   file:
     path: "{{ db_dir }}" # The directory to be created
@@ -10,10 +10,9 @@
     recurse: yes # Specifies whether or not to create all directories leading up to the specified path
     state: directory # The desired state of the path (directory in this case)
 
-
 # Create a Docker Compose configuration file using a Jinja2 template
 - name: Generate Docker Compose configuration
-  tags: 'couchdb'
+  tags: "couchdb"
   become: yes
   template:
     src: docker-compose.yaml.j2 # The source Jinja2 template
@@ -22,39 +21,39 @@
     group: "{{ ansible_user }}" # The name of the group who should own the file
 
 - name: copy the dockerfile
-  tags: 'couchdb'
+  tags: "couchdb"
   template:
     src: Dockerfile
     dest: "{{ db_dir }}/Dockerfile"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: '0755'
+    mode: "0755"
 
-- name: copy the script 
-  tags: 'couchdb'
+- name: copy the script
+  tags: "couchdb"
   copy:
     src: ./init_db.sh
     dest: "{{ db_dir }}/init_db.sh"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: '0755'
+    mode: "0755"
 
 - name: copy the local.ini
-  tags: 'couchdb'
+  tags: "couchdb"
   copy:
     src: ./local.ini
     dest: "{{ db_dir }}/local.ini"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: '0755'
+    mode: "0755"
 - name: copy the vm.args
-  tags: 'couchdb'
+  tags: "couchdb"
   copy:
     src: ./vm.args
     dest: "{{ db_dir }}/vm.args"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: '0755'
+    mode: "0755"
 
 - name: Delete _nodes.couch config file
   become: true
@@ -62,10 +61,9 @@
     path: "{{ db_dir }}/data/_nodes.couch"
     state: absent
 
-
 # Start the Docker Compose project based on the configuration file created in the previous task
 - name: Deploy CouchDB using Docker Compose
-  tags: 'couchdb'
+  tags: "couchdb"
   become: yes
   docker_compose:
     project_src: "{{ db_dir }}" # The directory containing the Docker Compose file
@@ -76,14 +74,12 @@
 
 # Change the permissions for the directory where the CouchDB data volume is mounted
 - name: Set permissions for CouchDB volume
-  tags: 'couchdb'
+  tags: "couchdb"
   become: yes
   file:
     path: "{{ item.mountpoint }}" # The path to the directory where the volume is mounted
     recurse: yes # Specifies that the mode should be applied to all files and directories within the path
-    mode: '0777' # The desired permissions
+    mode: "0777" # The desired permissions
   with_items:
     - "{{ volume }}" # The list of volumes for which to set permissions
-
-
 

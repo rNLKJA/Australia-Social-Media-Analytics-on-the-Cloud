@@ -1,6 +1,6 @@
+import math
 from pathlib import Path
 from typing import List
-import math
 
 
 def split_file_into_chunks(path: Path, size: int) -> List[List]:

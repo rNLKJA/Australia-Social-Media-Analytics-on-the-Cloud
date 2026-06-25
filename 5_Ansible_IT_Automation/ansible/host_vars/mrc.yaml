@@ -77,17 +77,17 @@ instances:
   - name: swarm-master1
     volumes: []
     instance_flavor: uom.mse.2c9g
-  
+
   - name: swarm-worker1
     volumes: []
     instance_flavor: uom.mse.2c9g
 
-  - name : db-master
+  - name: db-master
     volumes: ["data@database-4"]
     instance_flavor: uom.mse.2c9g
 
-  - name:  db-worker1
+  - name: db-worker1
     volumes: ["data@database-5"]
 
-  - name : db-worker2
+  - name: db-worker2
     volumes: ["data@database-3"]

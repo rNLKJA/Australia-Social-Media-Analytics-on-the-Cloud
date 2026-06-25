@@ -35,7 +35,7 @@ team-57-ccc-assignment-2/
 │   │   ├── sudo ## sudo file folder
 │   │   ├── twitterData ## Twitter Data
 │   │   ├── .env ## Environment
-│   │   ├── app.py 
+│   │   ├── app.py
 │   │   ├── Dockerfile
 │   │   ├── README.md
 │   │   ├── requirements.txt
@@ -43,15 +43,13 @@ team-57-ccc-assignment-2/
 
 ```
 
-
-
 ## Prerequisites
+
 Before running this application, ensure that you have the following prerequisites installed:
 
 Python (version 3.6 or higher)
 pip (Python package installer)
 [List any other prerequisites or dependencies specific to your project]
-
 
 ## Getting Started
 
@@ -72,28 +70,32 @@ docker run -p 8080:8080 redpeony159/myflaskapp
 The application will be accessible at http://localhost:8080 by default.
 
 ## API Documentation
+
 This documentation provides details about the API endpoints available in the Flask project.
 
 ### Get Crime Data
+
 - Endpoint: /api/sudo/crime/
 - Method: GET
-  
+
 This API endpoint retrieves crime data in a compressed JSON format. The endpoint checks if the data file already exists. If not, it generates the data by visualizing the crime data. The endpoint then compresses the data into a gzip format and returns it as an attachment.
 
 ### Get Income Data
+
 - Endpoint: /api/sudo/income/
 - Method: GET
-This API endpoint retrieves income data in a compressed JSON format. Similar to the previous endpoint, it checks if the data file already exists. If not, it generates the data by visualizing the income data. The endpoint then compresses the data into a gzip format and returns it as an attachment.
+  This API endpoint retrieves income data in a compressed JSON format. Similar to the previous endpoint, it checks if the data file already exists. If not, it generates the data by visualizing the income data. The endpoint then compresses the data into a gzip format and returns it as an attachment.
 
 ### Get Twitter Image Data
+
 - Endpoint: /api/twitter/<forceupdate>
 - Method: GET
-This API endpoint generates or retrieves previously generated data related to Twitter statistics. It returns a compressed JSON file containing a choropleth map of tweet data. The forceupdate parameter allows you to control whether to force an update of the Twitter data or use existing data if available.
+  This API endpoint generates or retrieves previously generated data related to Twitter statistics. It returns a compressed JSON file containing a choropleth map of tweet data. The forceupdate parameter allows you to control whether to force an update of the Twitter data or use existing data if available.
 
 ### Parameters
 
 - forceupdate (string): If set to "true", the system will force an update of the Twitter data views. Otherwise, it will use existing data if available.
-Returns
+  Returns
 
 The API endpoint returns a compressed JSON file containing a choropleth map of Twitter data. In case of an error, it returns a JSON message with an appropriate status code.
 

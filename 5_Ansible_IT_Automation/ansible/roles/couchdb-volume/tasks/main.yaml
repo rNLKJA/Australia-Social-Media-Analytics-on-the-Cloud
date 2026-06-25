@@ -8,17 +8,17 @@
 
 # Install 'xfsprogs' package which provides tools to manage XFS file systems.
 - name: Install XFS file system tools
-  tags: 'volume'
+  tags: "volume"
   become: yes
   apt:
-    name: ['xfsprogs']
+    name: ["xfsprogs"]
     state: latest
     install_recommends: no
     update_cache: yes
 
 # Create an XFS file system on the device specified in the 'volume' variable.
 - name: Create XFS file system on specified device
-  tags: 'volume'
+  tags: "volume"
   become: yes
   filesystem:
     fstype: xfs
@@ -28,7 +28,7 @@
 
 # Check if the directories specified as mount points in the 'volume' variable exist.
 - name: Check if the specified mount point directories exist
-  tags: 'volume'
+  tags: "volume"
   become: yes
   stat:
     path: "{{ item.mountpoint }}"
@@ -38,7 +38,7 @@
 
 # Create the directories specified in the 'volume' variable if they do not exist.
 - name: Create mount point directories if they do not exist
-  tags: 'volume'
+  tags: "volume"
   become: yes
   file:
     path: "{{ item.item.mountpoint }}"
@@ -50,7 +50,7 @@
 
 # Mount the device specified in the 'volume' variable at the corresponding mount point.
 - name: Mount the specified device at the corresponding mount point
-  tags: 'volume'
+  tags: "volume"
   become: yes
   mount:
     path: "{{ item.mountpoint }}"

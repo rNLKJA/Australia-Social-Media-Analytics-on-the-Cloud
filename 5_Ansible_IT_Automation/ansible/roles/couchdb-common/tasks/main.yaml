@@ -9,17 +9,17 @@
   become: true
   apt:
     name:
-      - build-essential  
-      - erlang           
-      - erlang-dev       
-      - libicu-dev       
-      - wget            
-      - curl             
-      - git              
-      - python3          
-      - python3-pip     
-      - docker.io        
-    state: present       # Ensure these packages are installed
+      - build-essential
+      - erlang
+      - erlang-dev
+      - libicu-dev
+      - wget
+      - curl
+      - git
+      - python3
+      - python3-pip
+      - docker.io
+    state: present # Ensure these packages are installed
 
 # Ensure Python's package manager pip is installed.
 - name: Ensure Python3's package manager pip is installed

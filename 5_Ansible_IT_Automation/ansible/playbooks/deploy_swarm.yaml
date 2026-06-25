@@ -42,8 +42,6 @@
     - name: Remove stack
       # Remove the Docker stack named "ccc"
       command: docker stack rm ccc
-      
-
 
     - name: Wait for services to be removed
       # Pause the playbook execution for 10 seconds to allow time for services to be removed
@@ -63,7 +61,7 @@
         state: present
         name: ccc
         compose:
-          - version: '3.2'
+          - version: "3.2"
             services:
               react_app:
                 image: "{{ webapp_image }}"

@@ -1,13 +1,12 @@
 # Team 57 - Ansible Deployment
 
-
 ## [Ansible Demostration Video](https://youtu.be/qermcMn7x1M)
 
 ## Scaling issue
 
 - To scaling the current instance resources, please use the MRC dashboard to resize the instance
 - To create a joined instances (e.g. add a cluster slave):
-  - If add a new instance: you join the couchdb cluster manually 
+  - If add a new instance: you join the couchdb cluster manually
   - If start from scratch, change the variable in `ansible/roles/[dependencies]/[init_script.sh]`
 
 ## How to install ansible
@@ -18,11 +17,10 @@ MACOS
 # for macos
 brew install ansible
 
-# or 
+# or
 pip install ansible
 
 ```
-
 
 WSL
 
@@ -34,7 +32,7 @@ sudo apt-get install ansible
 
 ## How to deploy the application using ansible playbook.
 
-*Note*:
+_Note_:
 
 You need to replace the ssh key path with your own one to use the ansible playbok at your own machine.
 
@@ -77,16 +75,20 @@ Our project deploys both frontend and backend applications, and sets up a databa
 We start by using the script in mrc.yaml to create instances based on the configuration information set in hosts_vars/mrc_yaml. This includes the system image used, the instance name, creation of data volumes, and volume mounting.
 
 ### Setting up inventory
+
 After creating the instances, we proceed to copy the IP addresses of the created instances from the MRC dashboard and fill them in the inventory/inventory.ini file. We then assign tasks to the instances according to our needs. Run `step1_run_mrc.sh`
 
 ### Database deployment and cluster setup
 
 - First, we set the IP address information of the database node in the `inventory/inventory.ini` and fill in the node information in `server_deployment/ansible/roles/couchdb/templates/init_db.sh`. This script is responsible for establishing the cluster.
--  Then, we run `step2_a_create_couchdb.sh` to deploy CouchDB containers on all database nodes using Docker, completing the mapping of data volume mounts. 
--  Finally, we run `step2_b_setup_couchdb_cluster.sh` to set up the cluster.
--  
+- Then, we run `step2_a_create_couchdb.sh` to deploy CouchDB containers on all database nodes using Docker, completing the mapping of data volume mounts.
+- Finally, we run `step2_b_setup_couchdb_cluster.sh` to set up the cluster.
+-
+
 ### Frontend and Backend Deployment
-In our project, for example, we set 172.26.130.83 as the Swarm master node and 172.26.128.118 as the swarm worker. - By running the `step3_a_create_docker_swarm.sh` script, we create a Swarm network based on the node information in inventory.ini. 
+
+In our project, for example, we set 172.26.130.83 as the Swarm master node and 172.26.128.118 as the swarm worker. - By running the `step3_a_create_docker_swarm.sh` script, we create a Swarm network based on the node information in inventory.ini.
+
 - After this, we run `step3_b_deploy_swarm_master.sh` to deploy the frontend React app and the backend Flask app into the Swarm network. The docker image that we created and deployed are stored in the `host_vars/docker_image.yaml`
 
 ### Docker stack services scale

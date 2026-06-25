@@ -1,28 +1,30 @@
+import os
+
 import nltk
+from dotenv import load_dotenv
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk.stem import WordNetLemmatizer
 
-import os
-from dotenv import load_dotenv
-
-nltk.download('vader_lexicon')
-nltk.download('wordnet')
-nltk.download('punkt')
+nltk.download("vader_lexicon")
+nltk.download("wordnet")
+nltk.download("punkt")
 
 load_dotenv()
+
 
 def normalize_string(input_string):
     lemmatizer = WordNetLemmatizer()
     tokens = nltk.word_tokenize(input_string)
     normalized_tokens = [lemmatizer.lemmatize(token) for token in tokens]
-    normalized_string = ' '.join(normalized_tokens)
+    normalized_string = " ".join(normalized_tokens)
     return normalized_string
+
 
 def sentiment_analysis(text):
     sia = SentimentIntensityAnalyzer()
     sentiment = sia.polarity_scores(text)
-    compound_score = sentiment['compound']
-    
+    compound_score = sentiment["compound"]
+
     if compound_score <= -0.8:
         return 1
     elif -0.8 < compound_score <= -0.6:

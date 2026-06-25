@@ -4,7 +4,6 @@
     - ../host_vars/couchdb.yaml
 
   roles:
-
     - role: ../roles/couchdb-common
     - role: ../roles/couchdb-volume
     - role: ../roles/couchdb

@@ -1,6 +1,5 @@
 # Twitter Data Processing & Mastodon Havestor API
 
-
 ## Huge Twitter Data Processing
 
 Huge Twitter data is provided by Unimelb and available in [Dropbox](https://www.dropbox.com/s/r6l4ke6h858bzph/twitter-huge.json.zip?dl=0). The processing logic similar to [2023 CCC Assignment 1](https://github.com/rNLKJA/Unimelb-Master-2023-COMP90024-Assignment-1) big twitter file processing logic.

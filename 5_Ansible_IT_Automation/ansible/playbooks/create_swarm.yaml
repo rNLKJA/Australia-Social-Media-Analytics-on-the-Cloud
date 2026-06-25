@@ -17,14 +17,14 @@
         state: present
         update_cache: yes
       tags: docker
-    
+
     - name: Initialize Swarm
       run_once: true
       command: docker swarm init --advertise-addr={{ hostvars[groups['swarm_manager'][0]]['ansible_host'] }}
       delegate_to: "{{ groups['swarm_manager'][0] }}"
       tags: docker_swarm
       ignore_errors: true
-    
+
     - name: Get Swarm manager join token
       command: docker swarm join-token manager -q
       register: docker_swarm_manager_token
