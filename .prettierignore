@@ -1,0 +1,25 @@
+node_modules/
+build/
+dist/
+.next/
+_archive/
+coverage/
+
+# Lockfiles
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Minified files
+*.min.js
+*.min.css
+
+# Compressed and large data
+*.gz
+*.json.gz
+
+# Generated / data payloads
+2_ReactJS_frontend/frontend/public/sudo_data/
+2_ReactJS_frontend/frontend/public/twitter_data/
+2_ReactJS_frontend/frontend/public/mastodon_data/
+2_ReactJS_frontend/frontend/public/mock_data/
