@@ -120,6 +120,21 @@ pip install -r requirements.txt
 mpiexec -n <NUM_PROCESSORS> python3 scripts/bigTwitterProcessingV1.py -t twitter_huge
 ```
 
+### Xquik export processing
+
+Reviewed Xquik CSV, JSON, or JSONL tweet exports can be converted into the same
+JSONL shape used by the Twitter processing pipeline:
+
+```bash
+cd 4_Python_data_processing
+python3 scripts/twitter/xquik_import.py path/to/xquik-export.jsonl \
+  --output data/processed/xquik_import.jsonl
+```
+
+The converter maps tweet text, author, date, location, tags, language, and
+sentiment score fields when present. It skips incomplete rows and creates the
+output directory if it is missing.
+
 ### Deployment (Ansible + Docker Swarm)
 
 ```bash
