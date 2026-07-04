@@ -17,7 +17,7 @@ NONE = None
 
 
 def get_partition(rank, size, num_partitions=4):
-    partition_size = size // 4
+    partition_size = size // num_partitions
     if partition_size == 0:
         return 0
 
@@ -33,9 +33,9 @@ COUNT = 1000
 def twitter_processor(file, cs, ce, sal_dict, rank, size, db, ns, sa, li):
 
     partition = get_partition(rank, size)
-    with open(
-        Path().absolute() / "data" / "processed" / f"{partition}.json", "a"
-    ) as output_f:
+    output_path = Path().absolute() / "data" / "processed" / f"{partition}.json"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_path, "a") as output_f:
 
         with open(file, mode="rb") as f:
             f.seek(cs)
