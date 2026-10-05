@@ -2,14 +2,20 @@
 
 import { useMemo, useState } from "react";
 import { DivergingLegend, NoDataSwatch, SequentialLegend } from "@/components/charts/legends";
-import { LazyChoroplethMap as ChoroplethMap } from "@/components/map/lazy-map";
+import { LazyChoroplethMap as ChoroplethMap, MAP_BOX } from "@/components/map/lazy-map";
 import { MELB_BOUNDS, VIC_BOUNDS } from "@/components/map/bounds";
 import { RegionSearch } from "@/components/scenario/region-search";
 import { Segmented } from "@/components/scenario/segmented";
 import { ThresholdControl } from "@/components/scenario/threshold-control";
 import { useThemeName } from "@/hooks/use-theme-name";
 import { fmtCompact, fmtInt, fmtScore } from "@/lib/format";
-import { NO_DATA, SEQUENTIAL, divergingColor, quantileBreaks, sequentialColor } from "@/lib/palette";
+import {
+  NO_DATA,
+  divergingColor,
+  quantileBreaks,
+  sequentialClassColors,
+  sequentialColor,
+} from "@/lib/palette";
 import { sentimentDescription } from "@/lib/sentiment";
 import type { SalRegion, Topic } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -114,7 +120,8 @@ export function TwitterExplorer({ regions }: { regions: SalRegion[] }) {
         <div className="space-y-1.5">
           <span className="block text-xs font-medium">Find</span>
           <RegionSearch
-            placeholder="A suburb, e.g. Carlton"
+            placeholder="A suburb, e.g. Geelong"
+            emptyLabel="No suburb with tweets matches"
             items={regions.map((r) => ({
               code: r.code,
               name: r.name,
@@ -136,7 +143,7 @@ export function TwitterExplorer({ regions }: { regions: SalRegion[] }) {
             onSelect={setSelected}
             bounds={view === "melb" ? MELB_BOUNDS : VIC_BOUNDS}
             ariaLabel="Map of Victorian suburbs coloured by tweet sentiment or volume"
-            className="h-[480px] md:h-[600px]"
+            className={MAP_BOX.tall}
             describe={(code, name) => {
               const r = byCode.get(code);
               const a = r?.[topic];
@@ -162,7 +169,7 @@ export function TwitterExplorer({ regions }: { regions: SalRegion[] }) {
               <SequentialLegend
                 label="Tweets per suburb (quantile classes)"
                 breaks={breaks}
-                colors={SEQUENTIAL[theme]}
+                colors={sequentialClassColors(breaks, theme)}
                 format={fmtCompact}
               />
             )}

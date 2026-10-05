@@ -3,15 +3,21 @@
 import { useMemo, useState } from "react";
 import { DivergingLegend, NoDataSwatch, SequentialLegend } from "@/components/charts/legends";
 import { ScatterPlot, type ScatterPoint } from "@/components/charts/scatter-plot";
-import { LazyChoroplethMap as ChoroplethMap } from "@/components/map/lazy-map";
-import { CorrelationReadout } from "@/components/scenario/correlation-readout";
+import { LazyChoroplethMap as ChoroplethMap, MAP_BOX } from "@/components/map/lazy-map";
+import { CAUTION_N, CorrelationReadout } from "@/components/scenario/correlation-readout";
 import { RegionSearch } from "@/components/scenario/region-search";
 import { Segmented } from "@/components/scenario/segmented";
 import { ThresholdControl } from "@/components/scenario/threshold-control";
 import { useThemeName } from "@/hooks/use-theme-name";
 import { fmtAud, fmtAudK, fmtInt, fmtScore } from "@/lib/format";
 import { median } from "@/lib/pandas";
-import { NO_DATA, SEQUENTIAL, divergingColor, quantileBreaks, sequentialColor } from "@/lib/palette";
+import {
+  NO_DATA,
+  divergingColor,
+  quantileBreaks,
+  sequentialClassColors,
+  sequentialColor,
+} from "@/lib/palette";
 import { sentimentDescription } from "@/lib/sentiment";
 import { correlate, describeStrength } from "@/lib/stats";
 import type { IncomeRegion, StoredCorrelation } from "@/lib/types";
@@ -141,6 +147,7 @@ export function IncomeExplorer({
           <span className="block text-xs font-medium">Find</span>
           <RegionSearch
             placeholder="An SA2, e.g. Sydenham"
+            emptyLabel="No SA2 in the chart matches"
             items={kept.map((r) => ({ code: r.code, name: r.name, hint: fmtAudK(r.medianAud) }))}
             onPick={setSelected}
           />
@@ -159,7 +166,7 @@ export function IncomeExplorer({
             onSelect={setSelected}
             onHover={setHovered}
             ariaLabel="Map of Victorian SA2 regions coloured by the selected measure"
-            className="h-[440px] md:h-[520px]"
+            className={MAP_BOX.regular}
             describe={(code, name) => {
               const r = byCode.get(code);
               if (!r) return { title: name, lines: ["No income data"] };
@@ -183,7 +190,7 @@ export function IncomeExplorer({
               <SequentialLegend
                 label="Median personal income, 2015-16 (quantile classes)"
                 breaks={breaks}
-                colors={SEQUENTIAL[theme]}
+                colors={sequentialClassColors(breaks, theme)}
                 format={fmtAudK}
               />
             ) : (
@@ -195,7 +202,7 @@ export function IncomeExplorer({
             )}
             <NoDataSwatch
               color={NO_DATA[theme]}
-              label={mapMetric === "median" ? "IQR outlier / no data" : "Below tweet threshold"}
+              label={mapMetric === "median" ? "IQR outlier / no data" : "Below tweet threshold / IQR outlier"}
             />
           </div>
         </div>
@@ -225,7 +232,12 @@ export function IncomeExplorer({
             />
           </div>
           <CorrelationReadout c={corr} stored={storedMatch} />
-          {corr && (
+          {corr && corr.n < CAUTION_N && (
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              With so few SA2s left, any line fits; lower the threshold to see a meaningful comparison.
+            </p>
+          )}
+          {corr && corr.n >= CAUTION_N && (
             <p className="text-muted-foreground text-sm leading-relaxed">
               With at least {minTweets} {minTweets === 1 ? topicLabel.replace("tweets", "tweet") : topicLabel}{" "}
               per SA2, income explains{" "}

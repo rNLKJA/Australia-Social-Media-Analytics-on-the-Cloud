@@ -103,12 +103,12 @@
 
   --sent-1: #f2876b;
   --sent-2: #dc6c53;
-  --sent-3: #b45a47;
-  --sent-4: #7a4a3f;
-  --sent-5: #3b3935;
-  --sent-6: #2d5d57;
-  --sent-7: #2f857c;
-  --sent-8: #3fae9f;
+  --sent-3: #bf5f4b;
+  --sent-4: #a0675a;
+  --sent-5: #6f6a62;
+  --sent-6: #4e8078;
+  --sent-7: #3f998d;
+  --sent-8: #4fb7a8;
   --sent-9: #6fd3c4;
   --sent-neg: #f07a5c;
   --sent-pos: #5cc7bb;
@@ -304,6 +304,19 @@
 .maplibregl-ctrl-attrib {
   @apply !bg-card/80 text-[10px];
 }
-.dark .maplibregl-ctrl-attrib a {
+.dark .maplibregl-ctrl-attrib,
+.dark .maplibregl-ctrl-attrib a,
+.dark .maplibregl-ctrl-attrib-inner {
   @apply !text-muted-foreground;
+}
+.dark .maplibregl-ctrl-attrib-button {
+  filter: invert(0.9);
+}
+/* "no data" swatch: the same diagonal hatch the maps draw */
+.hatch {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--hatch-color, currentColor) 0 1.5px,
+    transparent 1.5px 4px
+  );
 }

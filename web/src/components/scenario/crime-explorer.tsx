@@ -3,14 +3,20 @@
 import { useMemo, useState } from "react";
 import { DivergingLegend, NoDataSwatch, SequentialLegend } from "@/components/charts/legends";
 import { ScatterPlot, type ScatterPoint } from "@/components/charts/scatter-plot";
-import { LazyChoroplethMap as ChoroplethMap } from "@/components/map/lazy-map";
-import { CorrelationReadout } from "@/components/scenario/correlation-readout";
+import { LazyChoroplethMap as ChoroplethMap, MAP_BOX } from "@/components/map/lazy-map";
+import { CAUTION_N, CorrelationReadout } from "@/components/scenario/correlation-readout";
 import { RegionSearch } from "@/components/scenario/region-search";
 import { Segmented } from "@/components/scenario/segmented";
 import { ThresholdControl } from "@/components/scenario/threshold-control";
 import { useThemeName } from "@/hooks/use-theme-name";
 import { fmtCompact, fmtInt, fmtScore, plural } from "@/lib/format";
-import { NO_DATA, SEQUENTIAL, divergingColor, quantileBreaks, sequentialColor } from "@/lib/palette";
+import {
+  NO_DATA,
+  divergingColor,
+  quantileBreaks,
+  sequentialClassColors,
+  sequentialColor,
+} from "@/lib/palette";
 import { sentimentDescription } from "@/lib/sentiment";
 import { correlate, describeStrength } from "@/lib/stats";
 import { CRIME_CATEGORIES, type CrimeRegion, type StoredCorrelation } from "@/lib/types";
@@ -156,6 +162,7 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
           <span className="block text-xs font-medium">Find</span>
           <RegionSearch
             placeholder="An LGA, e.g. Ballarat"
+            emptyLabel="No Victorian LGA matches"
             items={regions.map((r) => ({ code: r.code, name: r.name, hint: fmtCompact(r.total) }))}
             onPick={setSelected}
           />
@@ -173,7 +180,7 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
             onSelect={setSelected}
             onHover={setHovered}
             ariaLabel="Map of Victorian local government areas coloured by the selected measure"
-            className="h-[440px] md:h-[520px]"
+            className={MAP_BOX.regular}
             describe={(code, name) => {
               const r = byCode.get(code);
               if (!r) return { title: name, lines: ["No crime data"] };
@@ -193,7 +200,7 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
               <SequentialLegend
                 label="Recorded offences, 2019 (quantile classes)"
                 breaks={breaks}
-                colors={SEQUENTIAL[theme]}
+                colors={sequentialClassColors(breaks, theme)}
                 format={(v) => fmtCompact(Math.round(v))}
               />
             ) : (
@@ -205,7 +212,15 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
             )}
             <NoDataSwatch
               color={NO_DATA[theme]}
-              label={mapMetric === "total" ? "IQR outlier (hidden)" : "Below threshold / outlier"}
+              label={
+                mapMetric === "total"
+                  ? withOutliers
+                    ? "No offence data"
+                    : "IQR outlier (hidden)"
+                  : withOutliers
+                    ? "Below tweet threshold"
+                    : "Below tweet threshold / IQR outlier"
+              }
             />
           </div>
         </div>
@@ -235,7 +250,12 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
             />
           </div>
           <CorrelationReadout c={corr} stored={storedMatch} />
-          {corr && (
+          {corr && corr.n < CAUTION_N && (
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              With so few LGAs left, any line fits; lower the threshold to see a meaningful comparison.
+            </p>
+          )}
+          {corr && corr.n >= CAUTION_N && (
             <p className="text-muted-foreground text-sm leading-relaxed">
               {corr.n} LGAs with at least {minTweets}{" "}
               {minTweets === 1 ? topic.replace("tweets", "tweet") : topic}: {describeStrength(corr.pearsonR)}{" "}

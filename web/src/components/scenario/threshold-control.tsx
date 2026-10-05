@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 
@@ -19,16 +20,18 @@ export function ThresholdControl({
   label?: string;
   className?: string;
 }) {
+  const labelId = useId();
   return (
     <div className={cn("space-y-2", className)}>
       <div className="flex items-baseline justify-between gap-2">
-        <span id="threshold-label" className="text-xs font-medium">
+        <span id={labelId} className="text-xs font-medium">
           {label}
         </span>
         <span className="num text-muted-foreground text-xs">≥ {value}</span>
       </div>
       <Slider
-        aria-labelledby="threshold-label"
+        aria-labelledby={labelId}
+        getAriaValueText={(v) => `at least ${v} tweet${v === 1 ? "" : "s"}`}
         min={1}
         max={max}
         step={1}
@@ -42,6 +45,7 @@ export function ThresholdControl({
             type="button"
             onClick={() => onChange(p)}
             aria-pressed={value === p}
+            aria-label={`At least ${p} tweet${p === 1 ? "" : "s"}`}
             className={cn(
               "num border-border text-muted-foreground hover:text-foreground rounded border px-2 py-0.5 text-[11px] transition-colors",
               value === p &&

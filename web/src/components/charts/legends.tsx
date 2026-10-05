@@ -71,6 +71,7 @@ export function SequentialLegend({
   );
 }
 
+/** Swatch for regions without a value; matches the maps' diagonal hatch. */
 export function NoDataSwatch({
   color,
   label = "No tweets / filtered out",
@@ -81,8 +82,8 @@ export function NoDataSwatch({
   return (
     <span className="text-muted-foreground inline-flex items-center gap-1.5 text-[11px]">
       <span
-        className="border-border inline-block size-2.5 rounded-sm border"
-        style={{ background: color }}
+        className="hatch border-border inline-block size-3 rounded-sm border"
+        style={{ ["--hatch-color" as string]: color }}
         aria-hidden
       />
       {label}

@@ -4,14 +4,22 @@ import * as React from "react";
 import { cn } from "cn";
 import { Slider as SliderPrimitive } from "radix-ui";
 
+/**
+ * shadcn Slider. The accessible name and value text belong on the thumb (the
+ * element with role="slider"), so `aria-label`, `aria-labelledby` and
+ * `getAriaValueText` are forwarded there rather than to the root.
+ */
 function Slider({
   className,
   defaultValue,
   value,
   min = 0,
   max = 100,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
+  getAriaValueText,
   ...props
-}: React.ComponentProps<typeof SliderPrimitive.Root>) {
+}: React.ComponentProps<typeof SliderPrimitive.Root> & { getAriaValueText?: (value: number) => string }) {
   const _values = React.useMemo(
     () => (Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [min, max]),
     [value, defaultValue, min, max],
@@ -43,6 +51,9 @@ function Slider({
         <SliderPrimitive.Thumb
           data-slot="slider-thumb"
           key={index}
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledBy}
+          aria-valuetext={getAriaValueText ? getAriaValueText(_values[index]) : undefined}
           className="border-ring ring-ring/50 relative block size-3 shrink-0 rounded-full border bg-white transition-[color,box-shadow] select-none after:absolute after:-inset-2 hover:ring-3 focus-visible:ring-3 focus-visible:outline-hidden active:ring-3 disabled:pointer-events-none disabled:opacity-50"
         />
       ))}

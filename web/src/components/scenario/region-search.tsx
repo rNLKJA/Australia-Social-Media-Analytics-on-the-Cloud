@@ -15,11 +15,14 @@ export function RegionSearch({
   items,
   onPick,
   placeholder = "Find a region",
+  emptyLabel = "No region matches",
   className,
 }: {
   items: SearchItem[];
   onPick: (code: string) => void;
   placeholder?: string;
+  /** shown (and announced) when the query matches nothing, e.g. "No suburb with tweets matches" */
+  emptyLabel?: string;
   className?: string;
 }) {
   const id = useId();
@@ -35,6 +38,9 @@ export function RegionSearch({
     );
     return [...starts, ...contains].slice(0, 8);
   }, [q, items]);
+
+  const query = q.trim();
+  const noMatch = open && !!query && matches.length === 0;
 
   const pick = (code: string) => {
     onPick(code);
@@ -94,6 +100,18 @@ export function RegionSearch({
         >
           <X className="size-3.5" aria-hidden />
         </button>
+      )}
+      <p className="sr-only" aria-live="polite">
+        {query
+          ? matches.length
+            ? `${matches.length} match${matches.length === 1 ? "" : "es"}`
+            : `${emptyLabel} “${query}”`
+          : ""}
+      </p>
+      {noMatch && (
+        <div className="border-border bg-popover text-muted-foreground absolute z-20 mt-1 w-full rounded-md border px-3 py-2 text-sm shadow-lg">
+          {emptyLabel} “{query}”.
+        </div>
       )}
       {open && matches.length > 0 && (
         <ul

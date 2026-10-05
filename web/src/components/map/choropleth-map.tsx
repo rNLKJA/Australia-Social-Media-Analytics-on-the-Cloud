@@ -2,7 +2,12 @@
 
 import type { FeatureCollection, Geometry } from "geojson";
 import * as maplibregl from "maplibre-gl";
-import type { LngLatBoundsLike, StyleSpecification } from "maplibre-gl";
+import type {
+  ExpressionSpecification,
+  FilterSpecification,
+  LngLatBoundsLike,
+  StyleSpecification,
+} from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
 import { feature } from "topojson-client";
@@ -21,6 +26,22 @@ const BASEMAP: Record<ThemeName, string> = {
   light: "https://tiles.openfreemap.org/styles/positron",
   dark: "https://tiles.openfreemap.org/styles/dark",
 };
+
+/** Keep panning near south-east Australia (Victoria plus a margin). */
+const MAX_BOUNDS: LngLatBoundsLike = [
+  [128, -46],
+  [160, -28],
+];
+
+const HATCH = "social-sense-nodata-hatch";
+
+/** Regions with a value are opaque; no-data regions only get a faint tint under the hatch. */
+const HAS_FILL_OPACITY: ExpressionSpecification = [
+  "case",
+  ["to-boolean", ["coalesce", ["feature-state", "fill"], ""]],
+  0.86,
+  0.12,
+];
 
 type RegionProps = { code: string; name: string };
 type Regions = FeatureCollection<Geometry, RegionProps>;
@@ -113,20 +134,34 @@ export function ChoroplethMap({
     latest.current = { fills, noDataColor, selected, onSelect, onHover, describe, theme };
   });
 
+  // imperative hooks the effects below call into (set up by the map effect)
+  const ctl = useRef<{ setTheme: (t: ThemeName) => void } | null>(null);
+
   // ---- create the map once ----------------------------------------------------
   useEffect(() => {
     if (!container.current) return;
     let cancelled = false;
     let usedFallback = false;
     let hovered: string | null = null;
+    // `style.load` has fired for the current style; cleared before every setStyle
+    let styleReady = false;
+    // bumped on every setStyle so an overlay pass started for an old style aborts
+    let styleGen = 0;
+    let overlayBusy = false;
+    let overlayAgain = false;
+
+    // On phones the map is most of the screen: one finger scrolls the page and
+    // two fingers pan, with MapLibre's built-in hint.
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
 
     const map = new maplibregl.Map({
       container: container.current,
       style: BASEMAP[latest.current.theme],
       bounds,
       fitBoundsOptions: { padding: 16 },
+      maxBounds: MAX_BOUNDS,
       attributionControl: { compact: true },
-      cooperativeGestures: false,
+      cooperativeGestures: coarse,
       dragRotate: false,
       pitchWithRotate: false,
       maxZoom: 13,
@@ -137,14 +172,45 @@ export function ChoroplethMap({
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
     mapRef.current = map;
 
-    const addOverlay = async () => {
-      if (cancelled) return;
-      if (usedFallback && !map.getSource("states")) {
-        try {
-          const states = await loadTopo("/geo/aus-states.topo.json");
-          if (cancelled) return;
+    const setStyle = (style: string | StyleSpecification) => {
+      styleReady = false;
+      styleGen++;
+      setReady(false);
+      map.setStyle(style, { diff: false });
+    };
+
+    const regionsP = loadTopo(geoUrl, objectName) as Promise<Regions>;
+    regionsP
+      .then((fc) => {
+        if (cancelled) return;
+        dataRef.current = fc;
+        void addOverlay();
+      })
+      .catch(() => !cancelled && setStatus("error"));
+
+    /**
+     * Add the fallback state outlines (if needed) and the region layers to the
+     * current style. Waits for both TopoJSON files, never for basemap tiles, and
+     * is serialised so concurrent triggers cannot race over the same sources.
+     */
+    const addOverlay = async (): Promise<void> => {
+      if (cancelled || !styleReady) return;
+      if (overlayBusy) {
+        overlayAgain = true;
+        return;
+      }
+      overlayBusy = true;
+      const gen = styleGen;
+      try {
+        const needStates = usedFallback && !map.getSource("states");
+        const [states, data] = await Promise.all([
+          needStates ? loadTopo("/geo/aus-states.topo.json").catch(() => null) : Promise.resolve(null),
+          regionsP.catch(() => null),
+        ]);
+        if (cancelled || gen !== styleGen || !styleReady) return;
+        const dark = latest.current.theme === "dark";
+        if (states && !map.getSource("states")) {
           map.addSource("states", { type: "geojson", data: states });
-          const dark = latest.current.theme === "dark";
           map.addLayer({
             id: "states-fill",
             type: "fill",
@@ -157,81 +223,103 @@ export function ChoroplethMap({
             source: "states",
             paint: { "line-color": dark ? "#4a4f57" : "#b9ae9c", "line-width": 1 },
           });
-        } catch {
-          /* the regions still render on the plain background */
         }
-      }
-      const data = dataRef.current;
-      if (!data || map.getSource("regions")) return;
-      map.addSource("regions", { type: "geojson", data, promoteId: "code" });
-      const firstSymbol = map.getStyle().layers?.find((l) => l.type === "symbol")?.id;
-      map.addLayer(
-        {
-          id: "regions-fill",
-          type: "fill",
-          source: "regions",
-          paint: {
-            "fill-color": ["coalesce", ["feature-state", "fill"], latest.current.noDataColor],
-            "fill-opacity": 0.86,
+        if (!data || map.getSource("regions")) return;
+        if (!map.hasImage(HATCH))
+          map.addImage(HATCH, hatchImage(latest.current.noDataColor), { pixelRatio: 2 });
+        map.addSource("regions", { type: "geojson", data, promoteId: "code" });
+        // Above the basemap's roads and boundaries, below its place labels.
+        const beforeId = labelLayer(map);
+        map.addLayer(
+          {
+            id: "regions-fill",
+            type: "fill",
+            source: "regions",
+            paint: {
+              "fill-color": ["coalesce", ["feature-state", "fill"], latest.current.noDataColor],
+              "fill-opacity": HAS_FILL_OPACITY,
+            },
           },
-        },
-        firstSymbol,
-      );
-      map.addLayer(
-        {
-          id: "regions-line",
+          beforeId,
+        );
+        map.addLayer(
+          {
+            id: "regions-nodata",
+            type: "fill",
+            source: "regions",
+            filter: noDataFilter(latest.current.fills),
+            paint: { "fill-pattern": HATCH, "fill-opacity": 0.9 },
+          },
+          beforeId,
+        );
+        map.addLayer(
+          {
+            id: "regions-line",
+            type: "line",
+            source: "regions",
+            paint: {
+              "line-color": dark ? "#34373d" : "#fffdf9",
+              "line-width": ["case", ["boolean", ["feature-state", "hover"], false], 2.2, 0.4],
+              "line-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 1, 0.7],
+            },
+          },
+          beforeId,
+        );
+        map.addLayer({
+          id: "regions-selected",
           type: "line",
           source: "regions",
-          paint: {
-            "line-color": latest.current.theme === "dark" ? "#0d0e10" : "#fffdf9",
-            "line-width": ["case", ["boolean", ["feature-state", "hover"], false], 2.2, 0.4],
-            "line-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 1, 0.7],
-          },
-        },
-        firstSymbol,
-      );
-      map.addLayer({
-        id: "regions-selected",
-        type: "line",
-        source: "regions",
-        filter: ["==", ["get", "code"], latest.current.selected ?? ""],
-        paint: { "line-color": latest.current.theme === "dark" ? "#f5f1e8" : "#1c1a17", "line-width": 2.4 },
-      });
-      applyFills(map, latest.current.fills);
-      setReady(true);
-      setStatus(usedFallback ? "fallback" : "ready");
+          filter: ["==", ["get", "code"], latest.current.selected ?? ""],
+          paint: { "line-color": dark ? "#f5f1e8" : "#1c1a17", "line-width": 2.4 },
+        });
+        applyFills(map, latest.current.fills);
+        setReady(true);
+        setStatus(usedFallback ? "fallback" : "ready");
+      } finally {
+        overlayBusy = false;
+        if (overlayAgain) {
+          overlayAgain = false;
+          void addOverlay();
+        }
+      }
     };
 
     const switchToFallback = () => {
       if (usedFallback || cancelled) return;
       usedFallback = true;
-      map.setStyle(fallbackStyle(latest.current.theme), { diff: false });
+      setStyle(fallbackStyle(latest.current.theme));
     };
+    // Only a basemap *style* that never loads counts as failure; slow tiles do not.
     const timeout = window.setTimeout(() => {
-      if (!map.isStyleLoaded()) switchToFallback();
+      if (!styleReady) switchToFallback();
     }, 9000);
 
+    ctl.current = {
+      setTheme: (t) => setStyle(usedFallback ? fallbackStyle(t) : BASEMAP[t]),
+    };
+
     map.on("style.load", () => {
-      setReady(false);
+      styleReady = true;
       void addOverlay();
     });
     map.on("error", (e) => {
-      // style or tile failures before the basemap is up -> local fallback basemap
+      // the style (or its sprite/glyph requests) failed before it loaded -> local fallback
       if (
-        !map.getSource("regions") &&
+        !styleReady &&
         /style|Failed to fetch|NetworkError|AJAXError/i.test(String(e.error?.message ?? ""))
       ) {
         switchToFallback();
       }
     });
-
-    loadTopo(geoUrl, objectName)
-      .then((fc) => {
-        if (cancelled) return;
-        dataRef.current = fc as Regions;
-        if (map.isStyleLoaded()) void addOverlay();
-      })
-      .catch(() => !cancelled && setStatus("error"));
+    // safety net: if anything above was skipped, try again once the map settles
+    map.on("idle", () => {
+      if (styleReady && dataRef.current && !map.getSource("regions")) void addOverlay();
+    });
+    // third-party styles occasionally reference sprites they do not ship
+    // (OpenFreeMap's dark style asks for "circle-11"): register a blank image
+    map.setMissingStyleImageResolver((id) => {
+      if (!map.hasImage(id)) map.addImage(id, { width: 1, height: 1, data: new Uint8Array(4) });
+    });
 
     map.on("mousemove", "regions-fill", (e) => {
       const f = e.features?.[0];
@@ -266,6 +354,7 @@ export function ChoroplethMap({
 
     return () => {
       cancelled = true;
+      ctl.current = null;
       window.clearTimeout(timeout);
       map.remove();
       mapRef.current = null;
@@ -276,15 +365,10 @@ export function ChoroplethMap({
   // ---- theme switch: swap basemap, overlay is re-added on style.load ----------
   const firstTheme = useRef(theme);
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map || theme === firstTheme.current) return;
+    if (theme === firstTheme.current) return;
     firstTheme.current = theme;
-    if (status === "fallback") {
-      map.setStyle(fallbackStyle(theme), { diff: false });
-    } else {
-      map.setStyle(BASEMAP[theme], { diff: false });
-    }
-  }, [theme, status]);
+    ctl.current?.setTheme(theme);
+  }, [theme]);
 
   // ---- extent changes (e.g. Melbourne <-> Victoria) -----------------------------
   const boundsKey = JSON.stringify(bounds);
@@ -305,6 +389,7 @@ export function ChoroplethMap({
     if (!map || !ready || !map.getSource("regions")) return;
     applyFills(map, fills);
     map.setPaintProperty("regions-fill", "fill-color", ["coalesce", ["feature-state", "fill"], noDataColor]);
+    if (map.getLayer("regions-nodata")) map.setFilter("regions-nodata", noDataFilter(fills));
   }, [fills, noDataColor, ready]);
 
   // ---- selection -----------------------------------------------------------------
@@ -367,6 +452,40 @@ export function ChoroplethMap({
       )}
     </div>
   );
+}
+
+/** Hatch only the regions without a fill. */
+function noDataFilter(fills: Record<string, string>): FilterSpecification {
+  return ["!", ["in", ["get", "code"], ["literal", Object.keys(fills)]]];
+}
+
+/** 8x8 CSS-pixel diagonal hatch (drawn at 2x) in the given colour. */
+function hatchImage(color: string) {
+  const size = 16;
+  const data = new Uint8Array(size * size * 4);
+  const n = parseInt(color.slice(1), 16);
+  const rgb = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      if ((x + y) % size < 3) {
+        const i = (y * size + x) * 4;
+        data.set([rgb[0], rgb[1], rgb[2], 230], i);
+      }
+    }
+  }
+  return { width: size, height: size, data };
+}
+
+/**
+ * The first layer of the basemap's trailing block of symbol layers (place
+ * labels). Inserting the overlay there keeps roads, rail and boundaries under
+ * the choropleth and the place names on top of it.
+ */
+function labelLayer(map: maplibregl.Map): string | undefined {
+  const layers = map.getStyle().layers ?? [];
+  let i = layers.length;
+  while (i > 0 && layers[i - 1].type === "symbol") i--;
+  return layers[i]?.id;
 }
 
 function applyFills(map: maplibregl.Map, fills: Record<string, string>) {

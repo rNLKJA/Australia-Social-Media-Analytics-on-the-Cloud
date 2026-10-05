@@ -34,11 +34,14 @@ export function niceTicks(min: number, max: number, count = 5): number[] {
   return out;
 }
 
-/** Powers of ten (and 2x, 5x) inside [min, max] for log axes. */
-export function logTicks(min: number, max: number): number[] {
+/**
+ * Powers of ten times each mantissa (default 1, 2, 5) inside [min, max] for
+ * log axes. Narrow charts pass fewer mantissas, e.g. [1, 3] or [1].
+ */
+export function logTicks(min: number, max: number, mantissas: readonly number[] = [1, 2, 5]): number[] {
   const out: number[] = [];
   for (let e = Math.floor(Math.log10(min)); e <= Math.ceil(Math.log10(max)); e++) {
-    for (const m of [1, 2, 5]) {
+    for (const m of mantissas) {
       const v = m * 10 ** e;
       if (v >= min && v <= max) out.push(v);
     }

@@ -7,7 +7,9 @@ export type ThemeName = "light" | "dark";
 
 export const SENTIMENT: Record<ThemeName, string[]> = {
   light: ["#a63a24", "#c8553d", "#e07a5f", "#efb09a", "#e4dccd", "#a7d3cb", "#6bb3a8", "#2e8c82", "#0f625c"],
-  dark: ["#f2876b", "#dc6c53", "#b45a47", "#7a4a3f", "#3b3935", "#2d5d57", "#2f857c", "#3fae9f", "#6fd3c4"],
+  // Dark: the neutral midpoint is a visible mid-tone (>= 3:1 against the card)
+  // rather than a near-black, so "scored 5" never reads as "no data".
+  dark: ["#f2876b", "#dc6c53", "#bf5f4b", "#a0675a", "#6f6a62", "#4e8078", "#3f998d", "#4fb7a8", "#6fd3c4"],
 };
 
 export const SEQUENTIAL: Record<ThemeName, string[]> = {
@@ -15,7 +17,12 @@ export const SEQUENTIAL: Record<ThemeName, string[]> = {
   dark: ["#222033", "#332e55", "#463f78", "#5b5398", "#7a70b6", "#a196d3", "#d0c7f0"],
 };
 
-export const NO_DATA: Record<ThemeName, string> = { light: "#d9d3c8", dark: "#2a2c30" };
+/**
+ * No-data regions are drawn as a hatch (diagonal lines in this colour over a
+ * faint tint), never as a flat fill, so they cannot be mistaken for the
+ * neutral midpoint of the sentiment scale.
+ */
+export const NO_DATA: Record<ThemeName, string> = { light: "#a9a090", dark: "#5a5e66" };
 
 function hexToRgb(hex: string): [number, number, number] {
   const n = parseInt(hex.slice(1), 16);
@@ -54,7 +61,11 @@ export function divergingColor(
   return sentimentColor(5 + t * 4, theme);
 }
 
-/** Quantile class breaks (k classes => k-1 internal breaks). */
+/**
+ * Quantile class breaks (k classes => at most k-1 internal breaks). Repeated
+ * breaks are dropped, because a class bounded by two equal breaks can never
+ * hold a value: skewed counts (most suburbs with 1 tweet) yield fewer classes.
+ */
 export function quantileBreaks(values: number[], k: number): number[] {
   const xs = values.filter((v) => Number.isFinite(v)).sort((a, b) => a - b);
   if (!xs.length) return [];
@@ -62,7 +73,8 @@ export function quantileBreaks(values: number[], k: number): number[] {
   for (let i = 1; i < k; i++) {
     const pos = (xs.length - 1) * (i / k);
     const lo = Math.floor(pos);
-    out.push(xs[lo] + (xs[Math.ceil(pos)] - xs[lo]) * (pos - lo));
+    const b = xs[lo] + (xs[Math.ceil(pos)] - xs[lo]) * (pos - lo);
+    if (!out.length || b > out[out.length - 1]) out.push(b);
   }
   return out;
 }
@@ -73,11 +85,19 @@ export function classify(value: number, breaks: number[]): number {
   return c;
 }
 
-export function sequentialColor(value: number, breaks: number[], theme: ThemeName = "light"): string {
+/** Colour of class `c` when `k` classes are spread over the 7-step palette. */
+function classColor(c: number, k: number, theme: ThemeName): string {
   const pal = SEQUENTIAL[theme];
-  const k = breaks.length + 1;
-  const c = classify(value, breaks);
-  // spread k classes over the 7-step palette
   const idx = k === 1 ? pal.length - 1 : Math.round((c / (k - 1)) * (pal.length - 1));
   return pal[idx];
+}
+
+export function sequentialColor(value: number, breaks: number[], theme: ThemeName = "light"): string {
+  return classColor(classify(value, breaks), breaks.length + 1, theme);
+}
+
+/** The colours actually used for each class (for the legend). */
+export function sequentialClassColors(breaks: number[], theme: ThemeName = "light"): string[] {
+  const k = breaks.length + 1;
+  return Array.from({ length: k }, (_, c) => classColor(c, k, theme));
 }

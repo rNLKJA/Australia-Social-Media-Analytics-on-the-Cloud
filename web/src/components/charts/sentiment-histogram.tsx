@@ -56,6 +56,9 @@ export function SentimentHistogram({
                 height={Math.max(h, s > 0 ? 1 : 0)}
                 rx={2}
                 fill={`var(--sent-${i + 1})`}
+                // a faint edge keeps the pale neutral bar visible on the card in both themes
+                stroke="color-mix(in oklab, var(--foreground) 22%, transparent)"
+                strokeWidth={1}
               >
                 <title>{`${i + 1} · ${sentimentDescription(i + 1)}: ${fmtInt(counts[i])} (${fmtPct(s, 1)})`}</title>
               </rect>

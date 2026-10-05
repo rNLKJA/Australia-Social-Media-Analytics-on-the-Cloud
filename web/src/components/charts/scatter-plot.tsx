@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useElementSize } from "@/hooks/use-element-size";
 import { extent, linearScale, logScale, logTicks, niceTicks } from "@/lib/scales";
 import { cn } from "@/lib/utils";
@@ -40,6 +40,29 @@ interface Props {
 
 const M = { top: 16, right: 18, bottom: 46, left: 52 };
 const px = (v: number) => Math.round(v * 10) / 10;
+/** approximate rendered width of an 11px label */
+const textW = (s: string) => s.length * 6.2;
+
+type Box = { x0: number; y0: number; x1: number; y1: number };
+const overlaps = (a: Box, b: Box) => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
+
+/** Log-axis ticks: the densest 1-2-5 / 1-3 / 1 set whose labels do not collide. */
+function fitLogTicks(d: [number, number], x: (v: number) => number, fmt: (v: number) => string): number[] {
+  const sets = [[1, 2, 5], [1, 3], [1]] as const;
+  let last: number[] = [];
+  for (const m of sets) {
+    const ts = logTicks(d[0], d[1], m);
+    if (!ts.length) continue;
+    last = ts;
+    let ok = true;
+    for (let i = 1; i < ts.length && ok; i++) {
+      const gap = x(ts[i]) - x(ts[i - 1]);
+      ok = gap >= (textW(fmt(ts[i])) + textW(fmt(ts[i - 1]))) / 2 + 8;
+    }
+    if (ok && ts.length >= 2) return ts;
+  }
+  return last;
+}
 
 export function ScatterPlot({
   points,
@@ -77,59 +100,142 @@ export function ScatterPlot({
     const ys = Object.assign((v: number) => px(rawY(v)), { domain: rawY.domain, range: rawY.range });
     const nMax = Math.max(1, ...points.map((p) => p.n));
     const rs = (n: number) => px(2.5 + Math.sqrt(n / nMax) * 11);
-    const xt = xType === "log" ? logTicks(xd[0], xd[1]) : niceTicks(xd[0], xd[1], W < 480 ? 3 : 5);
+    const xt = xType === "log" ? fitLogTicks(xd, xs, xFormat) : niceTicks(xd[0], xd[1], W < 480 ? 3 : 5);
     return { x: xs, y: ys, r: rs, xTicks: xt, yTicks: niceTicks(yd[0], yd[1], 5) };
-  }, [points, W, H, xType, yDomain]);
+  }, [points, W, H, xType, yDomain, xFormat]);
 
-  const fitPath = useMemo(() => {
-    if (!fit) return null;
+  // fit line in pixel space (also used to keep labels off it)
+  const fitPts = useMemo(() => {
+    if (!fit) return [] as [number, number][];
     const [a, b] = x.domain;
     const steps = 40;
-    const pts: string[] = [];
+    const pts: [number, number][] = [];
     for (let i = 0; i <= steps; i++) {
       const t = i / steps;
       const xv =
         xType === "log" ? 10 ** (Math.log10(a) + (Math.log10(b) - Math.log10(a)) * t) : a + (b - a) * t;
       const yv = fit.intercept + fit.slope * (fit.logX ? Math.log10(xv) : xv);
       if (yv < y.domain[0] || yv > y.domain[1]) continue;
-      pts.push(`${x(xv).toFixed(1)},${y(yv).toFixed(1)}`);
+      pts.push([x(xv), y(yv)]);
     }
-    return pts.length > 1 ? `M${pts.join("L")}` : null;
+    return pts;
   }, [fit, x, y, xType]);
+  const fitPath =
+    fitPts.length > 1 ? `M${fitPts.map(([a, b]) => `${a.toFixed(1)},${b.toFixed(1)}`).join("L")}` : null;
+  const refVisible = !!yReference && yReference.value > y.domain[0] && yReference.value < y.domain[1];
+
+  // keyboard-focused dot, and the dot that keeps the chart's single tab stop
+  const [focused, setFocused] = useState<string | null>(null);
+  const [kbId, setKbId] = useState<string | null>(null);
 
   // draw large circles first so small ones stay hoverable
   const ordered = useMemo(() => [...points].sort((p, q) => q.n - p.n), [points]);
-  const focus = points.find((p) => p.id === (hovered ?? selected));
+  const focus = points.find((p) => p.id === (hovered ?? focused ?? selected));
+
+  /**
+   * Permanent labels, placed greedily in priority order (the `annotate` order):
+   * right of the dot, then left, above, below. A label that would overlap an
+   * earlier label, the reference-line caption or the fit line is dropped.
+   */
   const labelled = useMemo(() => {
-    // naive collision avoidance: stack labels that would overlap vertically
-    const items = points
-      .filter((p) => annotate.includes(p.id) && p.id !== focus?.id)
-      .map((p) => {
-        // flip labels to the left of the dot near the right edge
-        const right = x(p.x) + r(p.n) + 4;
-        const flip = right + p.label.length * 6.2 > W - 4;
-        return {
-          p,
-          lx: flip ? x(p.x) - r(p.n) - 4 : right,
-          ly: y(p.y),
-          anchor: (flip ? "end" : "start") as "end" | "start",
-        };
-      })
-      .sort((a, b) => a.ly - b.ly);
-    for (let i = 1; i < items.length; i++) {
-      const prev = items[i - 1];
-      if (Math.abs(items[i].lx - prev.lx) < 90 && items[i].ly - prev.ly < 13) items[i].ly = prev.ly + 13;
+    const taken: Box[] = [];
+    if (refVisible && yReference) {
+      const ry = y(yReference.value) - 5;
+      const x1 = W - M.right - 4;
+      taken.push({ x0: x1 - yReference.label.length * 5.6, y0: ry - 10, x1, y1: ry + 2 });
     }
-    return items;
-  }, [points, annotate, focus, x, y, r, W]);
+    const fitY = (px0: number): number | null => {
+      for (let i = 1; i < fitPts.length; i++) {
+        const [ax, ay] = fitPts[i - 1];
+        const [bx, by] = fitPts[i];
+        if (px0 >= ax && px0 <= bx) return ay + ((by - ay) * (px0 - ax)) / (bx - ax || 1);
+      }
+      return null;
+    };
+    const crossesFit = (b: Box) =>
+      [b.x0, (b.x0 + b.x1) / 2, b.x1].some((xx) => {
+        const fy = fitY(xx);
+        return fy !== null && fy >= b.y0 - 1 && fy <= b.y1 + 1;
+      });
+    const inside = (b: Box) => b.x0 >= M.left && b.x1 <= W - M.right && b.y0 >= M.top && b.y1 <= H - M.bottom;
+    const byId = new Map(points.map((p) => [p.id, p]));
+    const out: { p: ScatterPoint; lx: number; ly: number; anchor: "start" | "end" | "middle" }[] = [];
+    for (const id of annotate) {
+      const p = byId.get(id);
+      if (!p || p.id === focus?.id) continue;
+      const cx = x(p.x);
+      const cy = y(p.y);
+      const rr = r(p.n);
+      const w = textW(p.label);
+      const h = 12;
+      const options: { box: Box; lx: number; ly: number; anchor: "start" | "end" | "middle" }[] = [
+        {
+          box: { x0: cx + rr + 4, y0: cy - h / 2, x1: cx + rr + 4 + w, y1: cy + h / 2 },
+          lx: cx + rr + 4,
+          ly: cy,
+          anchor: "start",
+        },
+        {
+          box: { x0: cx - rr - 4 - w, y0: cy - h / 2, x1: cx - rr - 4, y1: cy + h / 2 },
+          lx: cx - rr - 4,
+          ly: cy,
+          anchor: "end",
+        },
+        {
+          box: { x0: cx - w / 2, y0: cy - rr - 3 - h, x1: cx + w / 2, y1: cy - rr - 3 },
+          lx: cx,
+          ly: cy - rr - 3 - h / 2,
+          anchor: "middle",
+        },
+        {
+          box: { x0: cx - w / 2, y0: cy + rr + 3, x1: cx + w / 2, y1: cy + rr + 3 + h },
+          lx: cx,
+          ly: cy + rr + 3 + h / 2,
+          anchor: "middle",
+        },
+      ];
+      const pick = options.find(
+        (o) => inside(o.box) && !taken.some((t) => overlaps(t, o.box)) && !crossesFit(o.box),
+      );
+      if (!pick) continue;
+      taken.push(pick.box);
+      out.push({ p, lx: pick.lx, ly: pick.ly, anchor: pick.anchor });
+    }
+    return out;
+  }, [points, annotate, focus, x, y, r, W, H, fitPts, refVisible, yReference]);
+
+  // keyboard: one tab stop for the whole chart, arrow keys move along the x axis
+  const kbOrder = useMemo(() => [...points].sort((p, q) => p.x - q.x || p.y - q.y), [points]);
+  const circles = useRef(new Map<string, SVGCircleElement>());
+  const tabStop =
+    (kbId && points.some((p) => p.id === kbId) ? kbId : null) ??
+    (selected && points.some((p) => p.id === selected) ? selected : null) ??
+    kbOrder[0]?.id;
+  const moveTo = (id: string | undefined) => {
+    if (!id) return;
+    setKbId(id);
+    circles.current.get(id)?.focus();
+  };
+  const onKey = (e: React.KeyboardEvent, p: ScatterPoint) => {
+    const i = kbOrder.findIndex((q) => q.id === p.id);
+    if (e.key === "ArrowRight" || e.key === "ArrowUp")
+      moveTo(kbOrder[Math.min(i + 1, kbOrder.length - 1)]?.id);
+    else if (e.key === "ArrowLeft" || e.key === "ArrowDown") moveTo(kbOrder[Math.max(i - 1, 0)]?.id);
+    else if (e.key === "Home") moveTo(kbOrder[0]?.id);
+    else if (e.key === "End") moveTo(kbOrder[kbOrder.length - 1]?.id);
+    else if (e.key === "Enter" || e.key === " ") onSelect?.(p.id === selected ? null : p.id);
+    else return;
+    e.preventDefault();
+  };
 
   return (
     <div ref={ref} className={cn("relative w-full select-none", className)}>
       <svg
         width={W}
         height={H}
-        role="img"
-        aria-label={ariaLabel}
+        role="group"
+        aria-roledescription="scatter plot"
+        aria-label={`${ariaLabel} Use the arrow keys to move between regions and Enter to select one.`}
         className="block max-w-full overflow-visible"
         onMouseLeave={() => onHover?.(null)}
       >
@@ -192,7 +298,7 @@ export function ScatterPlot({
           {yLabel}
         </text>
 
-        {yReference && yReference.value > y.domain[0] && yReference.value < y.domain[1] && (
+        {refVisible && yReference && (
           <g>
             <line
               x1={M.left}
@@ -216,10 +322,14 @@ export function ScatterPlot({
         {/* points */}
         <g>
           {ordered.map((p) => {
-            const active = p.id === selected || p.id === hovered;
+            const active = p.id === selected || p.id === hovered || p.id === focused;
             return (
               <circle
                 key={p.id}
+                ref={(el) => {
+                  if (el) circles.current.set(p.id, el);
+                  else circles.current.delete(p.id);
+                }}
                 cx={x(p.x)}
                 cy={y(p.y)}
                 r={r(p.n)}
@@ -227,9 +337,23 @@ export function ScatterPlot({
                 fillOpacity={active ? 1 : 0.78}
                 stroke={active ? "var(--foreground)" : "var(--background)"}
                 strokeWidth={active ? 2 : 0.8}
-                className="cursor-pointer transition-[fill-opacity]"
+                className="cursor-pointer transition-[fill-opacity] focus-visible:outline-none"
+                role="button"
+                tabIndex={p.id === tabStop ? 0 : -1}
+                aria-pressed={p.id === selected}
+                aria-label={`${p.label}: ${xFormat(p.x)}, ${yFormat(p.y)}, ${p.n.toLocaleString("en-AU")} tweets`}
                 onMouseEnter={() => onHover?.(p.id)}
                 onClick={() => onSelect?.(p.id === selected ? null : p.id)}
+                onFocus={() => {
+                  setKbId(p.id);
+                  setFocused(p.id);
+                  onHover?.(p.id);
+                }}
+                onBlur={() => {
+                  setFocused(null);
+                  onHover?.(null);
+                }}
+                onKeyDown={(e) => onKey(e, p)}
               />
             );
           })}
