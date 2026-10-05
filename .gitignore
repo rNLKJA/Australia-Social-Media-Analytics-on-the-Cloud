@@ -1,171 +1,82 @@
-# Byte-compiled / optimized / DLL files
+# ---------------------------------------------------------------------------
+# OS / editor
+# ---------------------------------------------------------------------------
+.DS_Store
+*.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# ---------------------------------------------------------------------------
+# Secrets and local environment (never commit credentials)
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+
+# ---------------------------------------------------------------------------
+# Node / Next.js (web/)
+# ---------------------------------------------------------------------------
+node_modules/
+.next/
+out/
+.vercel
+.turbo/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+playwright-report/
+test-results/
+
+# ---------------------------------------------------------------------------
+# Python (scripts/ and coursework/)
+# ---------------------------------------------------------------------------
 __pycache__/
 *.py[cod]
 *$py.class
-
-# C extensions
-*.so
-
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-pip-wheel-metadata/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-
-# Translations
-*.mo
-*.pot
-
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
-
-# Flask stuff:
-instance/
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
-
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-target/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# IPython
-profile_default/
-ipython_config.py
-
-# pyenv
-.python-version
-
-# pipenv
-#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
-#   However, in case of collaboration, if having platform-specific dependencies or dependencies
-#   having no cross-platform support, pipenv may install dependencies that don't work, or not
-#   install all needed dependencies.
-#Pipfile.lock
-
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow
-__pypackages__/
-
-# Celery stuff
-celerybeat-schedule
-celerybeat.pid
-
-# SageMath parsed files
-*.sage.py
-*.DS_Store   
-
-# Environments
-.env
-.venv
-env/
+.venv/
 venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
+env/
+.ipynb_checkpoints
+.pytest_cache/
 .mypy_cache/
-.dmypy.json
-dmypy.json
+.ruff_cache/
+*.egg-info/
+build/
+dist/
 
-# Pyre type checker
-.pyre/
+# ---------------------------------------------------------------------------
+# Data pipeline scratch space (raw inputs are never committed)
+# ---------------------------------------------------------------------------
+scripts/.cache/
+scripts/raw/
+*.log
 
-4_Python_data_processing/data/sal.json
-4_Python_data_processing/data/sal.json.tar.gz
-4_Python_data_processing/data/twitter_cleaned_full.zip
-flask-backend/.DS_Store
-flask-backend/.DS_Store
-.DS_Store
-
-
-2_ReactJS_frontend/frontend/public/sudo_data/map/crime_lga.json
-2_ReactJS_frontend/frontend/public/sudo_data/map/median_income_sa2.json
-mnt/ext100/twitter-huge.json
-
-# private key
-*.pem
-
-# data
-*.zip
-/twitter-huge.json
-*.json
-
-# job submission scripts
+# ---------------------------------------------------------------------------
+# Original coursework: large / licensed data that was never part of the repo
+# ---------------------------------------------------------------------------
+coursework/4_Python_data_processing/data/sal.json
+coursework/4_Python_data_processing/data/sal.json.tar.gz
+coursework/4_Python_data_processing/data/twitter_cleaned_full.zip
+coursework/4_Python_data_processing/data/processed/*.json
+coursework/4_Python_data_processing/notebooks/plot.html
+coursework/4_Python_data_processing/data/shapefile/*.shp
+coursework/4_Python_data_processing/data/shapefile/*.shx
+coursework/4_Python_data_processing/data/shapefile/*.dbf
+coursework/4_Python_data_processing/data/shapefile/*.prj
+coursework/4_Python_data_processing/data/shapefile/*.xml
+coursework/1_Flask_Backend/flask-backend/SAL_2021_AUST_GDA94_SHP/*.shp
+coursework/1_Flask_Backend/flask-backend/SAL_2021_AUST_GDA94_SHP/*.shx
+coursework/1_Flask_Backend/flask-backend/SAL_2021_AUST_GDA94_SHP/*.dbf
+coursework/1_Flask_Backend/flask-backend/sudo/*.csv
+coursework/1_Flask_Backend/flask-backend/twitterData/*.json
+twitter-huge.json
 *.slurm
-
-# TODO: remove gitignore for frontend
-2_ReactJS_frontend/
-4_Python_data_processing/data/sedaXDi2d
-4_Python_data_processing/data/sal.json.tar.gz
-4_Python_data_processing/notebooks/plot.html
-4_Python_data_processing/data/shapefile/AUS_2021_AUST_GDA94.xml
-4_Python_data_processing/data/shapefile/GCCSA_2021_AUST_GDA94.xml
-4_Python_data_processing/data/shapefile/MB_2021_AUST_GDA2020.dbf
-4_Python_data_processing/data/shapefile/MB_2021_AUST_GDA2020.prj
-4_Python_data_processing/data/shapefile/MB_2021_AUST_GDA2020.shp
-4_Python_data_processing/data/shapefile/MB_2021_AUST_GDA2020.shx
-4_Python_data_processing/data/shapefile/MB_2021_AUST_GDA2020.xml
-*.xml
-*.dbf
-*.prj
-*.shp
-*.shx
