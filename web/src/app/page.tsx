@@ -1,4 +1,4 @@
-import { ArrowRight, FlaskConical, Map as MapIcon } from "lucide-react";
+import { ArrowRight, FlaskConical, Map as MapIcon, ScanSearch, Sigma } from "lucide-react";
 import Link from "next/link";
 import { SentimentHistogram } from "@/components/charts/sentiment-histogram";
 import { Section } from "@/components/editorial/page-header";
@@ -212,6 +212,54 @@ export default async function Home() {
               </div>
             </div>
           </FindingCard>
+        </div>
+      </Section>
+
+      {/* ---- 2026 upgrade ------------------------------------------------------------- */}
+      <Section
+        kicker="2026 upgrade"
+        title="How sure, and who checks the AI?"
+        intro={
+          <p>
+            The revival added the questions a statistician would ask of the 2023 results, and a way to query
+            the data in plain English that shows its working.
+          </p>
+        }
+      >
+        <div className="grid gap-5 md:grid-cols-2">
+          {[
+            {
+              href: "/spatial",
+              icon: Sigma,
+              title: "Spatial statistics, with intervals",
+              body: "Moran's I and a LISA cluster map with permutation tests, small-area suppression, bootstrap and robust intervals on both scenarios. The apparent clustering turns out to be noise from areas with a handful of tweets.",
+            },
+            {
+              href: "/ask",
+              icon: ScanSearch,
+              title: "Ask the data, with your own key",
+              body: "Your model writes SQL; the site validates it and runs it read-only; the answer cites the rows. Labelled, logged in your browser, and measurable with a 16-question benchmark.",
+            },
+          ].map((c) => (
+            <Link
+              key={c.href}
+              href={c.href}
+              className="group border-border bg-card hover:border-primary/60 flex gap-4 rounded-xl border p-5 transition-colors"
+            >
+              <c.icon className="text-primary mt-1 size-6 shrink-0" aria-hidden />
+              <div>
+                <p className="font-serif text-xl font-semibold">{c.title}</p>
+                <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">{c.body}</p>
+                <span className="text-primary mt-3 inline-flex items-center gap-1 text-sm font-medium">
+                  Open{" "}
+                  <ArrowRight
+                    className="size-4 transition-transform group-hover:translate-x-0.5"
+                    aria-hidden
+                  />
+                </span>
+              </div>
+            </Link>
+          ))}
         </div>
       </Section>
 

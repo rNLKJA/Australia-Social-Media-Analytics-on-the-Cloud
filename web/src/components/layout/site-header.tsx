@@ -1,3 +1,4 @@
+import { AiSettingsDialog } from "@/components/ai/ai-settings-dialog";
 import { IntentLink } from "@/components/layout/intent-link";
 import { Github } from "@/components/layout/icons";
 import { LogoMark } from "@/components/layout/logo";
@@ -34,6 +35,7 @@ export function SiteHeader() {
           >
             <Github className="size-4" />
           </a>
+          <AiSettingsDialog />
           <ThemeToggle />
           <MobileNav items={NAV} />
         </div>

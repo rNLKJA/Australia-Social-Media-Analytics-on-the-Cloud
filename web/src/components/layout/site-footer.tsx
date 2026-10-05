@@ -13,7 +13,8 @@ export function SiteFooter() {
           </div>
           <p className="text-muted-foreground max-w-md text-sm leading-relaxed">
             {SITE.subject}, {SITE.university}, {SITE.term}. Built by {SITE.team} on the Melbourne Research
-            Cloud; revived in 2026 as a static, read-only web app. The original submission is preserved in the
+            Cloud; revived in 2026 as a read-only web app, with uncertainty, spatial statistics and optional
+            bring-your-own-key AI added in the upgrade. The original submission is preserved in the
             repository.
           </p>
         </div>
@@ -32,6 +33,21 @@ export function SiteFooter() {
                 </IntentLink>
               </li>
             ))}
+            <li>
+              <IntentLink className="text-muted-foreground hover:text-foreground" href="/ask/eval">
+                Text-to-SQL evaluation
+              </IntentLink>
+            </li>
+            <li>
+              <IntentLink className="text-muted-foreground hover:text-foreground" href="/ai-log">
+                AI audit log (this browser)
+              </IntentLink>
+            </li>
+            <li>
+              <IntentLink className="text-muted-foreground hover:text-foreground" href="/methods#decisions">
+                Decision records
+              </IntentLink>
+            </li>
           </ul>
         </nav>
         <div>

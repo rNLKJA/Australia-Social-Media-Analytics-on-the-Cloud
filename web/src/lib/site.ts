@@ -15,7 +15,9 @@ export const NAV = [
   { href: "/income", label: "Income", short: "Income" },
   { href: "/crime", label: "Crime", short: "Crime" },
   { href: "/mastodon", label: "Mastodon", short: "Mastodon" },
+  { href: "/spatial", label: "Spatial stats", short: "Spatial" },
   { href: "/pipeline", label: "Try the pipeline", short: "Pipeline" },
+  { href: "/ask", label: "Ask the data", short: "Ask" },
   { href: "/methods", label: "Data & methods", short: "Methods" },
   { href: "/records", label: "Records", short: "Records" },
 ] as const;

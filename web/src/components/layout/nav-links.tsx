@@ -22,7 +22,8 @@ export function NavLinks({ items }: { items: readonly { href: string; label: str
                     "text-foreground after:bg-primary after:absolute after:inset-x-2.5 after:-bottom-[11px] after:h-0.5",
                 )}
               >
-                {item.label}
+                <span className="xl:hidden">{item.short}</span>
+                <span className="hidden xl:inline">{item.label}</span>
               </IntentLink>
             </li>
           );
