@@ -4,8 +4,11 @@ import { BarList } from "@/components/charts/bar-list";
 import { SentimentHistogram } from "@/components/charts/sentiment-histogram";
 import { Finding, Note, PageHeader, Section, StatStrip } from "@/components/editorial/page-header";
 import { IncomeExplorer } from "@/components/scenario/income-explorer";
+import { UncertaintySection } from "@/components/scenario/uncertainty-section";
 import { fmtAud, fmtAudK, fmtInt, fmtP, fmtR } from "@/lib/format";
 import { median } from "@/lib/pandas";
+import { analyseRelationship } from "@/lib/spatial-analysis";
+import { MIN_TWEETS_RELIABLE } from "@/lib/stats";
 import {
   getCorrelations,
   getGccIncome,
@@ -14,6 +17,7 @@ import {
   getJobsIndicators,
   getSalRegions,
 } from "@/server/analytics";
+import { getAdjacency, getAreaRecords } from "@/server/spatial";
 
 export const metadata: Metadata = {
   title: "Scenario 1: income and sentiment",
@@ -22,17 +26,35 @@ export const metadata: Metadata = {
 };
 
 export default async function IncomePage() {
-  const [regions, correlations, gcc, jobs, sals, twIncome, msSocial, msAu, msTictoc] = await Promise.all([
-    getIncomeRegions(),
-    getCorrelations(),
-    getGccIncome(),
-    getJobsIndicators(),
-    getSalRegions(),
-    getHistogram("twitter", "income"),
-    getHistogram("mastodon.social", "income"),
-    getHistogram("mastodon.au", "income"),
-    getHistogram("tictoc.social", "income"),
-  ]);
+  const [regions, correlations, gcc, jobs, sals, twIncome, msSocial, msAu, msTictoc, areas, adjacency] =
+    await Promise.all([
+      getIncomeRegions(),
+      getCorrelations(),
+      getGccIncome(),
+      getJobsIndicators(),
+      getSalRegions(),
+      getHistogram("twitter", "income"),
+      getHistogram("mastodon.social", "income"),
+      getHistogram("mastodon.au", "income"),
+      getHistogram("tictoc.social", "income"),
+      getAreaRecords("sa2"),
+      getAdjacency("sa2"),
+    ]);
+  const areaSums = Object.fromEntries(
+    areas.map((a) => [a.code, { all: a.sums.all ?? null, income: a.sums.income ?? null }]),
+  );
+  const uncertainty = [
+    {
+      title: "Income tweets, 2023 threshold",
+      note: "SA2s kept by the IQR rule with at least one income tweet: the comparison the 2023 page reported.",
+      res: analyseRelationship("sa2", areas, adjacency, { topic: "income", minTweets: 1 }),
+    },
+    {
+      title: `All tweets, SA2s with ≥ ${MIN_TWEETS_RELIABLE} tweets`,
+      note: "The overall tone of SA2s whose averages rest on enough tweets to mean something.",
+      res: analyseRelationship("sa2", areas, adjacency, { topic: "all", minTweets: MIN_TWEETS_RELIABLE }),
+    },
+  ];
   const kept = regions.filter((r) => r.kept);
   const lo = kept.reduce((a, b) => (b.medianAud < a.medianAud ? b : a));
   const hi = kept.reduce((a, b) => (b.medianAud > a.medianAud ? b : a));
@@ -95,8 +117,10 @@ export default async function IncomePage() {
           </p>
         }
       >
-        <IncomeExplorer regions={regions} stored={stored} />
+        <IncomeExplorer regions={regions} stored={stored} sums={areaSums} />
       </Section>
+
+      <UncertaintySection unitName="SA2" items={uncertainty} />
 
       <Section kicker="Context" title="What the 2023 analysis concluded">
         <div className="grid gap-6 lg:grid-cols-2">

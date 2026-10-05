@@ -7,6 +7,7 @@ import { LazyChoroplethMap as ChoroplethMap, MAP_BOX } from "@/components/map/la
 import { CAUTION_N, CorrelationReadout } from "@/components/scenario/correlation-readout";
 import { RegionSearch } from "@/components/scenario/region-search";
 import { Segmented } from "@/components/scenario/segmented";
+import { AreaInterval } from "@/components/scenario/area-interval";
 import { ThresholdControl } from "@/components/scenario/threshold-control";
 import { useThemeName } from "@/hooks/use-theme-name";
 import { fmtCompact, fmtInt, fmtScore, plural } from "@/lib/format";
@@ -19,7 +20,7 @@ import {
 } from "@/lib/palette";
 import { sentimentDescription } from "@/lib/sentiment";
 import { correlate, describeStrength } from "@/lib/stats";
-import { CRIME_CATEGORIES, type CrimeRegion, type StoredCorrelation } from "@/lib/types";
+import { CRIME_CATEGORIES, type CrimeRegion, type ScoreSums, type StoredCorrelation } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 type MapMetric = "total" | "crime" | "all";
@@ -28,7 +29,16 @@ type YMetric = "crime" | "all";
 const MID = 5.2;
 const SPREAD = 1.6;
 
-export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; stored: StoredCorrelation[] }) {
+export function CrimeExplorer({
+  regions,
+  stored,
+  sums,
+}: {
+  regions: CrimeRegion[];
+  stored: StoredCorrelation[];
+  /** pooled score sums per LGA, for each region's interval */
+  sums: Record<string, { all: ScoreSums | null; crime: ScoreSums | null }>;
+}) {
   const theme = useThemeName();
   const [mapMetric, setMapMetric] = useState<MapMetric>("total");
   const [yMetric, setYMetric] = useState<YMetric>("crime");
@@ -316,6 +326,7 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
                       {v === null
                         ? "no tweets"
                         : `avg ${fmtScore(v)} · ${sentimentDescription(Math.round(v))}`}
+                      <AreaInterval sums={sums[sel.code]?.[m]} />
                     </dd>
                   </div>
                 );

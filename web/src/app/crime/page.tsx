@@ -5,8 +5,12 @@ import { SentimentHistogram } from "@/components/charts/sentiment-histogram";
 import { Finding, Note, PageHeader, Section, StatStrip } from "@/components/editorial/page-header";
 import { CrimeExplorer } from "@/components/scenario/crime-explorer";
 import { SalCrimeCheck } from "@/components/scenario/sal-crime-check";
+import { UncertaintySection } from "@/components/scenario/uncertainty-section";
 import { fmtInt, fmtP, fmtPct, fmtR } from "@/lib/format";
+import { analyseRelationship } from "@/lib/spatial-analysis";
+import { MIN_TWEETS_RELIABLE } from "@/lib/stats";
 import { getCorrelations, getCrimeRegions, getHistogram, getSalRegions } from "@/server/analytics";
+import { getAdjacency, getAreaRecords } from "@/server/spatial";
 
 export const metadata: Metadata = {
   title: "Scenario 2: crime and sentiment",
@@ -15,13 +19,30 @@ export const metadata: Metadata = {
 };
 
 export default async function CrimePage() {
-  const [regions, correlations, sals, crimeHist, allHist] = await Promise.all([
+  const [regions, correlations, sals, crimeHist, allHist, areas, adjacency] = await Promise.all([
     getCrimeRegions(),
     getCorrelations(),
     getSalRegions(),
     getHistogram("twitter", "crime"),
     getHistogram("twitter", "all"),
+    getAreaRecords("lga"),
+    getAdjacency("lga"),
   ]);
+  const areaSums = Object.fromEntries(
+    areas.map((a) => [a.code, { all: a.sums.all ?? null, crime: a.sums.crime ?? null }]),
+  );
+  const uncertainty = [
+    {
+      title: "Crime tweets, 2023 threshold",
+      note: "LGAs kept by the IQR rule with at least one crime tweet (offences on a log scale).",
+      res: analyseRelationship("lga", areas, adjacency, { topic: "crime", minTweets: 1 }),
+    },
+    {
+      title: `All tweets, LGAs with ≥ ${MIN_TWEETS_RELIABLE} tweets`,
+      note: `Crime tweets are too sparse for this threshold (${areas.filter((a) => (a.sums.crime?.n ?? 0) >= MIN_TWEETS_RELIABLE).length} LGAs reach it), so this uses all tweets.`,
+      res: analyseRelationship("lga", areas, adjacency, { topic: "all", minTweets: MIN_TWEETS_RELIABLE }),
+    },
+  ];
   const kept = regions.filter((r) => r.kept);
   const topKept = kept.reduce((a, b) => (b.total > a.total ? b : a));
   const stored = correlations.filter((c) => c.scenario === "crime");
@@ -88,8 +109,10 @@ export default async function CrimePage() {
           </p>
         }
       >
-        <CrimeExplorer regions={regions} stored={stored} />
+        <CrimeExplorer regions={regions} stored={stored} sums={areaSums} />
       </Section>
+
+      <UncertaintySection unitName="LGA" items={uncertainty} />
 
       <Section kicker="Context" title="What the 2023 analysis concluded">
         <div className="grid gap-8 lg:grid-cols-2">

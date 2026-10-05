@@ -7,6 +7,7 @@ import { LazyChoroplethMap as ChoroplethMap, MAP_BOX } from "@/components/map/la
 import { CAUTION_N, CorrelationReadout } from "@/components/scenario/correlation-readout";
 import { RegionSearch } from "@/components/scenario/region-search";
 import { Segmented } from "@/components/scenario/segmented";
+import { AreaInterval } from "@/components/scenario/area-interval";
 import { ThresholdControl } from "@/components/scenario/threshold-control";
 import { useThemeName } from "@/hooks/use-theme-name";
 import { fmtAud, fmtAudK, fmtInt, fmtScore } from "@/lib/format";
@@ -20,7 +21,7 @@ import {
 } from "@/lib/palette";
 import { sentimentDescription } from "@/lib/sentiment";
 import { correlate, describeStrength } from "@/lib/stats";
-import type { IncomeRegion, StoredCorrelation } from "@/lib/types";
+import type { IncomeRegion, ScoreSums, StoredCorrelation } from "@/lib/types";
 
 type MapMetric = "median" | "income" | "all";
 type YMetric = "income" | "all";
@@ -28,9 +29,12 @@ type YMetric = "income" | "all";
 export function IncomeExplorer({
   regions,
   stored,
+  sums,
 }: {
   regions: IncomeRegion[];
   stored: StoredCorrelation[];
+  /** pooled score sums per SA2, for each region's interval */
+  sums: Record<string, { all: ScoreSums | null; income: ScoreSums | null }>;
 }) {
   const theme = useThemeName();
   const [mapMetric, setMapMetric] = useState<MapMetric>("median");
@@ -298,6 +302,7 @@ export function IncomeExplorer({
                       {v === null
                         ? "no tweets"
                         : `avg ${fmtScore(v)} · nearest bucket: ${sentimentDescription(Math.round(v))}`}
+                      <AreaInterval sums={sums[sel.code]?.[m]} />
                     </dd>
                   </div>
                 );
