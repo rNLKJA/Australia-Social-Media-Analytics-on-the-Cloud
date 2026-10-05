@@ -67,9 +67,10 @@ export default async function MastodonPage() {
         lede={
           <>
             Twitter&apos;s corpus came ready-made; Mastodon had to be harvested. The team&apos;s scheduler
-            asked three servers for 40 new toots every ten minutes, cleaned the HTML, and scored each toot
-            with the same pipeline as the tweets. Toots carry no location, so Mastodon could only be compared
-            by score distributions, not on a map.
+            asked three servers for 40 new toots every ten minutes, turned the HTML into text and scored each
+            toot with the same NLTK functions as the tweets, but without stripping hashtags, mentions and
+            links. Toots carry no location, so Mastodon could only be compared by score distributions, not on
+            a map.
           </>
         }
       >

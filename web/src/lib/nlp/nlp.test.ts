@@ -3,7 +3,15 @@ import { describe, expect, it } from "vitest";
 import fixture from "@/lib/__fixtures__/nlp-parity.json";
 import { loadEngine } from "@/test/load-engine";
 import { sentimentBucket, sentimentDescription } from "../sentiment";
-import { cleanContent, geocodePlace, normalizeString, scorePost, wordsNgrams } from "./pipeline";
+import { htmlToText } from "./html-text";
+import {
+  cleanContent,
+  geocodePlace,
+  normalizeString,
+  scorePost,
+  tokensAndLemmas,
+  wordsNgrams,
+} from "./pipeline";
 import { pyIsUpper, pyLen, pyRound, pySplit } from "./pyre";
 import { nltkWordTokenizer, wordTokenize } from "./word-tokenize";
 
@@ -117,6 +125,61 @@ describe("SAL geocoding (twitter/utils.py)", () => {
   }
 });
 
+describe("toot path (harvester/mastodon/toot.py extract_mastodon_info)", () => {
+  for (const t of fixture.toots) {
+    it(JSON.stringify(t.html).slice(0, 70), () => {
+      const trace = scorePost(engine, t.html, "mastodon");
+      expect(trace.cleaned).toBe(t.text);
+      expect(trace.tokens).toEqual(t.tokens);
+      expect(trace.normalized).toBe(t.normalized);
+      expect(trace.scores).toEqual(t.scores);
+      expect(trace.bucket).toBe(t.bucket);
+    });
+  }
+  it("keeps hashtags and mentions, unlike the tweet path", () => {
+    const text = "Feeling #blessed and #happy today";
+    expect(scorePost(engine, text, "mastodon").bucket).toBe(9);
+    expect(scorePost(engine, text, "twitter").bucket).toBe(5);
+  });
+});
+
+describe("BeautifulSoup .text", () => {
+  const cases: [string, string][] = [
+    ["<p>one</p><p>two</p>", "onetwo"],
+    ["line<br>break", "linebreak"],
+    ["AT&T rocks", "AT&T rocks"],
+    ["fish &chips;", "fish &chips"],
+    ["&#150; &#x1F600; &#8217;", "\u2013 \u{1F600} \u2019"],
+    ["<3 you", "<3 you"],
+    ["a < b > c", "a < b > c"],
+    ["<script>alert(1)</script>after", "after"],
+    ["<style>p{}</style>x", "x"],
+    ["<template>t</template>u", "u"],
+    ["<!-- c -->y", "y"],
+    ["&copy 2023", "\u00a9 2023"],
+    ["&amp", "&amp"],
+    ["Tom &amp Jerry", "Tom & Jerry"],
+    ["&notit; &notin;", "&notit \u2209"],
+    ['<a href="x>y">z</a>', "z"],
+    ["<b", ""],
+    ["<![CDATA[x]]>z", "xz"],
+    ["<!DOCTYPE html>q", "q"],
+    ["<?php x ?>w", "w"],
+    ["</p>closing", "closing"],
+    ["a&#10;b", "a\nb"],
+    ["<textarea>&amp;</textarea>", "&"],
+    // whitespace-only text nodes collapse (BeautifulSoup.endData)
+    ["a</a>  <b>x</b>", "a x"],
+    ["<p> \n </p>", "\n"],
+    ["<pre>  </pre>", "  "],
+    ["x  &amp;  y", "x  &  y"],
+    ["<b>a</b><!--c-->  <i>b</i>", "a b"],
+  ];
+  for (const [html, text] of cases) {
+    it(JSON.stringify(html), () => expect(htmlToText(html, engine.htmlEntities)).toBe(text));
+  }
+});
+
 describe("clean_content", () => {
   it("drops mentions, hashtags and links (whitespace around links is kept)", () => {
     expect(
@@ -132,29 +195,38 @@ describe("clean_content", () => {
  */
 const SAMPLE = process.env.NLP_SAMPLE ?? "/tmp/social-sense-nlp-sample.json";
 describe.runIf(existsSync(SAMPLE))("local cross-check on real toots", () => {
-  it("reproduces the Python normalised text and bucket", () => {
-    const rows: { text: string; normalized: string; compound: number; bucket: number }[] = JSON.parse(
-      readFileSync(SAMPLE, "utf8"),
-    );
-    let normMismatch = 0;
-    let bucketMismatch = 0;
+  it("reproduces BeautifulSoup text, tokens, normalised text, VADER scores and bucket", () => {
+    const rows: {
+      html?: string;
+      text: string;
+      tokens?: string[];
+      normalized: string;
+      scores?: Record<string, number>;
+      bucket: number;
+    }[] = JSON.parse(readFileSync(SAMPLE, "utf8"));
+    const miss = { text: 0, tokens: 0, normalized: 0, scores: 0, bucket: 0 };
     const examples: string[] = [];
     for (const r of rows) {
-      const normalized = normalizeString(engine, r.text);
-      const compound = engine.sia.polarityScores(normalized).compound;
+      if (r.html !== undefined && htmlToText(r.html, engine.htmlEntities) !== r.text) {
+        miss.text++;
+        if (examples.length < 3) examples.push(`html ${JSON.stringify(r.html).slice(0, 200)}`);
+      }
+      // `text` is already BeautifulSoup's output; score it from step 2 on
+      const { tokens, lemmas } = tokensAndLemmas(engine, r.text);
+      const normalized = lemmas.join(" ");
+      const scores = engine.sia.polarityScores(normalized);
+      if (r.tokens && JSON.stringify(tokens) !== JSON.stringify(r.tokens)) miss.tokens++;
       if (normalized !== r.normalized) {
-        normMismatch++;
+        miss.normalized++;
         if (examples.length < 3)
           examples.push(`${JSON.stringify(r.normalized)}\n${JSON.stringify(normalized)}`);
       }
-      if (sentimentBucket(compound) !== r.bucket) bucketMismatch++;
+      if (r.scores && JSON.stringify(scores) !== JSON.stringify(r.scores)) miss.scores++;
+      if (sentimentBucket(scores.compound) !== r.bucket) miss.bucket++;
     }
     if (examples.length) console.log(examples.join("\n---\n"));
-    console.log(
-      `sample=${rows.length} normalised mismatches=${normMismatch} bucket mismatches=${bucketMismatch}`,
-    );
-    // 44,156 real toots: 0 mismatches at the time of writing
-    expect(normMismatch).toBe(0);
-    expect(bucketMismatch).toBe(0);
+    console.log(`sample=${rows.length} mismatches=${JSON.stringify(miss)}`);
+    // 44,156 real toots: 0 mismatches in every field at the time of writing
+    expect(miss).toEqual({ text: 0, tokens: 0, normalized: 0, scores: 0, bucket: 0 });
   });
 });

@@ -3,9 +3,11 @@
 # dependencies = [
 #   "nltk==3.8.1",
 #   "langdetect==1.0.9",
-#   "regex",
+#   "regex==2026.9.29",
 #   "beautifulsoup4==4.11.2",
 # ]
+# [tool.uv]
+# exclude-newer = "2026-10-05T00:00:00Z"
 # ///
 """Export the NLP resources used by the original pipeline and record parity fixtures.
 
@@ -19,6 +21,13 @@ tweet and toot with NLTK 3.8.1:
 and geocoded tweets by matching normalised ``place.full_name`` n-grams
 against a SAL dictionary (twitter/utils.py + data/sal.processed.dict.pkl).
 
+Toots took a shorter path in the Mastodon harvester
+(coursework/1_Flask_Backend/harvester/mastodon/toot.py):
+
+    content (HTML) -> BeautifulSoup(..., "html.parser").text
+                   -> normalize_string -> sentiment_analysis
+    (no mention/hashtag/link stripping, no geocoding)
+
 This script exports the exact resources those functions use, so the
 TypeScript port in web/src/lib/nlp can run in the browser, and records the
 outputs of the ORIGINAL Python functions on a synthetic corpus so the port
@@ -30,6 +39,7 @@ Outputs
   web/public/data/nlp/wordnet-noun-exceptions.json
   web/public/data/nlp/punkt-english.json          Punkt English model parameters
   web/public/data/nlp/sal-lookup.json             location string -> SAL 2021 code
+  web/public/data/nlp/html-entities.json          the entity table BeautifulSoup 4.11 decodes
   web/src/lib/__fixtures__/nlp-parity.json        Python outputs for the parity tests
 
 Run:  uv run scripts/build_nlp_assets.py
@@ -50,6 +60,8 @@ SAL_DICT = ROOT / "coursework" / "4_Python_data_processing" / "data" / "sal.proc
 OUT = ROOT / "web" / "public" / "data" / "nlp"
 FIXTURES = ROOT / "web" / "src" / "lib" / "__fixtures__"
 CORPUS = ROOT / "scripts" / "fixtures" / "nlp_parity_corpus.txt"
+TOOT_CORPUS = ROOT / "scripts" / "fixtures" / "toot_parity_corpus.txt"
+HARVESTER = ROOT / "coursework" / "1_Flask_Backend" / "harvester" / "mastodon"
 NLTK_DIR = ROOT / "scripts" / ".cache" / "nltk_data"
 
 
@@ -89,6 +101,7 @@ def main() -> None:
     # The ORIGINAL modules, imported from coursework/ unchanged.
     analyzer = load_module("orig_analyzer", ORIG_SCRIPTS / "sentimental_analysis" / "analyzer.py")
     tw_utils = load_module("orig_twitter_utils", ORIG_SCRIPTS / "twitter" / "utils.py")
+    toot = load_harvester_toot(nltk)
 
     from nltk.corpus import wordnet as wn
     from nltk.sentiment.vader import SentimentIntensityAnalyzer
@@ -138,6 +151,11 @@ def main() -> None:
     with open(SAL_DICT, "rb") as f:
         sal_dict = pickle.load(f)
     write_json(OUT / "sal-lookup.json", {k: str(v) for k, v in sal_dict.items()})
+
+    # ---- HTML entities (BeautifulSoup .text, used by the toot path) -------------
+    from bs4.dammit import EntitySubstitution
+
+    write_json(OUT / "html-entities.json", dict(sorted(EntitySubstitution.HTML_ENTITY_TO_CHARACTER.items())))
 
     # ---- Parity fixtures -----------------------------------------------------
     # One example per line; the two-character sequence "\\n" encodes a newline.
@@ -203,6 +221,30 @@ def main() -> None:
     ]
     punkt_cases = [[t, sent_tokenize(t), word_tokenize(t)] for t in punkt_inputs]
 
+    # Toot path: the harvester's own extract_mastodon_info() on synthetic statuses.
+    from bs4 import BeautifulSoup
+
+    toot_inputs = [
+        line.replace("\\n", "\n")
+        for line in TOOT_CORPUS.read_text().split("\n")
+        if line.strip() and not line.startswith("#")
+    ]
+    toots = []
+    for html in toot_inputs:
+        record = toot.extract_mastodon_info(fake_status(html))
+        text = BeautifulSoup(html, "html.parser").text
+        assert record.content == analyzer.normalize_string(text), html
+        toots.append(
+            {
+                "html": html,
+                "text": text,
+                "tokens": word_tokenize(text),
+                "normalized": record.content,
+                "scores": sia.polarity_scores(record.content),
+                "bucket": record.score,
+            }
+        )
+
     if args.sample:
         write_sample(analyzer, args.sample, args.sample_out)
 
@@ -211,6 +253,7 @@ def main() -> None:
         {
             "nltkVersion": nltk.__version__,
             "examples": examples,
+            "toots": toots,
             "lemmas": lemmas,
             "locations": locations,
             "punkt": punkt_cases,
@@ -231,19 +274,63 @@ def write_sample(analyzer, n: int, out: Path) -> None:
     statuses = json.loads(raw.read_text())
     step = max(1, len(statuses) // n)
     rows = []
+    from nltk.tokenize import word_tokenize
+
     for s in statuses[::step][:n]:
-        text = BeautifulSoup(s.get("content") or "", "html.parser").text
+        html = s.get("content") or ""
+        text = BeautifulSoup(html, "html.parser").text
         normalized = analyzer.normalize_string(text)
+        scores = analyzer.sia.polarity_scores(normalized)
         rows.append(
             {
+                "html": html,
                 "text": text,
+                "tokens": word_tokenize(text),
                 "normalized": normalized,
-                "compound": analyzer.sia.polarity_scores(normalized)["compound"],
+                "scores": scores,
+                "compound": scores["compound"],
                 "bucket": analyzer.sentiment_analysis(normalized),
             }
         )
     out.write_text(json.dumps(rows, ensure_ascii=False))
     log(f"wrote {len(rows)} sample rows to {out} (local only)")
+
+
+def load_harvester_toot(nltk):
+    """Import coursework/.../harvester/mastodon/toot.py unchanged.
+
+    Its sibling utils.py calls nltk.download() at import time; the resources
+    are already in NLTK_DIR, so the downloads are skipped rather than fetched
+    into the user's home directory.
+    """
+    real_download = nltk.download
+    nltk.download = lambda *a, **k: True
+    sys.path.insert(0, str(HARVESTER))
+    try:
+        sys.modules.pop("utils", None)
+        return load_module("orig_toot", HARVESTER / "toot.py")
+    finally:
+        sys.path.remove(str(HARVESTER))
+        sys.modules.pop("utils", None)
+        nltk.download = real_download
+
+
+class _Status(dict):
+    """Mastodon.py's AttribAccessDict: keys readable as attributes."""
+
+    __getattr__ = dict.__getitem__
+
+
+def fake_status(html: str):
+    from datetime import datetime, timezone
+
+    return _Status(
+        id=1,
+        created_at=datetime(2023, 5, 2, tzinfo=timezone.utc),
+        language="en",
+        content=html,
+        account={"id": 1},
+    )
 
 
 def clean_content(content: str) -> str:

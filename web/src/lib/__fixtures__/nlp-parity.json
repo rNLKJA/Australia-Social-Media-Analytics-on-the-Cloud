@@ -4374,6 +4374,497 @@
    "description": "Neutral"
   }
  ],
+ "toots": [
+  {
+   "html": "Feeling #blessed and #happy today",
+   "text": "Feeling #blessed and #happy today",
+   "tokens": [
+    "Feeling",
+    "#",
+    "blessed",
+    "and",
+    "#",
+    "happy",
+    "today"
+   ],
+   "normalized": "Feeling # blessed and # happy today",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.18,
+    "pos": 0.82,
+    "compound": 0.8442
+   },
+   "bucket": 9
+  },
+  {
+   "html": "Worst week ever #fail #sad",
+   "text": "Worst week ever #fail #sad",
+   "tokens": [
+    "Worst",
+    "week",
+    "ever",
+    "#",
+    "fail",
+    "#",
+    "sad"
+   ],
+   "normalized": "Worst week ever # fail # sad",
+   "scores": {
+    "neg": 0.843,
+    "neu": 0.157,
+    "pos": 0.0,
+    "compound": -0.8934
+   },
+   "bucket": 1
+  },
+  {
+   "html": "@jerk you are awful",
+   "text": "@jerk you are awful",
+   "tokens": [
+    "@",
+    "jerk",
+    "you",
+    "are",
+    "awful"
+   ],
+   "normalized": "@ jerk you are awful",
+   "scores": {
+    "neg": 0.73,
+    "neu": 0.27,
+    "pos": 0.0,
+    "compound": -0.6597
+   },
+   "bucket": 2
+  },
+  {
+   "html": "<p>Feeling <a href=\"https://mastodon.social/tags/blessed\" class=\"mention hashtag\" rel=\"tag\">#<span>blessed</span></a> and <a href=\"https://mastodon.social/tags/happy\" class=\"mention hashtag\" rel=\"tag\">#<span>happy</span></a> today</p>",
+   "text": "Feeling #blessed and #happy today",
+   "tokens": [
+    "Feeling",
+    "#",
+    "blessed",
+    "and",
+    "#",
+    "happy",
+    "today"
+   ],
+   "normalized": "Feeling # blessed and # happy today",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.18,
+    "pos": 0.82,
+    "compound": 0.8442
+   },
+   "bucket": 9
+  },
+  {
+   "html": "<p><span class=\"h-card\"><a href=\"https://mastodon.au/@someone\" class=\"u-url mention\">@<span>someone</span></a></span> you are awful</p>",
+   "text": "@someone you are awful",
+   "tokens": [
+    "@",
+    "someone",
+    "you",
+    "are",
+    "awful"
+   ],
+   "normalized": "@ someone you are awful",
+   "scores": {
+    "neg": 0.5,
+    "neu": 0.5,
+    "pos": 0.0,
+    "compound": -0.4588
+   },
+   "bucket": 3
+  },
+  {
+   "html": "<p>Worst week ever <a href=\"https://tictoc.social/tags/fail\" class=\"mention hashtag\" rel=\"tag\">#<span>fail</span></a></p>",
+   "text": "Worst week ever #fail",
+   "tokens": [
+    "Worst",
+    "week",
+    "ever",
+    "#",
+    "fail"
+   ],
+   "normalized": "Worst week ever # fail",
+   "scores": {
+    "neg": 0.792,
+    "neu": 0.208,
+    "pos": 0.0,
+    "compound": -0.8225
+   },
+   "bucket": 1
+  },
+  {
+   "html": "<p>First line</p><p>Second line, still good</p>",
+   "text": "First lineSecond line, still good",
+   "tokens": [
+    "First",
+    "lineSecond",
+    "line",
+    ",",
+    "still",
+    "good"
+   ],
+   "normalized": "First lineSecond line , still good",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.58,
+    "pos": 0.42,
+    "compound": 0.4404
+   },
+   "bucket": 7
+  },
+  {
+   "html": "<p>Line one<br>line two<br />line three</p>",
+   "text": "Line oneline twoline three",
+   "tokens": [
+    "Line",
+    "oneline",
+    "twoline",
+    "three"
+   ],
+   "normalized": "Line oneline twoline three",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5
+  },
+  {
+   "html": "<p>Read this: <a href=\"https://example.org/a-long/path?x=1&amp;y=2\" rel=\"nofollow noopener noreferrer\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"ellipsis\">example.org/a-long/pa</span><span class=\"invisible\">th?x=1&amp;y=2</span></a> it is terrible</p>",
+   "text": "Read this: https://example.org/a-long/path?x=1&y=2 it is terrible",
+   "tokens": [
+    "Read",
+    "this",
+    ":",
+    "https",
+    ":",
+    "//example.org/a-long/path",
+    "?",
+    "x=1",
+    "&",
+    "y=2",
+    "it",
+    "is",
+    "terrible"
+   ],
+   "normalized": "Read this : http : //example.org/a-long/path ? x=1 & y=2 it is terrible",
+   "scores": {
+    "neg": 0.279,
+    "neu": 0.721,
+    "pos": 0.0,
+    "compound": -0.4767
+   },
+   "bucket": 3
+  },
+  {
+   "html": "<p>Tom &amp; Jerry &lt;3 &quot;love&quot; it&#39;s great</p>",
+   "text": "Tom & Jerry <3 \"love\" it's great",
+   "tokens": [
+    "Tom",
+    "&",
+    "Jerry",
+    "<",
+    "3",
+    "``",
+    "love",
+    "''",
+    "it",
+    "'s",
+    "great"
+   ],
+   "normalized": "Tom & Jerry < 3 `` love '' it 's great",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.42,
+    "pos": 0.58,
+    "compound": 0.8519
+   },
+   "bucket": 9
+  },
+  {
+   "html": "<p>&hellip; and &mdash; then &nbsp;nothing &copy; 2023</p>",
+   "text": "… and — then  nothing © 2023",
+   "tokens": [
+    "…",
+    "and",
+    "—",
+    "then",
+    "nothing",
+    "©",
+    "2023"
+   ],
+   "normalized": "… and — then nothing © 2023",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5
+  },
+  {
+   "html": "<p>AT&amp;T is down again, so annoying</p>",
+   "text": "AT&T is down again, so annoying",
+   "tokens": [
+    "AT",
+    "&",
+    "T",
+    "is",
+    "down",
+    "again",
+    ",",
+    "so",
+    "annoying"
+   ],
+   "normalized": "AT & T is down again , so annoying",
+   "scores": {
+    "neg": 0.411,
+    "neu": 0.589,
+    "pos": 0.0,
+    "compound": -0.541
+   },
+   "bucket": 3
+  },
+  {
+   "html": "<p>I &lt;3 this, a &lt; b &gt; c</p>",
+   "text": "I <3 this, a < b > c",
+   "tokens": [
+    "I",
+    "<",
+    "3",
+    "this",
+    ",",
+    "a",
+    "<",
+    "b",
+    ">",
+    "c"
+   ],
+   "normalized": "I < 3 this , a < b > c",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5
+  },
+  {
+   "html": "Plain text toot with no markup at all, pretty nice",
+   "text": "Plain text toot with no markup at all, pretty nice",
+   "tokens": [
+    "Plain",
+    "text",
+    "toot",
+    "with",
+    "no",
+    "markup",
+    "at",
+    "all",
+    ",",
+    "pretty",
+    "nice"
+   ],
+   "normalized": "Plain text toot with no markup at all , pretty nice",
+   "scores": {
+    "neg": 0.145,
+    "neu": 0.461,
+    "pos": 0.395,
+    "compound": 0.5859
+   },
+   "bucket": 7
+  },
+  {
+   "html": "Die Sonne war hell und der Tag war schön.",
+   "text": "Die Sonne war hell und der Tag war schön.",
+   "tokens": [
+    "Die",
+    "Sonne",
+    "war",
+    "hell",
+    "und",
+    "der",
+    "Tag",
+    "war",
+    "schön",
+    "."
+   ],
+   "normalized": "Die Sonne war hell und der Tag war schön .",
+   "scores": {
+    "neg": 0.765,
+    "neu": 0.235,
+    "pos": 0.0,
+    "compound": -0.9538
+   },
+   "bucket": 1
+  },
+  {
+   "html": "<p>Die Sonne war hell und der Tag war schön.</p>",
+   "text": "Die Sonne war hell und der Tag war schön.",
+   "tokens": [
+    "Die",
+    "Sonne",
+    "war",
+    "hell",
+    "und",
+    "der",
+    "Tag",
+    "war",
+    "schön",
+    "."
+   ],
+   "normalized": "Die Sonne war hell und der Tag war schön .",
+   "scores": {
+    "neg": 0.765,
+    "neu": 0.235,
+    "pos": 0.0,
+    "compound": -0.9538
+   },
+   "bucket": 1
+  },
+  {
+   "html": "<p>Mixed feelings :) but the rent is killing me</p>",
+   "text": "Mixed feelings :) but the rent is killing me",
+   "tokens": [
+    "Mixed",
+    "feelings",
+    ":",
+    ")",
+    "but",
+    "the",
+    "rent",
+    "is",
+    "killing",
+    "me"
+   ],
+   "normalized": "Mixed feeling : ) but the rent is killing me",
+   "scores": {
+    "neg": 0.457,
+    "neu": 0.449,
+    "pos": 0.094,
+    "compound": -0.7814
+   },
+   "bucket": 2
+  },
+  {
+   "html": "<p>Emoji only 🎉🎉🎉</p>",
+   "text": "Emoji only 🎉🎉🎉",
+   "tokens": [
+    "Emoji",
+    "only",
+    "🎉🎉🎉"
+   ],
+   "normalized": "Emoji only 🎉🎉🎉",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5
+  },
+  {
+   "html": "<p></p>",
+   "text": "",
+   "tokens": [],
+   "normalized": "",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5
+  },
+  {
+   "html": "<p><a href=\"https://mastodon.social/tags/auspol\" class=\"mention hashtag\" rel=\"tag\">#<span>auspol</span></a></p>",
+   "text": "#auspol",
+   "tokens": [
+    "#",
+    "auspol"
+   ],
+   "normalized": "# auspol",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5
+  },
+  {
+   "html": "&#150; dash &#8217;quote&#8217; &#x1F600; smile",
+   "text": "– dash ’quote’ 😀 smile",
+   "tokens": [
+    "–",
+    "dash",
+    "’",
+    "quote",
+    "’",
+    "😀",
+    "smile"
+   ],
+   "normalized": "– dash ’ quote ’ 😀 smile",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.444,
+    "pos": 0.556,
+    "compound": 0.3612
+   },
+   "bucket": 6
+  },
+  {
+   "html": "<p>unknown &foo; entity and AT&T rocks</p>",
+   "text": "unknown &foo entity and AT&T rocks",
+   "tokens": [
+    "unknown",
+    "&",
+    "foo",
+    "entity",
+    "and",
+    "AT",
+    "&",
+    "T",
+    "rocks"
+   ],
+   "normalized": "unknown & foo entity and AT & T rock",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5
+  },
+  {
+   "html": "<p>So good  <a href=\"https://mastodon.social/tags/one\" class=\"mention hashtag\" rel=\"tag\">#<span>one</span></a>  <a href=\"https://mastodon.social/tags/two\" class=\"mention hashtag\" rel=\"tag\">#<span>two</span></a> <br>next line, terrible</p>",
+   "text": "So good  #one #two next line, terrible",
+   "tokens": [
+    "So",
+    "good",
+    "#",
+    "one",
+    "#",
+    "two",
+    "next",
+    "line",
+    ",",
+    "terrible"
+   ],
+   "normalized": "So good # one # two next line , terrible",
+   "scores": {
+    "neg": 0.275,
+    "neu": 0.443,
+    "pos": 0.283,
+    "compound": 0.024
+   },
+   "bucket": 5
+  }
+ ],
  "lemmas": [
   [
    "dogs",

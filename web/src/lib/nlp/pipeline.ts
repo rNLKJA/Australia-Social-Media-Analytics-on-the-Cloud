@@ -1,12 +1,14 @@
 /**
  * The Team 57 tweet/toot pipeline (2023), ported to TypeScript.
  *
- *   clean_content      coursework/4_Python_data_processing/scripts/twitter/processor.py
+ *   html -> text       coursework/1_Flask_Backend/harvester/mastodon/toot.py (toots only)
+ *   clean_content      coursework/4_Python_data_processing/scripts/twitter/processor.py (tweets only)
  *   normalize_string   .../scripts/sentimental_analysis/analyzer.py
  *   sentiment_analysis .../scripts/sentimental_analysis/analyzer.py
  *   keyword views      .../scripts/MapReduce/{Income/mapIncome.js,Crime/mapCrimeV2.js}
  *   SAL geocoding      .../scripts/twitter/{processor.py,utils.py}
  */
+import { htmlToText } from "./html-text";
 import { WordNetLemmatizer } from "./lemmatizer";
 import { PunktSentenceTokenizer } from "./punkt";
 import { NS, S, W } from "./pyre";
@@ -19,6 +21,8 @@ export interface NlpEngine {
   lemmatizer: WordNetLemmatizer;
   sia: SentimentIntensityAnalyzer;
   salLookup: Record<string, string>;
+  /** BeautifulSoup's named-entity table (name without ";" -> text) */
+  htmlEntities: Record<string, string>;
 }
 
 const MENTION = new RegExp(`@${W}+${S}*`, "gu");
@@ -135,8 +139,13 @@ export function geocodePlace(
 
 // ---- end-to-end ------------------------------------------------------------
 
+/** Which 2023 code path scored the post. */
+export type PostSource = "twitter" | "mastodon";
+
 export interface PipelineTrace {
+  source: PostSource;
   input: string;
+  /** after step 1: tweets with mentions/hashtags/links stripped; toots converted from HTML */
   cleaned: string;
   sentences: string[];
   tokens: string[];
@@ -149,14 +158,19 @@ export interface PipelineTrace {
   crime: string | null;
 }
 
-/** Score one post exactly as the 2023 Twitter processor did. */
-export function scorePost(engine: NlpEngine, input: string): PipelineTrace {
-  const cleaned = cleanContent(input);
+/**
+ * Score one post exactly as the 2023 code did. Tweets (twitter/processor.py)
+ * had mentions, hashtags and links stripped; toots (harvester/mastodon/toot.py)
+ * were only converted from HTML to text, so hashtags and mentions were scored.
+ */
+export function scorePost(engine: NlpEngine, input: string, source: PostSource = "twitter"): PipelineTrace {
+  const cleaned = source === "twitter" ? cleanContent(input) : htmlToText(input, engine.htmlEntities);
   const { sentences, tokens, lemmas } = tokensAndLemmas(engine, cleaned);
   const normalized = lemmas.join(" ");
   const scores = engine.sia.polarityScores(normalized);
   const bucket = sentimentBucket(scores.compound);
   return {
+    source,
     input,
     cleaned,
     sentences,

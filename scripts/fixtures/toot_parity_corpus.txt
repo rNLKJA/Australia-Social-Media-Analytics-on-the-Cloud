@@ -1,0 +1,26 @@
+# Synthetic, hand-written Mastodon statuses (HTML as the API returns it) for the
+# toot-path parity tests: BeautifulSoup .text -> normalize_string -> sentiment_analysis.
+# One status per line. Lines starting with '#' are ignored. No real user content.
+Feeling #blessed and #happy today
+Worst week ever #fail #sad
+@jerk you are awful
+<p>Feeling <a href="https://mastodon.social/tags/blessed" class="mention hashtag" rel="tag">#<span>blessed</span></a> and <a href="https://mastodon.social/tags/happy" class="mention hashtag" rel="tag">#<span>happy</span></a> today</p>
+<p><span class="h-card"><a href="https://mastodon.au/@someone" class="u-url mention">@<span>someone</span></a></span> you are awful</p>
+<p>Worst week ever <a href="https://tictoc.social/tags/fail" class="mention hashtag" rel="tag">#<span>fail</span></a></p>
+<p>First line</p><p>Second line, still good</p>
+<p>Line one<br>line two<br />line three</p>
+<p>Read this: <a href="https://example.org/a-long/path?x=1&amp;y=2" rel="nofollow noopener noreferrer" target="_blank"><span class="invisible">https://</span><span class="ellipsis">example.org/a-long/pa</span><span class="invisible">th?x=1&amp;y=2</span></a> it is terrible</p>
+<p>Tom &amp; Jerry &lt;3 &quot;love&quot; it&#39;s great</p>
+<p>&hellip; and &mdash; then &nbsp;nothing &copy; 2023</p>
+<p>AT&amp;T is down again, so annoying</p>
+<p>I &lt;3 this, a &lt; b &gt; c</p>
+Plain text toot with no markup at all, pretty nice
+Die Sonne war hell und der Tag war schön.
+<p>Die Sonne war hell und der Tag war schön.</p>
+<p>Mixed feelings :) but the rent is killing me</p>
+<p>Emoji only 🎉🎉🎉</p>
+<p></p>
+<p><a href="https://mastodon.social/tags/auspol" class="mention hashtag" rel="tag">#<span>auspol</span></a></p>
+&#150; dash &#8217;quote&#8217; &#x1F600; smile
+<p>unknown &foo; entity and AT&T rocks</p>
+<p>So good  <a href="https://mastodon.social/tags/one" class="mention hashtag" rel="tag">#<span>one</span></a>  <a href="https://mastodon.social/tags/two" class="mention hashtag" rel="tag">#<span>two</span></a> <br>next line, terrible</p>

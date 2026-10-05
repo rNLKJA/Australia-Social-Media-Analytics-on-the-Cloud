@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { PostSource } from "@/lib/nlp/pipeline";
 import type { PipelineRequest, PipelineResponse } from "@/workers/pipeline.worker";
 
 type Status = "loading" | "ready" | "error";
@@ -34,9 +35,9 @@ export function usePipelineWorker() {
     return () => w.terminate();
   }, []);
 
-  const score = useCallback((text: string, place: string) => {
+  const score = useCallback((text: string, place: string, source: PostSource) => {
     const id = ++seq.current;
-    const msg: PipelineRequest = { id, text, place };
+    const msg: PipelineRequest = { id, text, place, source };
     worker.current?.postMessage(msg);
   }, []);
 

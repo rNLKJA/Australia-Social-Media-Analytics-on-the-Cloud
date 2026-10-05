@@ -10,6 +10,7 @@ export const NLP_ASSETS = {
   exceptions: "wordnet-noun-exceptions.json",
   punkt: "punkt-english.json",
   sal: "sal-lookup.json",
+  entities: "html-entities.json",
 } as const;
 
 export interface NlpAssetPayload {
@@ -18,6 +19,7 @@ export interface NlpAssetPayload {
   exceptions: Record<string, string[]>;
   punkt: PunktParamsJson;
   sal: Record<string, string>;
+  entities: Record<string, string>;
 }
 
 export function createEngine(a: NlpAssetPayload): NlpEngine {
@@ -26,6 +28,7 @@ export function createEngine(a: NlpAssetPayload): NlpEngine {
     lemmatizer: new WordNetLemmatizer(decodeFrontCoded(a.nounsFrontCoded), a.exceptions),
     sia: new SentimentIntensityAnalyzer(a.vader),
     salLookup: a.sal,
+    htmlEntities: a.entities,
   };
 }
 
@@ -36,12 +39,13 @@ export async function fetchEngine(base = "/data/nlp/"): Promise<NlpEngine> {
       if (!r.ok) throw new Error(`Failed to load ${f} (${r.status})`);
       return r;
     });
-  const [vader, nounsFrontCoded, exceptions, punkt, sal] = await Promise.all([
+  const [vader, nounsFrontCoded, exceptions, punkt, sal, entities] = await Promise.all([
     get(NLP_ASSETS.vader).then((r) => r.json()),
     get(NLP_ASSETS.nouns).then((r) => r.text()),
     get(NLP_ASSETS.exceptions).then((r) => r.json()),
     get(NLP_ASSETS.punkt).then((r) => r.json()),
     get(NLP_ASSETS.sal).then((r) => r.json()),
+    get(NLP_ASSETS.entities).then((r) => r.json()),
   ]);
-  return createEngine({ vader, nounsFrontCoded, exceptions, punkt, sal });
+  return createEngine({ vader, nounsFrontCoded, exceptions, punkt, sal, entities });
 }

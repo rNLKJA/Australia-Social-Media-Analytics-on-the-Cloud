@@ -16,6 +16,7 @@ export function loadEngine(): NlpEngine {
     exceptions: JSON.parse(read(NLP_ASSETS.exceptions)),
     punkt: JSON.parse(read(NLP_ASSETS.punkt)),
     sal: JSON.parse(read(NLP_ASSETS.sal)),
+    entities: JSON.parse(read(NLP_ASSETS.entities)),
   });
   return cached;
 }
