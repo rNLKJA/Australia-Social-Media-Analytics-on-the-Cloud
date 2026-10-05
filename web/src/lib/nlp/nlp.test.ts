@@ -228,5 +228,6 @@ describe.runIf(existsSync(SAMPLE))("local cross-check on real toots", () => {
     console.log(`sample=${rows.length} mismatches=${JSON.stringify(miss)}`);
     // 44,156 real toots: 0 mismatches in every field at the time of writing
     expect(miss).toEqual({ text: 0, tokens: 0, normalized: 0, scores: 0, bucket: 0 });
-  });
+    // scoring tens of thousands of toots takes well over vitest's 5 s default
+  }, 180_000);
 });
