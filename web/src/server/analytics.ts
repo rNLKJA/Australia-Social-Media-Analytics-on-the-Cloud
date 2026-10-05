@@ -105,6 +105,22 @@ export const getSalRegions = cache(async (): Promise<SalRegion[]> => {
   });
 });
 
+/**
+ * Sum of squared 1-9 scores per suburb and topic (the third field of the
+ * CouchDB `_stats` reduce), keyed by SAL code. Kept apart from
+ * `getSalRegions` so only the pages that show a suburb's interval carry it.
+ */
+export const getSalSumsq = cache(async (): Promise<Record<string, Partial<Record<Topic, number>>>> => {
+  const rows = await query<{ sal_code: string; topic: Topic; score_sumsqr: number }>(
+    `SELECT t.sal_code, t.topic, t.score_sumsqr
+       FROM twitter_sal_sentiment t JOIN regions_sal r USING (sal_code)
+      WHERE r.on_original_map = 1`,
+  );
+  const out: Record<string, Partial<Record<Topic, number>>> = {};
+  for (const r of rows) (out[r.sal_code] ??= {})[r.topic] = r.score_sumsqr;
+  return out;
+});
+
 export const getIncomeRegions = cache(async (): Promise<IncomeRegion[]> => {
   const rows = await query<{
     sa2_code: string;

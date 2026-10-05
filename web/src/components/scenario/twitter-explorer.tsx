@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { DivergingLegend, NoDataSwatch, SequentialLegend } from "@/components/charts/legends";
 import { LazyChoroplethMap as ChoroplethMap, MAP_BOX } from "@/components/map/lazy-map";
 import { MELB_BOUNDS, VIC_BOUNDS } from "@/components/map/bounds";
+import { AreaInterval } from "@/components/scenario/area-interval";
 import { RegionSearch } from "@/components/scenario/region-search";
 import { Segmented } from "@/components/scenario/segmented";
 import { ThresholdControl } from "@/components/scenario/threshold-control";
@@ -28,7 +29,14 @@ const TOPIC_LABEL: Record<Topic, string> = {
   crime: "Crime tweets",
 };
 
-export function TwitterExplorer({ regions }: { regions: SalRegion[] }) {
+export function TwitterExplorer({
+  regions,
+  sumsq,
+}: {
+  regions: SalRegion[];
+  /** sum of squared scores per suburb and topic, for each suburb's interval */
+  sumsq: Record<string, Partial<Record<Topic, number>>>;
+}) {
   const theme = useThemeName();
   const [topic, setTopic] = useState<Topic>("all");
   const [measure, setMeasure] = useState<Measure>("avg");
@@ -221,6 +229,11 @@ export function TwitterExplorer({ regions }: { regions: SalRegion[] }) {
                                 />
                                 {fmtScore(a.avg)}
                               </span>
+                              {sumsq[sel.code]?.[t] !== undefined && (
+                                <span className="text-muted-foreground flex flex-col items-end text-[11px]">
+                                  <AreaInterval sums={{ n: a.n, sum: a.sum, sumsq: sumsq[sel.code]![t]! }} />
+                                </span>
+                              )}
                             </>
                           ) : (
                             <span className="text-muted-foreground">none</span>
@@ -232,7 +245,7 @@ export function TwitterExplorer({ regions }: { regions: SalRegion[] }) {
                 </dl>
                 <p className="text-muted-foreground mt-3 text-[11px]">
                   Averages are the original dashboard&apos;s values: sum of 1-9 scores ÷ tweets, rounded to
-                  two decimals.
+                  two decimals. Intervals are t-based, treating tweets as independent.
                 </p>
               </>
             ) : (

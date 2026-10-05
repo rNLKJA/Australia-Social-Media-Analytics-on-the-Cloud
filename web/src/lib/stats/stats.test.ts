@@ -4,7 +4,13 @@ import { benjaminiHochberg, mcnemarExact, pairedDifferenceScoreCi } from "./mult
 import { wilson } from "./proportion";
 import { createRng, shuffleInPlace } from "./random";
 import { invert, ols } from "./regression";
-import { areaMean, reliability, tweetsForReliability, varianceComponents } from "./reliability";
+import {
+  areaMean,
+  histogramSums,
+  reliability,
+  tweetsForReliability,
+  varianceComponents,
+} from "./reliability";
 import {
   inducedSubgraph,
   knnNeighbors,
@@ -167,6 +173,15 @@ describe("small-area reliability", () => {
     const v = scores.reduce((a, b) => a + (b - 35 / 6) ** 2, 0) / 5;
     expect(m.sd!).toBeCloseTo(Math.sqrt(v), 12);
     expect(m.lower!).toBeLessThan(m.mean);
+  });
+  it("recovers the sums from a 1-9 histogram (scipy.stats.t.interval on the expanded scores)", () => {
+    // np.repeat(np.arange(1, 10), counts): n 23, sum 114, sum of squares 664
+    const s = histogramSums([3, 0, 1, 2, 10, 4, 0, 1, 2]);
+    expect(s).toEqual({ n: 23, sum: 114, sumsq: 664 });
+    const m = areaMean(s);
+    expect(m.mean).toBeCloseTo(4.956521739130435, 12);
+    expect(m.lower!).toBeCloseTo(4.039395488805699, 9);
+    expect(m.upper!).toBeCloseTo(5.87364798945517, 9);
   });
   it("gives no interval for a single tweet", () => {
     expect(areaMean({ n: 1, sum: 6, sumsq: 36 }).se).toBeNull();

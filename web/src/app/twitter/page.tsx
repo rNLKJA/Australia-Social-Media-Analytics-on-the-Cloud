@@ -5,8 +5,9 @@ import { Finding, Note, PageHeader, Section, StatStrip } from "@/components/edit
 import { TwitterExplorer } from "@/components/scenario/twitter-explorer";
 import { fmtInt, fmtPct, fmtScore, plural } from "@/lib/format";
 import { median } from "@/lib/pandas";
+import { type AreaMean, areaMean } from "@/lib/stats";
 import type { SalRegion } from "@/lib/types";
-import { getFacts, getHistogram, getSalRegions } from "@/server/analytics";
+import { getFacts, getHistogram, getSalRegions, getSalSumsq } from "@/server/analytics";
 
 export const metadata: Metadata = {
   title: "Sentiment map",
@@ -14,15 +15,21 @@ export const metadata: Metadata = {
     "Average tweet sentiment for 1,085 Victorian suburbs, February to July 2022, reproduced from the Team 57 CouchDB MapReduce views.",
 };
 
-function ExtremeList({ title, items, tone }: { title: string; items: SalRegion[]; tone: "neg" | "pos" }) {
+interface Ranked {
+  region: SalRegion;
+  /** t-based 95% interval for the suburb's mean, from the CouchDB `_stats` sums */
+  mean: AreaMean;
+}
+
+function ExtremeList({ title, items, tone }: { title: string; items: Ranked[]; tone: "neg" | "pos" }) {
   return (
     <div>
       <h3 className="text-sm font-semibold">{title}</h3>
       <ul className="divide-border/60 mt-2 divide-y text-sm">
-        {items.map((r) => (
+        {items.map(({ region: r, mean: m }) => (
           <li key={r.code} className="flex items-baseline justify-between gap-3 py-1.5">
             <span className="truncate">{r.name}</span>
-            <span className="num text-muted-foreground shrink-0 text-xs">
+            <span className="num text-muted-foreground shrink-0 text-right text-xs">
               {fmtInt(r.all!.n)} tweets ·{" "}
               <span
                 className={
@@ -31,6 +38,11 @@ function ExtremeList({ title, items, tone }: { title: string; items: SalRegion[]
               >
                 {fmtScore(r.all!.avg)}
               </span>
+              {m.lower !== null && (
+                <span className="block text-[11px]">
+                  95% CI {fmtScore(m.lower)}–{fmtScore(m.upper)}
+                </span>
+              )}
             </span>
           </li>
         ))}
@@ -39,11 +51,16 @@ function ExtremeList({ title, items, tone }: { title: string; items: SalRegion[]
   );
 }
 
+/** true when every pair of intervals in the list overlaps, so the order within it is not a finding */
+const allOverlap = (xs: Ranked[]) =>
+  xs.every((a) => xs.every((b) => (a.mean.lower ?? -Infinity) <= (b.mean.upper ?? Infinity)));
+
 export default async function TwitterPage() {
-  const [regions, all, facts] = await Promise.all([
+  const [regions, all, facts, sumsq] = await Promise.all([
     getSalRegions(),
     getHistogram("twitter", "all"),
     getFacts(),
+    getSalSumsq(),
   ]);
   const withAll = regions.filter((r) => r.all);
   const vicTweets = withAll.reduce((a, r) => a + r.all!.n, 0);
@@ -54,9 +71,16 @@ export default async function TwitterPage() {
   const extremesMedianN = median([...low, ...high].map((r) => r.all!.n));
   const midMedianN = median(mid.map((r) => r.all!.n));
   const busiest = [...withAll].sort((a, b) => b.all!.n - a.all!.n).slice(0, 10);
-  const reliable = withAll.filter((r) => r.all!.n >= 100);
-  const happiest = [...reliable].sort((a, b) => b.all!.avg - a.all!.avg).slice(0, 6);
-  const gloomiest = [...reliable].sort((a, b) => a.all!.avg - b.all!.avg).slice(0, 6);
+  const reliable: Ranked[] = withAll
+    .filter((r) => r.all!.n >= 100 && sumsq[r.code]?.all !== undefined)
+    .map((r) => ({
+      region: r,
+      mean: areaMean({ n: r.all!.n, sum: r.all!.sum, sumsq: sumsq[r.code]!.all! }),
+    }));
+  const happiest = [...reliable].sort((a, b) => b.region.all!.avg - a.region.all!.avg).slice(0, 6);
+  const gloomiest = [...reliable].sort((a, b) => a.region.all!.avg - b.region.all!.avg).slice(0, 6);
+  // suburbs with at least 100 tweets whose whole interval sits below the neutral 5
+  const clearlyNegative = reliable.filter((x) => x.mean.upper !== null && x.mean.upper < 5).length;
 
   return (
     <>
@@ -95,7 +119,7 @@ export default async function TwitterPage() {
       </PageHeader>
 
       <Section kicker="Explore" title="The suburb map" className="pb-6">
-        <TwitterExplorer regions={regions} />
+        <TwitterExplorer regions={regions} sumsq={sumsq} />
       </Section>
 
       <Section
@@ -159,6 +183,14 @@ export default async function TwitterPage() {
           <ExtremeList title="Most negative (≥ 100 tweets)" items={gloomiest} tone="neg" />
         </div>
         <Note className="mt-6">
+          Intervals are t-based 95% intervals for each suburb&apos;s mean, from the count, sum and sum of
+          squares the CouchDB views kept; tweets are treated as independent, so they are optimistic.{" "}
+          {allOverlap(happiest) && allOverlap(gloomiest)
+            ? "Within each list every interval overlaps every other, so the order inside a list is not a finding. "
+            : ""}
+          {clearlyNegative === 0
+            ? `None of the ${fmtInt(reliable.length)} suburbs with at least 100 tweets has an interval wholly below the neutral 5. `
+            : `${plural(clearlyNegative, "suburb")} with at least 100 tweets ${clearlyNegative === 1 ? "has an interval" : "have intervals"} wholly below the neutral 5. `}
           Place names come from Twitter&apos;s self-reported place field, matched to suburbs by the
           team&apos;s n-gram lookup; a tweet tagged &quot;Melbourne, Victoria&quot; lands in the Melbourne CBD
           suburb, which is why it dominates every ranking.

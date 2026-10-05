@@ -5,6 +5,7 @@ import { HourlyTimeline } from "@/components/charts/hourly-timeline";
 import { SentimentHistogram } from "@/components/charts/sentiment-histogram";
 import { Finding, Note, PageHeader, Section, StatStrip } from "@/components/editorial/page-header";
 import { fmtInt, fmtPct } from "@/lib/format";
+import { areaMean, histogramSums, wilson } from "@/lib/stats";
 import { getFacts, getHistogram, getMastodonHourly, getMastodonLanguages } from "@/server/analytics";
 
 export const metadata: Metadata = {
@@ -22,6 +23,9 @@ const SERVERS = [
     blurb: 'A general-purpose server ("Mastodon TicToc" in 2023).',
   },
 ] as const;
+
+/** "45.1–45.4%" for a Wilson interval */
+const fmtPctRange = (lo: number, hi: number) => `${(lo * 100).toFixed(1)}–${(hi * 100).toFixed(1)}%`;
 
 const LANG_NAMES: Record<string, string> = {
   en: "English",
@@ -56,6 +60,7 @@ export default async function MastodonPage() {
   const social2023 = byServer[0].all.counts;
   const reTotal = sum(reAll.counts);
   const topLangs = langs.slice(0, 12);
+  const neutral2023 = wilson(social2023[4], sum(social2023));
   const de = langs.find((l) => l.lang === "de");
   const en = langs.find((l) => l.lang === "en");
 
@@ -87,9 +92,9 @@ export default async function MastodonPage() {
               note: "in the 2023 dashboard",
             },
             {
-              value: fmtPct(social2023[4] / sum(social2023)),
+              value: fmtPct(neutral2023.estimate, 1),
               label: "of them scored neutral",
-              note: "versus 48% on Twitter",
+              note: `95% CI ${fmtPctRange(neutral2023.lower, neutral2023.upper)}; 48% on Twitter`,
             },
             {
               value: fmtInt(reTotal),
@@ -238,14 +243,18 @@ export default async function MastodonPage() {
             <BarList
               ariaLabel="Share of toots scored neutral by language"
               max={1}
-              items={topLangs.map((l) => ({
-                key: l.lang,
-                label: `${LANG_NAMES[l.lang] ?? l.lang} (${fmtInt(l.toots)})`,
-                value: l.buckets[4] / l.toots,
-                display: fmtPct(l.buckets[4] / l.toots),
-                color: "var(--sent-5)",
-                highlight: l.lang === "en",
-              }))}
+              items={topLangs.map((l) => {
+                const w = wilson(l.buckets[4], l.toots);
+                return {
+                  key: l.lang,
+                  label: `${LANG_NAMES[l.lang] ?? l.lang} (${fmtInt(l.toots)})`,
+                  value: w.estimate,
+                  display: fmtPct(w.estimate, 1),
+                  detail: fmtPctRange(w.lower, w.upper),
+                  color: "var(--sent-5)",
+                  highlight: l.lang === "en",
+                };
+              })}
             />
           </div>
           <div>
@@ -255,17 +264,27 @@ export default async function MastodonPage() {
               max={6}
               items={topLangs.map((l) => {
                 const m = l.scoreSum / l.toots;
+                const ci = areaMean(histogramSums(l.buckets));
+                const range =
+                  ci.lower === null ? undefined : `${ci.lower.toFixed(2)}–${ci.upper!.toFixed(2)}`;
                 return {
                   key: l.lang,
                   label: LANG_NAMES[l.lang] ?? l.lang,
                   value: m,
                   display: m.toFixed(2),
+                  detail: range,
                   color: m < 4.8 ? "var(--sent-3)" : m > 5.2 ? "var(--sent-7)" : "var(--sent-5)",
                   highlight: l.lang === "de",
                 };
               })}
             />
             <Note className="mt-4">
+              Under each value: a 95% interval (Wilson for the share, t-based for the mean, toots treated as
+              independent). With thousands of toots per language the intervals are a fraction of a point wide,
+              so gaps such as English against Japanese or German against English are not sampling noise; they
+              come from the English-only lexicon.
+            </Note>
+            <Note className="mt-2">
               The 2023 harvester stored each toot&apos;s declared language but scored every toot regardless.
               The same applies to tweets. Try German text on the{" "}
               <Link className="link" href="/pipeline">

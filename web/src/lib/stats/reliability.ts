@@ -38,6 +38,22 @@ export function areaMean({ n, sum, sumsq }: AreaSums, level = 0.95): AreaMean {
   return { n, mean, sd, se, lower: mean - t * se, upper: mean + t * se };
 }
 
+/**
+ * Count, sum and sum of squares of 1-9 scores recovered exactly from a
+ * histogram (`counts[i]` posts scored `i + 1`), for `areaMean`.
+ */
+export function histogramSums(counts: readonly number[]): AreaSums {
+  let n = 0;
+  let sum = 0;
+  let sumsq = 0;
+  counts.forEach((c, i) => {
+    n += c;
+    sum += c * (i + 1);
+    sumsq += c * (i + 1) ** 2;
+  });
+  return { n, sum, sumsq };
+}
+
 export interface VarianceComponents {
   /** regions with at least 2 tweets */
   k: number;

@@ -8,6 +8,8 @@ export interface BarItem {
   color?: string;
   highlight?: boolean;
   note?: string;
+  /** a second, smaller line under the value, e.g. a 95% interval */
+  detail?: string;
 }
 
 /**
@@ -53,6 +55,7 @@ export function BarList({
             className={cn("num text-muted-foreground text-right text-xs", it.highlight && "text-foreground")}
           >
             {it.display ?? it.value}
+            {it.detail && <span className="block text-[10px] leading-tight">{it.detail}</span>}
             {it.note && <span className="sr-only"> ({it.note})</span>}
           </span>
         </li>
