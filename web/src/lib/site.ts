@@ -20,6 +20,7 @@ export const NAV = [
   { href: "/ask", label: "Ask the data", short: "Ask" },
   { href: "/methods", label: "Data & methods", short: "Methods" },
   { href: "/records", label: "Records", short: "Records" },
+  { href: "/tour", label: "Tour", short: "Tour" },
 ] as const;
 
 export const TEAM = [

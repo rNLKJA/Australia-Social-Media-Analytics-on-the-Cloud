@@ -15,7 +15,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "showcase": "node scripts/showcase.mjs",
+    "showcase:test": "SHOWCASE_FAST=1 node scripts/showcase.mjs --test-only",
+    "showcase:media": "node scripts/showcase-media.mjs"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",
@@ -38,6 +41,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/geojson": "^7946.0.16",
     "@types/node": "^24.19.1",
@@ -51,6 +55,7 @@
     "prettier": "^3.9.9",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "shadcn": "^4.21.1",
+    "sharp": "^0.35.5",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^5.0.3"

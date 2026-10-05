@@ -4,13 +4,100 @@
 
 **Does the mood online match life on the ground?** A University of Melbourne cloud computing project (COMP90024, 2023) that scored 2.4 million geotagged tweets and 1.7 million Mastodon toots for sentiment and set them against official income and crime statistics, revived in 2026 as an interactive, read-only website, then upgraded with uncertainty, spatial statistics and an optional, auditable bring-your-own-key AI feature.
 
-**Live demo:** [comp90024-social-sense.vercel.app](https://comp90024-social-sense.vercel.app)
+**Live demo:** [comp90024-social-sense.vercel.app](https://comp90024-social-sense.vercel.app) · **[Guided tour](https://comp90024-social-sense.vercel.app/tour)** (three short walkthrough videos)
 
 [![CI](https://github.com/rNLKJA/Australia-Social-Media-Analytics-on-the-Cloud/actions/workflows/ci.yml/badge.svg)](https://github.com/rNLKJA/Australia-Social-Media-Analytics-on-the-Cloud/actions/workflows/ci.yml)
 [![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs)](https://nextjs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 </div>
+
+## Showcase
+
+<p align="center">
+  <img src="docs/showcase/the-story.gif" alt="The story walkthrough: the landing page and the scroll-driven diagram of the original 2023 cloud system" width="960">
+</p>
+
+**[Take the guided tour](https://comp90024-social-sense.vercel.app/tour)**: three short captioned walkthroughs (MP4 with WebVTT captions and a written transcript) and every screenshot below in a lightbox. All of it was recorded by a reproducible Playwright script, [`web/e2e/showcase.spec.ts`](web/e2e/showcase.spec.ts) (`cd web && pnpm showcase`), which doubles as an end-to-end test: it asserts what each step shows (the recovered 2023 numbers, the live correlation, Moran's I at two thresholds, the validator verdict, the audit-log record), so a broken feature fails the recording. The statistics use the site's fixed seed 57. No real API key was used: in walkthrough 3 the key is a placeholder and the model's reply is a clearly labelled mock, while the SQL it returns still goes through the real validator and runs on the real read-only database.
+
+### Key features
+
+| | |
+| --- | --- |
+| <img src="docs/showcase/01-landing-light.png" alt="Landing page" width="440"><br>**Landing page.** The question, and Victoria's geotagged tweets drawn as one dot per suburb. | <img src="docs/showcase/02-landing-dark.png" alt="Landing page, dark mode" width="440"><br>**Landing page, dark mode.** The same hero in dark mode. |
+| <img src="docs/showcase/03-architecture.png" alt="The original cloud system" width="440"><br>**The original cloud system.** A scroll-driven diagram of the 2023 MPI, CouchDB, Flask and React system. | <img src="docs/showcase/04-sentiment-map.png" alt="Suburb sentiment map" width="440"><br>**Suburb sentiment map.** Average tone of geotagged tweets per suburb, by topic, with a tweet threshold. |
+| <img src="docs/showcase/05-income-explorer.png" alt="Scenario 1: income" width="440"><br>**Scenario 1: income.** SA2 income choropleth linked to a sentiment scatter; the correlation is recomputed live. | <img src="docs/showcase/06-income-uncertainty.png" alt="How sure can we be?" width="440"><br>**How sure can we be?** Spearman's rho with a bootstrap interval, HC3 slope and residual Moran's I. |
+| <img src="docs/showcase/07-crime-explorer.png" alt="Scenario 2: crime" width="440"><br>**Scenario 2: crime.** Recorded offences by LGA against the tone of crime tweets. | <img src="docs/showcase/08-spatial-lisa.png" alt="Spatial statistics" width="440"><br>**Spatial statistics.** Global Moran's I with a permutation test and the LISA cluster map. |
+| <img src="docs/showcase/09-mastodon.png" alt="Mastodon: VADER only speaks English" width="440"><br>**Mastodon: VADER only speaks English.** Neutral share and mean score by language, with intervals, from a re-scored week of toots. | <img src="docs/showcase/10-pipeline.png" alt="The 2023 pipeline in your browser" width="440"><br>**The 2023 pipeline in your browser.** The ported NLTK and VADER code path scores a post step by step. |
+| <img src="docs/showcase/11-ai-settings.png" alt="Bring your own key" width="440"><br>**Bring your own key.** AI settings: Anthropic by default; the key stays in this browser. | <img src="docs/showcase/12-ask-mocked-answer.png" alt="Ask the data (mocked reply)" width="440"><br>**Ask the data (mocked reply).** Validated SQL, cited rows and a human decision. The model reply is mocked. |
+| <img src="docs/showcase/13-ask-eval.png" alt="Text-to-SQL benchmark" width="440"><br>**Text-to-SQL benchmark.** 16 questions with hand-written gold SQL, run on your own key; nothing is pre-scored. | <img src="docs/showcase/14-ai-log.png" alt="AI audit log" width="440"><br>**AI audit log.** Every AI call from this browser, with the human decision; JSON and CSV export. |
+| <img src="docs/showcase/15-methods.png" alt="Data and methods" width="440"><br>**Data and methods.** How uncertainty is reported and how the statistics are checked against Python. | <img src="docs/showcase/16-records.png" alt="Records" width="440"><br>**Records.** Every table of the read-only database, searchable and exportable as CSV. |
+| <img src="docs/showcase/17-mobile-landing.png" alt="Mobile: landing" width="220"><br>**Mobile: landing.** The landing page on a 390 px phone. | <img src="docs/showcase/18-mobile-income.png" alt="Mobile: Scenario 1" width="220"><br>**Mobile: Scenario 1.** The income scatter and correlations on a phone. |
+| <img src="docs/showcase/19-mobile-spatial.png" alt="Mobile: spatial statistics" width="220"><br>**Mobile: spatial statistics.** Moran's I and the LISA map on a phone. |  |
+
+### Workflow walkthrough
+
+The steps below are the on-screen captions of each recording, in order.
+
+#### 1. The story (`/`)
+
+The landing page from top to bottom: the question, Victoria's geotagged tweets drawn as suburb dots, the 2023 brief, the original cloud system animated step by step as you scroll, the four recomputed findings and the 2026 upgrade.
+
+1. The question: does the mood online match life on the ground?
+2. Every dot is a Victorian suburb: size is tweet volume, colour is average tone
+3. The 2023 brief: harvest, store, analyse and compare with official data, on 8 vCPUs
+4. How it worked: scroll to follow a tweet through the original cloud system
+5. Harvest: MPI ranks split the 57 GB file; harvesters poll three Mastodon servers
+6. Score and store: VADER on a 1-9 scale, bulk-loaded into a three-node CouchDB cluster
+7. Summarise: MapReduce views keep a count, sum, min and max for every suburb
+8. Serve and compare: a Flask API joins the views with SUDO income and crime data
+9. Automate: Ansible and Docker Swarm on the Melbourne Research Cloud
+10. Four findings, recomputed from the recovered numbers
+11. The 2026 upgrade: intervals, spatial statistics and an optional, audited AI
+
+*Setup:* No input needed: every number is recovered from the 2023 outputs or recomputed by scripts/.
+
+#### 2. Income vs sentiment (`/income` → `/spatial`)
+
+Scenario 1 end to end: the SA2 income choropleth linked to a scatter of tweet sentiment, the map recoloured by mood, a selected area with its interval, the correlation recomputed live at higher thresholds, the bootstrap interval, then Moran's I and the LISA cluster map on /spatial, and the caveats that come with them.
+
+<img src="docs/showcase/income-vs-sentiment.gif" alt="Income vs sentiment walkthrough" width="960">
+
+1. Scenario 1: do richer areas tweet more happily about money?
+2. The choropleth: median personal income for 420 Victorian SA2s (ABS, 2015-16)
+3. The linked scatter: one dot per SA2, sized by its income tweets
+4. Recolour the map by the mood of income tweets instead
+5. Select Ballarat: the map, the chart and the detail panel follow, with a 95% interval
+6. Raise the tweet threshold: the correlation is recomputed in the browser
+7. How sure? Spearman's rho 0.10, bootstrap 95% CI -0.06 to 0.26, which includes zero
+8. Spatial statistics: is the mood clustered in space, or is it noise?
+9. Global Moran's I = 0.022, permutation p = 0.24 across 152 SA2s: no evidence of clustering
+10. The LISA cluster map: High-High, Low-Low and outliers, 999 permutations, seed 57
+11. Count every SA2 with a tweet and a 'pattern' appears: I = 0.135, p = 0.001
+12. Back to 30 tweets and zoom to Melbourne, where most analysed SA2s are
+13. The caveats: areas, not people; boundaries change answers; small areas are suppressed
+
+*Setup:* Default settings. Bootstrap: 2,000 paired resamples, seed 57. Moran's I and LISA: 999 permutations, seed 57, 6 nearest neighbours, SA2s with at least 30 tweets unless stated.
+
+#### 3. Ask the data (`/ask` → `/ai-log` → `/records`)
+
+The optional bring-your-own-key feature: the AI settings dialog, a question answered by a mocked model (no real key is used), the generated SQL passing the site's validator, the rows and chart, the human decision, then the audit log and the same rows in the open records.
+
+<img src="docs/showcase/ask-the-data.gif" alt="Ask the data walkthrough" width="960">
+
+1. Ask the data: optional AI with your own key; the rest of the site needs none
+2. AI settings: Anthropic by default, the key stays in this tab and goes only to the provider
+3. For this demo: a placeholder, not a real key; provider calls are intercepted *(mocked AI response for illustration)*
+4. Ask an example question: the five Victorian suburbs with the most crime tweets
+5. Step 1: the model writes one SQL query, labelled AI-generated *(mocked AI response for illustration)*
+6. Step 2: the site's validator allows one read-only SELECT and runs it
+7. Step 3: the explanation cites rows, and every citation is checked *(mocked AI response for illustration)*
+8. The rows themselves, with an automatic chart
+9. A person decides: accept or reject, and the decision is recorded *(mocked AI response for illustration)*
+10. The AI audit log: question, model, SQL, verdict, latency and decision; JSON or CSV *(mocked AI response for illustration)*
+11. Records: Melbourne (SAL 21640) in the open table shows the same 4,026 crime tweets
+
+*Setup:* A placeholder key, never a real one. Every request to the provider is intercepted in the browser and answered by a mock grounded in the rows the site returned; the SQL runs for real on the read-only database.
 
 ## Overview
 
@@ -77,6 +164,7 @@ The upgrade adds the questions a statistician would ask of the 2023 results, and
 | `/methods/model-card` | Model card for the sentiment scorer and the text-to-SQL assistant |
 | `/methods/decisions/DR-00N-…` | The four decision records, rendered from `docs/decisions/` |
 | `/records` | Every table of `analytics.db` with search, sorting, pagination and CSV export |
+| `/tour` | Guided tour: three captioned walkthrough videos with transcripts, and every key screenshot in a lightbox |
 | `POST /api/sql` | Validates and runs one read-only SELECT; accepts only `{ "sql": "..." }` |
 
 ## Tech stack
@@ -92,7 +180,7 @@ The upgrade adds the questions a statistician would ask of the 2023 results, and
 | NLP | NLTK 3.8.1 (Python 3.11) | The same algorithms in TypeScript, run in a Web Worker |
 | Statistics | scipy in notebooks | `web/src/lib/stats` (bootstrap, Wilson, OLS with HC3, Moran's I, LISA), verified against scipy, statsmodels and PySAL |
 | AI | A ChatGPT pop-up with a build-time key (never shipped) | Optional, bring your own key: Anthropic or OpenAI from the browser, SQL validated server-side (node-sql-parser + read-only SQLite), audit log in IndexedDB |
-| Tests | – | Vitest (452 tests incl. parity with Python), ESLint, TypeScript strict, GitHub Actions |
+| Tests | – | Vitest (479 tests incl. parity with Python), Playwright guided tour (end-to-end journeys), ESLint, TypeScript strict, GitHub Actions |
 | Deployment | Ansible + Docker Swarm | `git push` |
 
 ## Repository structure
@@ -104,7 +192,8 @@ The upgrade adds the questions a statistician would ask of the 2023 results, and
 ├── .github/workflows/ci.yml     lint, typecheck, test and build the web app
 ├── docs/                        model card and decision records (mirrored into web/content/ for the site)
 │   ├── model-card.md
-│   └── decisions/DR-001 … DR-004
+│   ├── decisions/DR-001 … DR-004
+│   └── showcase/                README screenshots (PNG) and walkthrough GIFs, made by `pnpm showcase`
 ├── coursework/                  the original 2023 submission, moved with git mv (see coursework/README.md)
 │   ├── 1_Flask_Backend/         Flask API + Mastodon harvester
 │   ├── 2_ReactJS_frontend/      React dashboard and the Plotly JSON it shipped (parity reference)
@@ -124,6 +213,9 @@ The upgrade adds the questions a statistician would ask of the 2023 results, and
 └── web/                         the deployable Next.js app (Vercel root)
     ├── data/analytics.db        read-only SQLite (aggregates only)
     ├── public/geo/              simplified ABS boundaries (TopoJSON)
+    ├── public/showcase/         /tour media: H.264 walkthroughs, WebVTT captions, posters, WebP screenshots
+    ├── e2e/                     Playwright guided tour (showcase.spec.ts), caption overlay, mocked AI provider
+    ├── scripts/                 showcase runner and media post-processing (ffmpeg, sharp)
     ├── public/data/nlp/         VADER lexicon, WordNet nouns, Punkt parameters, SAL lookup, HTML entities
     ├── assets/fonts/            Newsreader + Public Sans subsets for the Open Graph image (SIL OFL)
     ├── content/                 mirror of docs/ rendered on /methods (node tools/sync-docs.mjs)
@@ -131,7 +223,7 @@ The upgrade adds the questions a statistician would ask of the 2023 results, and
     ├── .env.example             optional variables (none required)
     └── src/
         ├── app/                 routes (/, /twitter, /income, /crime, /mastodon, /spatial, /pipeline, /ask,
-        │                        /ask/eval, /ai-log, /methods, /records) and api/sql
+        │                        /ask/eval, /ai-log, /methods, /records, /tour) and api/sql
         ├── components/          ui/ (shadcn), layout/, charts/, map/, scenario/, spatial/, ask/, ai/, landing/,
         │                        pipeline/, editorial/
         ├── lib/                 framework-free code + tests: nlp/ (Punkt, tokeniser, WordNet, VADER, pipeline),
@@ -155,6 +247,17 @@ pnpm dev                 # http://localhost:3000
 pnpm lint && pnpm typecheck && pnpm test && pnpm build
 pnpm start               # serve the production build
 ```
+
+### Re-recording the showcase
+
+```bash
+cd web
+pnpm showcase                                   # tour against production; writes docs/showcase/ and public/showcase/
+pnpm build && BASE_URL=http://localhost:3000 pnpm showcase   # against a local production build
+pnpm showcase:test                              # the same journeys as fast end-to-end tests, no video
+```
+
+It uses the system Google Chrome (Playwright `channel: "chrome"`; no browser is downloaded) and the `ffmpeg` on `PATH`. Raw output goes to `web/.showcase/` (git-ignored); `scripts/showcase-media.mjs` encodes the MP4s (H.264, CRF 28, faststart), the README GIFs (960 px, palette per GIF) and the optimised screenshots.
 
 No environment variables are required (see [`web/.env.example`](web/.env.example)). Open Graph image URLs are made absolute from `NEXT_PUBLIC_SITE_URL` if set, otherwise from Vercel's `VERCEL_PROJECT_PRODUCTION_URL` / `VERCEL_URL`, which Vercel provides at build time, and only fall back to `http://localhost:3000` for local builds.
 

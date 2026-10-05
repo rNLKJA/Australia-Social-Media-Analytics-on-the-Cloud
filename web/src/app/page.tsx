@@ -1,4 +1,4 @@
-import { ArrowRight, FlaskConical, Map as MapIcon, ScanSearch, Sigma } from "lucide-react";
+import { ArrowRight, Clapperboard, FlaskConical, Map as MapIcon, ScanSearch, Sigma } from "lucide-react";
 import Link from "next/link";
 import { SentimentHistogram } from "@/components/charts/sentiment-histogram";
 import { Section } from "@/components/editorial/page-header";
@@ -71,6 +71,12 @@ export default async function Home() {
                 </Link>
               </Button>
             </div>
+            <p className="mt-4 text-sm">
+              <Link href="/tour" className="link inline-flex items-center gap-1.5 font-medium">
+                <Clapperboard className="size-4" aria-hidden /> Short on time? Take the guided tour: three
+                captioned walkthroughs
+              </Link>
+            </p>
           </div>
           <div className="relative">
             <SuburbDots regions={sals} outline={vic} className="mx-auto max-w-[640px]" />

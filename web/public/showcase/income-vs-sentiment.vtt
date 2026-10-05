@@ -1,0 +1,55 @@
+WEBVTT
+
+NOTE Income vs sentiment: captions match the on-screen steps.
+
+1
+00:00:00.200 --> 00:00:05.840
+Step 1 of 13. Scenario 1: do richer areas tweet more happily about money?.
+
+2
+00:00:05.840 --> 00:00:13.328
+Step 2 of 13. The choropleth: median personal income for 420 Victorian SA2s (ABS, 2015-16).
+
+3
+00:00:13.328 --> 00:00:17.758
+Step 3 of 13. The linked scatter: one dot per SA2, sized by its income tweets.
+
+4
+00:00:17.758 --> 00:00:24.707
+Step 4 of 13. Recolour the map by the mood of income tweets instead.
+
+5
+00:00:24.707 --> 00:00:33.274
+Step 5 of 13. Select Ballarat: the map, the chart and the detail panel follow, with a 95% interval.
+
+6
+00:00:33.274 --> 00:00:43.885
+Step 6 of 13. Raise the tweet threshold: the correlation is recomputed in the browser.
+
+7
+00:00:43.885 --> 00:00:50.987
+Step 7 of 13. How sure? Spearman's rho 0.10, bootstrap 95% CI -0.06 to 0.26, which includes zero.
+
+8
+00:00:50.987 --> 00:00:56.657
+Step 8 of 13. Spatial statistics: is the mood clustered in space, or is it noise?.
+
+9
+00:00:56.657 --> 00:01:02.988
+Step 9 of 13. Global Moran's I = 0.022, permutation p = 0.24 across 152 SA2s: no evidence of clustering.
+
+10
+00:01:02.988 --> 00:01:10.269
+Step 10 of 13. The LISA cluster map: High-High, Low-Low and outliers, 999 permutations, seed 57.
+
+11
+00:01:10.269 --> 00:01:15.990
+Step 11 of 13. Count every SA2 with a tweet and a 'pattern' appears: I = 0.135, p = 0.001.
+
+12
+00:01:15.990 --> 00:01:24.705
+Step 12 of 13. Back to 30 tweets and zoom to Melbourne, where most analysed SA2s are.
+
+13
+00:01:24.705 --> 00:01:35.920
+Step 13 of 13. The caveats: areas, not people; boundaries change answers; small areas are suppressed.
