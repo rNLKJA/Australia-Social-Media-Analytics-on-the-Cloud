@@ -1,10 +1,12 @@
-import { Check, Equal } from "lucide-react";
+import { ArrowRight, Check, Equal } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { AreaCaveats } from "@/components/editorial/caveats";
 import { Finding, Note, PageHeader, Section } from "@/components/editorial/page-header";
 import { fmtInt } from "@/lib/format";
 import { SITE } from "@/lib/site";
 import { getFacts, getHistogram } from "@/server/analytics";
+import { listDecisions } from "@/server/content";
 
 export const metadata: Metadata = {
   title: "Data & methods",
@@ -56,6 +58,58 @@ const SOURCES = [
   },
 ];
 
+const TOC = [
+  ["sources", "Data"],
+  ["original", "2023 processing"],
+  ["revival", "2026 revival"],
+  ["reproduction", "Reproduction checks"],
+  ["evaluation", "Uncertainty"],
+  ["spatial", "Spatial caveats"],
+  ["limitations", "Limitations & assumptions"],
+  ["ai-use", "AI use statement"],
+  ["model-card", "Model card"],
+  ["decisions", "Decision records"],
+  ["change", "What I'd change"],
+] as const;
+
+const UNCERTAINTY = [
+  {
+    what: "An area's average sentiment",
+    how: "Tweet count and a t-based 95% interval from the CouchDB _stats sums (count, sum, sum of squares); areas under 30 tweets flagged or suppressed (DR-003)",
+    ref: "scipy.stats.t",
+  },
+  {
+    what: "Proportions (benchmark accuracy, refusal rate, neutral share by language)",
+    how: "Wilson score 95% interval, with k and n shown",
+    ref: "statsmodels proportion_confint",
+  },
+  {
+    what: "Income or offences against sentiment",
+    how: "Spearman's rho with a paired percentile bootstrap (2,000 resamples, seed 57); OLS slope with HC3 robust standard error; residual Moran's I",
+    ref: "scipy.stats.bootstrap, statsmodels OLS",
+  },
+  {
+    what: "Spatial clustering",
+    how: "Global Moran's I with analytic moments and a 999-permutation p-value (seed 57); local Moran's I with conditional permutation, two-sided, optional Benjamini-Hochberg",
+    ref: "PySAL esda Moran, Moran_Local",
+  },
+  {
+    what: "Neighbours",
+    how: "6 nearest representative points, or shared borders read from the TopoJSON arcs (islands dropped and counted)",
+    ref: "libpysal KNN, Rook",
+  },
+  {
+    what: "Two AI models compared",
+    how: "Paired by question; exact McNemar test on the discordant questions, with the accuracy difference",
+    ref: "statsmodels mcnemar(exact=True)",
+  },
+  {
+    what: "Model latency",
+    how: "Median with a percentile bootstrap interval",
+    ref: "numpy percentile",
+  },
+] as const;
+
 function Status({ exact }: { exact: boolean }) {
   return exact ? (
     <span className="text-sent-pos inline-flex shrink-0 items-center gap-1 text-xs font-medium">
@@ -69,7 +123,11 @@ function Status({ exact }: { exact: boolean }) {
 }
 
 export default async function MethodsPage() {
-  const [facts, twAll] = await Promise.all([getFacts(), getHistogram("twitter", "all")]);
+  const [facts, twAll, decisions] = await Promise.all([
+    getFacts(),
+    getHistogram("twitter", "all"),
+    listDecisions(),
+  ]);
   const viewTotal = twAll.counts.reduce((a, b) => a + b, 0);
 
   const checks: { claim: string; source: string; result: string; exact: boolean }[] = [
@@ -147,12 +205,27 @@ export default async function MethodsPage() {
           <>
             Social Sense was a five-person cloud computing project. This page documents the data, the original
             processing, what the revival recomputed and the checks that tie every chart back to the 2023
-            outputs.
+            outputs, then how uncertainty is reported, what the optional AI does, and the decisions behind it.
           </>
         }
-      />
+      >
+        <nav aria-label="On this page">
+          <ul className="flex flex-wrap gap-2 text-sm">
+            {TOC.map(([id, label]) => (
+              <li key={id}>
+                <a
+                  href={`#${id}`}
+                  className="border-border bg-card hover:border-primary/60 inline-block rounded-full border px-3 py-1"
+                >
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </PageHeader>
 
-      <Section kicker="Sources" title="Data">
+      <Section id="sources" kicker="Sources" title="Data">
         {/* phones: one card per source; wider screens: a table */}
         <ul className="space-y-3 sm:hidden">
           {SOURCES.map((s) => (
@@ -211,7 +284,7 @@ export default async function MethodsPage() {
         </Note>
       </Section>
 
-      <Section kicker="2023" title="The original processing">
+      <Section id="original" kicker="2023" title="The original processing">
         <div className="grid gap-8 lg:grid-cols-2">
           <ol className="space-y-4 text-[0.98rem]">
             {[
@@ -270,7 +343,7 @@ export default async function MethodsPage() {
         </div>
       </Section>
 
-      <Section kicker="2026" title="What the revival added">
+      <Section id="revival" kicker="2026" title="What the revival added">
         <div className="prose-civic text-muted-foreground">
           <p>
             <strong className="text-foreground">A read-only database.</strong>{" "}
@@ -300,6 +373,7 @@ export default async function MethodsPage() {
       </Section>
 
       <Section
+        id="reproduction"
         kicker="Reproduction"
         title="Checks against the 2023 outputs"
         intro={
@@ -359,7 +433,80 @@ export default async function MethodsPage() {
         </div>
       </Section>
 
-      <Section kicker="Caveats" title="Limitations worth knowing">
+      <Section
+        id="evaluation"
+        kicker="2026 upgrade · rigour"
+        title="How uncertainty is reported, and how the statistics are checked"
+        intro={
+          <p>
+            Every quantitative result added in the upgrade carries a sample size and an interval, resampling
+            uses a fixed seed (57, for Team 57) that the page displays, and every TypeScript statistic is
+            compared in CI with the standard Python implementation by <code>scripts/verify_stats.py</code>.
+          </p>
+        }
+      >
+        <div className="border-border bg-card relative overflow-x-auto rounded-lg border">
+          <table className="w-full text-sm">
+            <caption className="sr-only">Uncertainty methods</caption>
+            <thead className="bg-muted/60 text-muted-foreground text-left text-xs">
+              <tr>
+                <th scope="col" className="px-4 py-2 font-medium">
+                  Quantity
+                </th>
+                <th scope="col" className="px-4 py-2 font-medium">
+                  Uncertainty shown
+                </th>
+                <th scope="col" className="px-4 py-2 font-medium">
+                  Verified against
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {UNCERTAINTY.map((u) => (
+                <tr key={u.what} className="border-border/70 border-t align-top">
+                  <th scope="row" className="px-4 py-3 text-left font-medium">
+                    {u.what}
+                  </th>
+                  <td className="text-muted-foreground px-4 py-3">{u.how}</td>
+                  <td className="text-muted-foreground px-4 py-3 font-mono text-xs">{u.ref}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="prose-civic text-muted-foreground mt-6">
+          <p>
+            Analytic quantities agree with the Python reference to between 1e-9 and 1e-12; permutation and
+            bootstrap quantities, which use different random streams, agree within Monte Carlo error.
+            Contiguity built from the site&apos;s own TopoJSON matches libpysal&apos;s rook neighbours on the
+            same files exactly (2,472 SA2 links, 410 LGA links). Ties in permutation tests count against
+            significance.
+          </p>
+          <p>
+            Comparisons are reported, not ranked: the spatial page shows a sensitivity table across
+            thresholds, neighbour definitions and area units rather than the most striking combination, and
+            nothing is corrected for the number of looks, which is said where it matters.
+          </p>
+        </div>
+      </Section>
+
+      <Section
+        id="spatial"
+        kicker="Areas, not people"
+        title="Spatial statistics and their caveats"
+        intro={
+          <p>
+            The <Link href="/spatial">spatial statistics page</Link> tests whether neighbouring areas share a
+            mood (global and local Moran&apos;s I). Its main result is negative: the clustering that appears
+            when every area with a tweet counts disappears once averages built on fewer than 30 tweets are
+            suppressed (<Link href="/methods/decisions/DR-003-small-area-suppression">DR-003</Link>).
+          </p>
+        }
+      >
+        <AreaCaveats unit="area" />
+      </Section>
+
+      <Section id="limitations" kicker="Caveats" title="Limitations worth knowing">
         <ul className="grid gap-4 md:grid-cols-2">
           {[
             [
@@ -406,6 +553,211 @@ export default async function MethodsPage() {
           </a>
           .
         </Note>
+      </Section>
+
+      <Section id="assumptions" kicker="Assumptions" title="What the analysis takes for granted">
+        <ul className="grid gap-3 md:grid-cols-2">
+          {[
+            [
+              "Stable geography of mood",
+              "Income (2015-16), offences (2019) and tweets (2022) are compared as if each area's position had not changed.",
+            ],
+            [
+              "Independent tweets",
+              "Standard errors treat every tweet as a separate draw. Prolific accounts and repeated posts break this, so intervals are optimistic. No user identifiers were kept, so it cannot be corrected.",
+            ],
+            [
+              "Place tags mean place",
+              "A tweet's self-reported place is where it is counted, whatever the author's home or the subject of the tweet.",
+            ],
+            [
+              "A suburb belongs to one SA2 and one LGA",
+              "Each suburb is assigned by its representative point; suburbs that straddle boundaries are not split.",
+            ],
+            [
+              "Neighbours",
+              "Spatial weights are six nearest areas by default, or shared borders; results are shown under both.",
+            ],
+            [
+              "The team's outlier rule",
+              "Scenario relationships use the areas the 2023 IQR filter kept, unless a reader brings the outliers back.",
+            ],
+          ].map(([h, d]) => (
+            <li key={h} className="border-border bg-card rounded-lg border p-4">
+              <p className="font-medium">{h}</p>
+              <p className="text-muted-foreground mt-1 text-sm">{d}</p>
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <Section
+        id="ai-use"
+        kicker="AI use statement"
+        title="What AI does on this site, and what it never does"
+        intro={
+          <p>
+            AI is optional here and runs only on a visitor&apos;s own key. This statement is informed by the
+            transparency principles of the Australian Government&apos;s policy for the responsible use of AI
+            in government, the EU AI Act&apos;s transparency obligations and the NIST AI Risk Management
+            Framework. It does not claim compliance with any of them.
+          </p>
+        }
+      >
+        <div className="grid gap-4 md:grid-cols-2">
+          {[
+            [
+              "What it does",
+              "On /ask, a language model the visitor chooses turns a question into one SQL query and then explains the returned rows in up to three sentences that cite them. On /ask/eval, the same model answers 16 benchmark questions so the visitor can measure it. That is all.",
+            ],
+            [
+              "What it never does",
+              "It never produced any number elsewhere on the site: every chart, statistic and finding comes from the 2023 pipeline and the revival's tested code. It never touches the database directly, never writes data, never runs on this site's servers and never sees a key belonging to the project (there is none).",
+            ],
+            [
+              "Data sent to the provider",
+              "From the visitor's browser, with their key: the question, the documented schema, the generated SQL and up to 30 result rows of public aggregates. No personal data is held, so none can be sent. This site's server receives only the SQL.",
+            ],
+            [
+              "Human in the loop",
+              "Every output is labelled AI-generated. The SQL is shown and editable, the validator's verdict and the rows are shown, citations are checked against the rows, and the person records a decision: accepted, edited or rejected.",
+            ],
+            [
+              "Records",
+              "Each call is logged in the visitor's browser (IndexedDB) with id, time, feature, provider, model, question, generated and edited SQL, validator verdict, row count, answer, latency, token usage and the decision, viewable and exportable as JSON or CSV at /ai-log. Keys are redacted before every write.",
+            ],
+            [
+              "Measurement and limits",
+              "The benchmark reports accuracy with Wilson intervals and compares models with a paired exact test. The project publishes no AI scores of its own. Known failure modes are listed in the model card.",
+            ],
+          ].map(([h, d]) => (
+            <div key={h} className="border-border bg-card rounded-lg border p-4">
+              <p className="font-medium">{h}</p>
+              <p className="text-muted-foreground mt-1 text-sm leading-relaxed">{d}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-6 flex flex-wrap gap-4 text-sm">
+          <Link className="link inline-flex items-center gap-1" href="/ask">
+            Ask the data <ArrowRight className="size-4" aria-hidden />
+          </Link>
+          <Link className="link inline-flex items-center gap-1" href="/ai-log">
+            AI audit log <ArrowRight className="size-4" aria-hidden />
+          </Link>
+          <Link
+            className="link inline-flex items-center gap-1"
+            href="/methods/decisions/DR-004-byok-text-to-sql"
+          >
+            Why it works this way (DR-004) <ArrowRight className="size-4" aria-hidden />
+          </Link>
+        </div>
+      </Section>
+
+      <Section
+        id="model-card"
+        kicker="Model card"
+        title="Two models, documented"
+        intro={
+          <p>
+            The 2023 sentiment scorer (VADER in NLTK, wrapped in the team&apos;s pipeline) and the optional
+            text-to-SQL assistant each get intended use, provenance, evaluation, failure modes and ethical
+            considerations.
+          </p>
+        }
+      >
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="border-border bg-card rounded-lg border p-4 text-sm">
+            <p className="font-medium">Sentiment scorer</p>
+            <p className="text-muted-foreground mt-1 leading-relaxed">
+              Reproduced exactly by the TypeScript port (0 mismatches in 44,156 real toots; Wilson upper bound
+              0.009%). Accuracy against human judgement was not measured here. Its clearest failure is
+              language: in the re-scored Mastodon week, 45% of English toots score neutral against 98% of
+              Japanese ones.
+            </p>
+          </div>
+          <div className="border-border bg-card rounded-lg border p-4 text-sm">
+            <p className="font-medium">Ask the data</p>
+            <p className="text-muted-foreground mt-1 leading-relaxed">
+              A third-party model chosen and paid for by the visitor, contained by server-side validation and
+              read-only execution, measured by a 16-question benchmark the visitor runs. No accuracy is
+              claimed.
+            </p>
+          </div>
+        </div>
+        <Link className="link mt-6 inline-flex items-center gap-1 text-sm" href="/methods/model-card">
+          Read the full model card <ArrowRight className="size-4" aria-hidden />
+        </Link>
+      </Section>
+
+      <Section
+        id="decisions"
+        kicker="Decision records"
+        title="The decisions behind the revival and the upgrade"
+        intro={
+          <p>
+            Each record states the decision first, the options and the reasons, then what actually happened,
+            including the weak numbers, and what I would change. Records are never edited to change a
+            decision; a new record supersedes an old one.
+          </p>
+        }
+      >
+        <ul className="grid gap-3 md:grid-cols-2">
+          {decisions.map((d) => (
+            <li
+              key={d.slug}
+              className="group border-border bg-card hover:border-primary/60 relative rounded-lg border p-4 transition-colors"
+            >
+              <p className="text-muted-foreground font-mono text-xs">{d.id}</p>
+              <p className="mt-1 font-medium">
+                <Link
+                  href={`/methods/decisions/${d.slug}`}
+                  className="after:absolute after:inset-0 focus-visible:outline-none"
+                >
+                  {d.title}
+                </Link>
+              </p>
+              <p className="text-muted-foreground mt-1 text-xs">
+                {d.status} · {d.decided}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <Section id="change" kicker="Next" title="What I'd change">
+        <ul className="grid gap-3 md:grid-cols-2">
+          {[
+            [
+              "Shrink, don't suppress",
+              "Replace the 30-tweet cut with partial pooling (empirical Bayes or a multilevel model) so small areas borrow strength from their neighbours instead of disappearing.",
+            ],
+            [
+              "Measure the scorer",
+              "Hand-label a stratified sample of a few hundred posts to estimate VADER's agreement with people on this data, with intervals, before reading anything into small differences in tone.",
+            ],
+            [
+              "Effective sample size",
+              "Keep a count of distinct accounts per area in any future pipeline, so intervals can account for prolific posters.",
+            ],
+            [
+              "Pre-register the comparisons",
+              "Fix the thresholds and the tests before looking at the data, instead of reporting a sensitivity table afterwards.",
+            ],
+            [
+              "A bigger text-to-SQL benchmark",
+              "Fifty or more questions with a held-out half, so a prompt cannot be tuned to the test, and a tamper-evident audit log.",
+            ],
+            [
+              "Rate-limit the SQL endpoint",
+              "The validator bounds each query, but nothing bounds how many arrive.",
+            ],
+          ].map(([h, d]) => (
+            <li key={h} className="border-border bg-card rounded-lg border p-4">
+              <p className="font-medium">{h}</p>
+              <p className="text-muted-foreground mt-1 text-sm">{d}</p>
+            </li>
+          ))}
+        </ul>
       </Section>
     </>
   );

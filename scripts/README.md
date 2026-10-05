@@ -7,6 +7,7 @@ Reproducible Python scripts that turn the **original** Team 57 code and data int
 | `build_nlp_assets.py` | NLTK 3.8.1 data (downloaded to `scripts/.cache/`), `coursework/.../sal.processed.dict.pkl`, `fixtures/nlp_parity_corpus.txt` (tweets), `fixtures/toot_parity_corpus.txt` (toots) | `web/public/data/nlp/*` (VADER lexicon, WordNet noun lemmas, Punkt English parameters, SAL lookup, BeautifulSoup's HTML entity table), `web/src/lib/__fixtures__/nlp-parity.json` | ~5 s |
 | `build_mastodon.py` | raw mastodon.social harvest (`raw/Mastodon_social/*.json`, 595k toots) | `derived/mastodon-social-2023-05.json` (hourly, language and histogram aggregates) | ~1 min on 9 cores |
 | `build_analytics.py` | Plotly JSON shipped by the 2023 dashboard (`coursework/2_ReactJS_frontend/frontend/public`), CouchDB view exports, SUDO CSVs, ABS boundaries, `derived/*.json` | `web/data/analytics.db`, `web/public/geo/*.topo.json`, `web/src/lib/__fixtures__/*-parity.json` | ~30 s |
+| `verify_stats.py` | `web/data/analytics.db`, `web/public/geo/vic-{sa2,lga}.topo.json` (both committed) | `web/src/lib/__fixtures__/stats-parity.json`: scipy, statsmodels and PySAL (libpysal, esda) reference values for the TypeScript statistics in `web/src/lib/stats/` | ~10 s |
 
 Run them in this order (later steps consume earlier outputs):
 
@@ -14,6 +15,7 @@ Run them in this order (later steps consume earlier outputs):
 uv run scripts/build_nlp_assets.py           # Python 3.11, the version the team's Docker images used
 uv run scripts/build_mastodon.py             # optional: needs the raw toots; output is committed
 uv run scripts/build_analytics.py            # needs Node (npx mapshaper) for the boundary files
+uv run scripts/verify_stats.py               # no raw data needed; re-run after rebuilding analytics.db
 ```
 
 All outputs are deterministic: re-running a script on the same inputs produces byte-identical files. To keep it that way, every Python dependency is pinned to an exact version in the script's inline metadata (plus a `[tool.uv] exclude-newer` cut-off for transitive packages), and `build_analytics.py` calls a pinned `mapshaper@0.6.121`.
