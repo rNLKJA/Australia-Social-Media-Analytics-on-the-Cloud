@@ -247,8 +247,10 @@ export function IncomeExplorer({
               <p className="kicker">{sel.sa4}</p>
               <h3 className="mt-1 font-serif text-2xl font-semibold">{sel.name}</h3>
               <p className="text-muted-foreground mt-1 text-sm">
-                SA2 {sel.code} · {sel.sa3} · pooled from {sel.salCount} suburb{sel.salCount === 1 ? "" : "s"}{" "}
-                with tweets
+                SA2 {sel.code} · {sel.sa3} ·{" "}
+                {sel.salCount === 0
+                  ? "no geotagged tweets matched here"
+                  : `pooled from ${sel.salCount} suburb${sel.salCount === 1 ? "" : "s"} with tweets`}
               </p>
               {!sel.kept && (
                 <p className="text-sent-neg mt-2 text-sm">

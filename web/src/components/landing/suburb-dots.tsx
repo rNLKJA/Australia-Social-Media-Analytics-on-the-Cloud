@@ -1,13 +1,12 @@
 import type { Geometry } from "geojson";
 import { toSvgPath } from "@/lib/geo-path";
-import { divergingColor } from "@/lib/palette";
 import type { SalRegion } from "@/lib/types";
 
 /**
  * A server-rendered dot map: one circle per Victorian suburb with tweets,
  * placed at its representative point, sized by tweet volume and coloured by
- * average sentiment. Light and dark variants are both rendered and toggled
- * with CSS so no client JavaScript is needed.
+ * average sentiment (nine classes via the --sent-* CSS variables, so the
+ * same markup works in light and dark mode without client JavaScript).
  */
 export function SuburbDots({
   regions,
@@ -35,19 +34,8 @@ export function SuburbDots({
   const sorted = [...pts].sort((a, b) => b.all!.n - a.all!.n);
   const melb = pts.find((p) => p.name === "Melbourne");
 
-  const dots = (theme: "light" | "dark") =>
-    sorted.map((p) => (
-      <circle
-        key={p.code}
-        cx={x(p.lon).toFixed(1)}
-        cy={y(p.lat).toFixed(1)}
-        r={r(p.all!.n).toFixed(2)}
-        fill={divergingColor(p.all!.avg, 5.5, 1.6, theme)}
-        fillOpacity={0.9}
-        stroke={theme === "dark" ? "#111214" : "#f7f4ee"}
-        strokeWidth={0.5}
-      />
-    ));
+  // nine discrete classes coloured by CSS variables, so one set of dots serves both themes
+  const bin = (avg: number) => Math.min(9, Math.max(1, Math.round(5 + ((avg - 5.5) / 1.6) * 4)));
 
   return (
     <figure className={className}>
@@ -65,8 +53,17 @@ export function SuburbDots({
             strokeWidth={1}
           />
         )}
-        <g className="dark:hidden">{dots("light")}</g>
-        <g className="hidden dark:inline">{dots("dark")}</g>
+        <g stroke="var(--background)" strokeWidth={0.5} fillOpacity={0.9}>
+          {sorted.map((p) => (
+            <circle
+              key={p.code}
+              cx={x(p.lon).toFixed(1)}
+              cy={y(p.lat).toFixed(1)}
+              r={r(p.all!.n).toFixed(1)}
+              fill={`var(--sent-${bin(p.all!.avg)})`}
+            />
+          ))}
+        </g>
         {melb && (
           <g className="pointer-events-none">
             <line

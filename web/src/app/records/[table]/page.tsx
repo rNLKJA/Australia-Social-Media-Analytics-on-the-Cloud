@@ -5,7 +5,14 @@ import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/editorial/page-header";
 import { fmtInt } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { PAGE_SIZE, TABLE_DOCS, getTable, queryTable, tableParamsSchema } from "@/server/records";
+import { PAGE_SIZE, TABLE_DOCS, getTable, listTables, queryTable, tableParamsSchema } from "@/server/records";
+
+// Only the tables that exist in analytics.db; anything else is a real 404.
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  return (await listTables()).map((t) => ({ table: t.name }));
+}
 
 export async function generateMetadata(props: PageProps<"/records/[table]">): Promise<Metadata> {
   const { table } = await props.params;

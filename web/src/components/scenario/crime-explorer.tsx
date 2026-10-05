@@ -9,7 +9,7 @@ import { RegionSearch } from "@/components/scenario/region-search";
 import { Segmented } from "@/components/scenario/segmented";
 import { ThresholdControl } from "@/components/scenario/threshold-control";
 import { useThemeName } from "@/hooks/use-theme-name";
-import { fmtCompact, fmtInt, fmtScore } from "@/lib/format";
+import { fmtCompact, fmtInt, fmtScore, plural } from "@/lib/format";
 import { NO_DATA, SEQUENTIAL, divergingColor, quantileBreaks, sequentialColor } from "@/lib/palette";
 import { sentimentDescription } from "@/lib/sentiment";
 import { correlate, describeStrength } from "@/lib/stats";
@@ -256,7 +256,8 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
               <p className="kicker">Local government area</p>
               <h3 className="mt-1 font-serif text-2xl font-semibold">{sel.name}</h3>
               <p className="text-muted-foreground mt-1 text-sm">
-                LGA {sel.code} · {fmtInt(Math.round(sel.areaKm2))} km² · {sel.salCount} suburbs with tweets
+                LGA {sel.code} · {fmtInt(Math.round(sel.areaKm2))} km² · {plural(sel.salCount, "suburb")} with
+                tweets
               </p>
               <p className="num mt-3 font-serif text-3xl font-semibold">{fmtInt(sel.total)}</p>
               <p className="text-muted-foreground text-xs">
