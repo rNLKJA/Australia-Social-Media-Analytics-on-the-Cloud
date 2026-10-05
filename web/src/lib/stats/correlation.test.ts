@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import fx from "@/lib/__fixtures__/correlations-parity.json";
-import { correlate, correlationPValue, rankdata } from "./stats";
+import { correlate, correlationPValue, rankdata } from "./correlation";
 
 type Row = [string, number, number | null, number, number | null, number];
 

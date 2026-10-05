@@ -138,3 +138,29 @@ export interface JobsIndicator {
   std: number;
   median: number;
 }
+
+/** The `_stats` reduce of one region's 1-9 scores, pooled from its suburbs. */
+export interface ScoreSums {
+  n: number;
+  sum: number;
+  /** sum of squared scores */
+  sumsq: number;
+}
+
+/** A Victorian SA2 or LGA with tweet score sums and its scenario covariate. */
+export interface AreaRecord {
+  code: string;
+  name: string;
+  lat: number;
+  lon: number;
+  sums: Partial<Record<Topic, ScoreSums>>;
+  /** median personal income (SA2) or recorded offences (LGA); null without SUDO data */
+  covariate: number | null;
+  /** kept by the team's IQR outlier rule; null without SUDO data */
+  kept: boolean | null;
+}
+
+export type SpatialUnit = "sa2" | "lga";
+
+/** Rook contiguity from the TopoJSON's shared arcs: code -> neighbouring codes. */
+export type Adjacency = Record<string, string[]>;
