@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { IntentLink } from "@/components/layout/intent-link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
@@ -13,7 +13,7 @@ export function NavLinks({ items }: { items: readonly { href: string; label: str
           const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <li key={item.href}>
-              <Link
+              <IntentLink
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
@@ -23,7 +23,7 @@ export function NavLinks({ items }: { items: readonly { href: string; label: str
                 )}
               >
                 {item.label}
-              </Link>
+              </IntentLink>
             </li>
           );
         })}

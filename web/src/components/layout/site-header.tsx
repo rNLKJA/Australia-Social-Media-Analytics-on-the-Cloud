@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { IntentLink } from "@/components/layout/intent-link";
 import { Github } from "@/components/layout/icons";
 import { LogoMark } from "@/components/layout/logo";
 import { MobileNav } from "@/components/layout/mobile-nav";
@@ -16,14 +16,14 @@ export function SiteHeader() {
         Skip to content
       </a>
       <div className="mx-auto flex h-14 max-w-7xl items-center gap-4 px-4 sm:px-6">
-        <Link
+        <IntentLink
           href="/"
           className="flex shrink-0 items-center gap-2 rounded-md"
           aria-label={`${SITE.name} home`}
         >
           <LogoMark className="size-7" />
           <span className="font-serif text-xl leading-none font-semibold tracking-tight">{SITE.name}</span>
-        </Link>
+        </IntentLink>
         <NavLinks items={NAV} />
         <div className="ml-auto flex items-center gap-1">
           <a

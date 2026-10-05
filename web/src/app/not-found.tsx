@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { NAV } from "@/lib/site";
+
+export const metadata: Metadata = { title: "Page not found", robots: { index: false } };
 
 export default function NotFound() {
   return (

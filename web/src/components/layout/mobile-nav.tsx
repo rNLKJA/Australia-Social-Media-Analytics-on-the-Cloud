@@ -1,7 +1,7 @@
 "use client";
 
 import { Menu } from "lucide-react";
-import Link from "next/link";
+import { IntentLink } from "@/components/layout/intent-link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,7 @@ export function MobileNav({ items }: { items: readonly { href: string; label: st
           <ul className="flex flex-col gap-1">
             {[{ href: "/", label: "The story" }, ...items].map((item) => (
               <li key={item.href}>
-                <Link
+                <IntentLink
                   href={item.href}
                   onClick={() => setOpen(false)}
                   aria-current={pathname === item.href ? "page" : undefined}
@@ -45,7 +45,7 @@ export function MobileNav({ items }: { items: readonly { href: string; label: st
                   )}
                 >
                   {item.label}
-                </Link>
+                </IntentLink>
               </li>
             ))}
             <li>

@@ -83,14 +83,3 @@ export function tweetVolumeShares(counts: number[], inclusive: boolean): [number
   const high = counts.filter((c) => (inclusive ? c > 100 : c >= 100)).length;
   return [low / n, (n - low - high) / n, high / n];
 }
-
-/** Weighted mean sentiment from (sum, count) pairs, e.g. SALs inside an SA2. */
-export function pooledAverage(rows: Pick<ReduceRow, "sum" | "count">[]): number | null {
-  let s = 0;
-  let c = 0;
-  for (const r of rows) {
-    s += r.sum;
-    c += r.count;
-  }
-  return c ? s / c : null;
-}

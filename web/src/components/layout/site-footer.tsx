@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { IntentLink } from "@/components/layout/intent-link";
 import { LogoMark } from "@/components/layout/logo";
 import { NAV, SITE } from "@/lib/site";
 
@@ -21,15 +21,15 @@ export function SiteFooter() {
           <h2 className="kicker mb-3">Explore</h2>
           <ul className="space-y-1.5 text-sm">
             <li>
-              <Link className="text-muted-foreground hover:text-foreground" href="/">
+              <IntentLink className="text-muted-foreground hover:text-foreground" href="/">
                 The story
-              </Link>
+              </IntentLink>
             </li>
             {NAV.map((n) => (
               <li key={n.href}>
-                <Link className="text-muted-foreground hover:text-foreground" href={n.href}>
+                <IntentLink className="text-muted-foreground hover:text-foreground" href={n.href}>
                   {n.label}
-                </Link>
+                </IntentLink>
               </li>
             ))}
           </ul>
