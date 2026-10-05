@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AreaCaveats } from "@/components/editorial/caveats";
 import { Note, PageHeader, Section, StatStrip } from "@/components/editorial/page-header";
 import { SpatialExplorer } from "@/components/spatial/spatial-explorer";
+import { ScrollRegion } from "@/components/ui/scroll-region";
 import { fmtInt, fmtP } from "@/lib/format";
 import { SITE } from "@/lib/site";
 import {
@@ -22,6 +23,9 @@ export const metadata: Metadata = {
 };
 
 const THRESHOLDS = [1, 10, 30, 100];
+
+/** "Income vs all tweets (SA2)" -> "income vs all tweets (SA2)": keeps unit codes in capitals */
+const lowerFirst = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
 const WEIGHTS: WeightsKind[] = ["knn6", "rook"];
 
 export default async function SpatialPage() {
@@ -97,12 +101,16 @@ export default async function SpatialPage() {
             {
               value: main.moran ? main.moran.I.toFixed(3) : "–",
               label: `Moran's I, SA2s with ≥ ${SPATIAL_DEFAULTS.minTweets} tweets`,
-              note: main.moran ? `${main.analysed} SA2s · ${fmtP(main.moran.p_sim)}` : "",
+              note: main.moran
+                ? `${main.analysed} SA2s · one-sided permutation ${fmtP(main.moran.p_sim)}`
+                : "",
             },
             {
               value: loose.moran ? loose.moran.I.toFixed(3) : "–",
               label: "Same, counting every SA2 with a tweet",
-              note: loose.moran ? `${loose.analysed} SA2s · ${fmtP(loose.moran.p_sim)}` : "",
+              note: loose.moran
+                ? `${loose.analysed} SA2s · one-sided permutation ${fmtP(loose.moran.p_sim)}`
+                : "",
             },
             {
               value: `${Math.sqrt(vc.betweenVar).toFixed(2)} vs ${Math.sqrt(vc.withinVar).toFixed(2)}`,
@@ -144,10 +152,13 @@ export default async function SpatialPage() {
         }
       >
         <div className="grid gap-8 lg:grid-cols-2">
-          <div className="border-border bg-card relative overflow-x-auto rounded-lg border">
+          <ScrollRegion
+            label="Sensitivity of Moran's I (scrolls sideways)"
+            className="border-border bg-card relative rounded-lg border"
+          >
             <table className="w-full text-sm">
               <caption className="text-muted-foreground px-4 pt-3 text-left text-xs">
-                Global Moran&apos;s I of average tone (all tweets); permutation p,{" "}
+                Global Moran&apos;s I of average tone (all tweets); one-sided permutation p,{" "}
                 {SPATIAL_DEFAULTS.permutations} permutations, seed {SPATIAL_DEFAULTS.seed}
               </caption>
               <thead className="text-muted-foreground text-left text-xs">
@@ -168,7 +179,7 @@ export default async function SpatialPage() {
                     I
                   </th>
                   <th scope="col" className="px-4 py-2 text-right font-medium">
-                    p
+                    p (one-sided)
                   </th>
                 </tr>
               </thead>
@@ -183,7 +194,7 @@ export default async function SpatialPage() {
                     <td className="px-4 py-1.5">
                       {s.weights === "knn6"
                         ? "6 nearest"
-                        : `border${s.islands ? ` (${s.islands} islands)` : ""}`}
+                        : `border${s.islands ? ` (${s.islands} island${s.islands === 1 ? "" : "s"})` : ""}`}
                     </td>
                     <td className="px-4 py-1.5 text-right">{s.n}</td>
                     <td className="px-4 py-1.5 text-right">{s.moran ? s.moran.I.toFixed(3) : "–"}</td>
@@ -194,8 +205,11 @@ export default async function SpatialPage() {
                 ))}
               </tbody>
             </table>
-          </div>
-          <div className="border-border bg-card relative overflow-x-auto rounded-lg border">
+          </ScrollRegion>
+          <ScrollRegion
+            label="Sensitivity of the scenario relationships (scrolls sideways)"
+            className="border-border bg-card relative rounded-lg border"
+          >
             <table className="w-full text-sm">
               <caption className="text-muted-foreground px-4 pt-3 text-left text-xs">
                 Scenario relationships (team&apos;s IQR outliers removed): Spearman&apos;s ρ with a 95%
@@ -238,13 +252,15 @@ export default async function SpatialPage() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </ScrollRegion>
         </div>
         <Note className="mt-4 max-w-3xl">
-          These are many looks at one dataset and no correction for multiple comparisons is applied, so an
-          interval that excludes zero is a lead to check, not a result.{" "}
+          The Moran&apos;s I p-values are one-sided, in the direction of the observed I: they test for
+          clustering when I is above its expectation and for dispersion when it is below (the cluster map uses
+          two-sided local p-values). These are many looks at one dataset and no correction for multiple
+          comparisons is applied, so an interval that excludes zero is a lead to check, not a result.{" "}
           {excluding.length
-            ? `Intervals excluding zero: ${excluding.map(([label, ks]) => `${label.toLowerCase()} at ${ks.map((k) => `≥ ${k}`).join(" and ")} tweets`).join("; ")}.${noneEverywhere ? " None holds at every threshold." : ""}${allWeak ? " All are weak (ρ under 0.3)." : ""}`
+            ? `Intervals excluding zero: ${excluding.map(([label, ks]) => `${lowerFirst(label)} at ${ks.map((k) => `≥ ${k}`).join(" and ")} tweet${ks.at(-1) === 1 ? "" : "s"}`).join("; ")}.${noneEverywhere ? " None holds at every threshold." : ""}${allWeak ? " All are weak (ρ under 0.3)." : ""}`
             : "No interval excludes zero."}{" "}
           The 2023 conclusions stand: no meaningful link between income and the tone of income tweets, and
           none between recorded offences and the tone of crime tweets.

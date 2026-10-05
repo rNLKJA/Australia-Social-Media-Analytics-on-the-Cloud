@@ -66,7 +66,9 @@ export default async function EvalPage() {
               intervals; median latency a bootstrap interval. Fourteen scored questions give wide intervals by
               design: this is a smoke test that catches a broken prompt or a weak model, not a leaderboard.
               Repeat a run to see run-to-run variation, and compare two runs with the exact McNemar test on
-              the questions where they disagree.
+              the questions where they disagree and a Tango score interval for the accuracy difference. A
+              reply that is malformed or cut off counts as wrong; only key, quota, rate-limit, network or
+              provider failures are left out.
             </p>
             <p>
               <strong className="text-foreground">No published scores.</strong> The site has no AI budget and

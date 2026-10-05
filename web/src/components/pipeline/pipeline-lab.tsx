@@ -508,7 +508,7 @@ function Fate({
   return (
     <p className={cn("flex items-start gap-2 text-sm", ok ? "text-foreground" : "text-muted-foreground")}>
       {ok ? (
-        <CheckCircle2 className="text-sent-pos mt-0.5 size-4 shrink-0" aria-hidden />
+        <CheckCircle2 className="text-sent-pos-ink mt-0.5 size-4 shrink-0" aria-hidden />
       ) : (
         <Ban className="mt-0.5 size-4 shrink-0" aria-hidden />
       )}

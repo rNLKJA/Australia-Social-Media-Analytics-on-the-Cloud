@@ -2,10 +2,12 @@ import "fake-indexeddb/auto";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { BENCHMARK } from "@/lib/sql/benchmark";
 import type { SqlRunResponse } from "@/lib/sql/client";
+import { finishFlow, rerunFlow, startFlow, toEntry } from "./ask-record";
 import {
   appendEntry,
   type AuditEntry,
   clearEntries,
+  decisionPatch,
   entriesToCsv,
   listEntries,
   redactSecrets,
@@ -117,6 +119,32 @@ describe("Anthropic adapter (fetch mocked)", () => {
     const wrongShape = vi.fn(async () => anthropicReply(JSON.stringify({ answerable: "yes", sql: 1 })));
     await expect(generateSql("q", anthropic, KEY, { fetchImpl: wrongShape })).rejects.toMatchObject({
       kind: "invalid_output",
+    });
+  });
+
+  it("keeps the billed tokens and time of a failed call", async () => {
+    const notJson = vi.fn(async () => anthropicReply("SELECT 1"));
+    const err = await generateSql("q", anthropic, KEY, { fetchImpl: notJson }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(AiError);
+    expect(err).toMatchObject({ kind: "invalid_output", usage: { inputTokens: 1200, outputTokens: 80 } });
+    expect((err as AiError).latencyMs).toBeGreaterThanOrEqual(0);
+    const cut = vi.fn(async () => anthropicReply("{", { stop_reason: "max_tokens" }));
+    await expect(generateSql("q", anthropic, KEY, { fetchImpl: cut })).rejects.toMatchObject({
+      kind: "truncated",
+      usage: { inputTokens: 1200, outputTokens: 80 },
+    });
+  });
+
+  it("treats a 200 response that is not JSON as a network problem, not a crash", async () => {
+    const portal = vi.fn(
+      async () =>
+        new Response("<html>oops</html>", { status: 200, headers: { "content-type": "text/html" } }),
+    );
+    const err = await generateSql("q", anthropic, KEY, { fetchImpl: portal }).catch((e: unknown) => e);
+    expect(err).toMatchObject({ kind: "network" });
+    expect((err as Error).message).not.toContain("Unexpected token");
+    await expect(generateSql("q", openai, KEY, { fetchImpl: portal })).rejects.toMatchObject({
+      kind: "network",
     });
   });
 
@@ -331,6 +359,49 @@ describe("audit log (IndexedDB)", () => {
     expect(lines[1]).toContain("SELECT COUNT(*) FROM crime_lga");
   });
 
+  it("changes only the decision when a person accepts or rejects", async () => {
+    const asked = new Date("2026-10-06T02:00:00.000Z");
+    let f = startFlow("How many LGAs?", "anthropic", "claude-haiku-4-5", { now: 1000, date: asked });
+    f = { ...f, reply: { answerable: true, sql: "SELECT 1", reason: "r" }, modelMs: 90, usage: null };
+    f = finishFlow(f, 1120);
+    await appendEntry(toEntry(f));
+    // eight seconds later the person clicks Accept
+    await updateEntry(f.id, decisionPatch("accepted", new Date("2026-10-06T02:00:08.000Z")));
+    const [stored] = await listEntries();
+    expect(stored.timestamp).toBe(asked.toISOString());
+    expect(stored.latencyMs).toEqual({ model: 90, total: 120 });
+    expect(stored.decision).toBe("accepted");
+    expect(stored.decidedAt).toBe("2026-10-06T02:00:08.000Z");
+    expect(stored.output.generatedSql).toBe("SELECT 1");
+    // finishing twice never moves the end-to-end time
+    expect(finishFlow(f, 99999).totalMs).toBe(120);
+  });
+
+  it("logs a re-run of edited SQL as a new record and keeps the model's original output", async () => {
+    let f = startFlow("q", "anthropic", "claude-haiku-4-5", { now: 0, date: new Date() });
+    f = finishFlow({ ...f, reply: { answerable: true, sql: "SELECT 1", reason: "r" }, modelMs: 50 }, 60);
+    await appendEntry(toEntry(f));
+    await updateEntry(f.id, decisionPatch("edited"));
+    let child = rerunFlow(f, "SELECT 2", { now: 100, date: new Date() });
+    child = finishFlow(child, 140);
+    await appendEntry(toEntry(child));
+    const all = await listEntries();
+    expect(all).toHaveLength(2);
+    const parent = all.find((e) => e.id === f.id)!;
+    const rerun = all.find((e) => e.id === child.id)!;
+    expect(parent.output.generatedSql).toBe("SELECT 1");
+    expect(parent.output.editedSql).toBeUndefined();
+    expect(parent.decision).toBe("edited");
+    expect(rerun.parentId).toBe(f.id);
+    expect(rerun.output.editedSql).toBe("SELECT 2");
+    expect(rerun.output.generatedSql).toBeUndefined();
+    expect(rerun.latencyMs.total).toBe(40);
+    expect(rerun.latencyMs.model).toBeUndefined(); // no SQL-writing call in a re-run
+    expect(rerun.decision).toBe("pending");
+    // a second edit still points at the original question's record
+    expect(rerunFlow(child, "SELECT 3", { now: 0, date: new Date() }).parentId).toBe(f.id);
+  });
+
   it("redacts quoted and escaped occurrences", () => {
     const k = 'abc"defghijk';
     expect(JSON.stringify(redactSecrets({ q: `x ${k} y` }, [k]))).not.toContain("defghijk");
@@ -370,6 +441,15 @@ describe("benchmark scoring", () => {
     expect(scoreItem(ans, { answerable: false, sql: "" }, null, gold).status).toBe("refused");
     expect(scoreItem(ans, null, null, gold, "rate limited").status).toBe("ai_error");
   });
+  it("scores the model's own failures against it, and leaves only infrastructure failures out", () => {
+    expect(scoreItem(ans, null, null, gold, "invalid_output").status).toBe("invalid_output");
+    expect(scoreItem(ans, null, null, gold, "truncated").status).toBe("invalid_output");
+    expect(scoreItem(ans, null, null, gold, "refusal").status).toBe("refused");
+    expect(scoreItem(unans, null, null, null, "refusal").status).toBe("correct_refusal");
+    expect(scoreItem(unans, null, null, null, "invalid_output").status).toBe("invalid_output");
+    for (const kind of ["rate_limited", "network", "invalid_key", "quota", "overloaded", "server"])
+      expect(scoreItem(ans, null, null, gold, kind).status).toBe("ai_error");
+  });
   it("scores unanswerable questions by refusal", () => {
     expect(scoreItem(unans, { answerable: false, sql: "" }, null, null).status).toBe("correct_refusal");
     expect(scoreItem(unans, { answerable: true, sql: "SELECT 1" }, null, null).status).toBe("missed_refusal");
@@ -405,5 +485,56 @@ describe("benchmark scoring", () => {
     const cmp = compareRuns(a, b, ids);
     expect(cmp).toMatchObject({ pairs: 14, bothCorrect: 3, onlyA: 7, onlyB: 0, neither: 4 });
     expect(cmp.mcnemar.p).toBeCloseTo(2 / 128, 12);
+    // Tango interval, R PropCIs::scoreci.mp(0, 7, 14): [0.177034, 0.732008]
+    expect(cmp.differenceCi.lower).toBeCloseTo(0.177034, 5);
+    expect(cmp.differenceCi.upper).toBeCloseTo(0.732008, 5);
+  });
+  it("does not inflate accuracy when most replies are unusable", () => {
+    const ids = new Set(BENCHMARK.filter((b) => b.goldSql).map((b) => b.id));
+    const results = BENCHMARK.map((b) => ({
+      id: b.id,
+      question: b.question,
+      ...(b.id === "q03"
+        ? { status: "correct" as const, usage: { inputTokens: 1000, outputTokens: 40 } }
+        : b.goldSql
+          ? { status: "invalid_output" as const, usage: { inputTokens: 1000, outputTokens: 40 } }
+          : { status: "correct_refusal" as const, usage: { inputTokens: 1000, outputTokens: 40 } }),
+      detail: "",
+      sql: "",
+      verdict: "",
+      latencyMs: 900,
+    }));
+    const s = summariseRun(results, ids);
+    expect(s.accuracy.k).toBe(1);
+    expect(s.accuracy.n).toBe(14); // not 1/1 = 100%
+    expect(s.accuracy.upper).toBeLessThan(0.35);
+    expect(s.invalidSql.k).toBe(13);
+    expect(s.modelFailures).toBe(13);
+    expect(s.aiErrors).toBe(0);
+    expect(s.tokens!.input).toBe(16 * 1000); // failed calls' tokens are counted
+    // an infrastructure failure, by contrast, drops out of the denominator
+    const withOutage = results.map((r) =>
+      r.id === "q01" ? { ...r, status: "ai_error" as const, usage: undefined } : r,
+    );
+    const s2 = summariseRun(
+      withOutage.map((r) => ({ ...r, usage: r.usage ?? null })),
+      ids,
+    );
+    expect(s2.accuracy.n).toBe(13);
+    expect(s2.aiErrors).toBe(1);
+    // and in a paired comparison an unusable reply is a wrong answer, not a dropped pair
+    const run = (rs: typeof results): EvalRun => ({
+      id: "r",
+      timestamp: "t",
+      provider: "anthropic",
+      model: "m",
+      repetition: 1,
+      batchId: "b",
+      results: rs,
+    });
+    const good = run(results.map((r) => (ids.has(r.id) ? { ...r, status: "correct" as const } : r)));
+    const cmp = compareRuns(good, run(results), ids);
+    expect(cmp.pairs).toBe(14);
+    expect(cmp.onlyA).toBe(13);
   });
 });

@@ -146,8 +146,8 @@ export function SpatialExplorer({
               setSelected(null);
             }}
             options={[
-              { value: "sa2", label: "SA2 (457)" },
-              { value: "lga", label: "LGA (79)" },
+              { value: "sa2", label: `SA2 (${areas.sa2.length})` },
+              { value: "lga", label: `LGA (${areas.lga.length})` },
             ]}
           />
         </div>
@@ -229,7 +229,7 @@ export function SpatialExplorer({
               </p>
             </>
           ) : (
-            <p className="text-sent-neg mt-2 flex items-start gap-1.5 text-sm">
+            <p className="text-sent-neg-ink mt-2 flex items-start gap-1.5 text-sm">
               <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
               Only {res.analysed} {unitName}s pass this threshold: too few for a spatial statistic.
             </p>
@@ -453,7 +453,7 @@ function StatusTag({ r }: { r: RegionStat }) {
     ) : (
       <span className="text-muted-foreground">analysed</span>
     );
-  if (r.status === "suppressed") return <span className="text-sent-neg">suppressed</span>;
+  if (r.status === "suppressed") return <span className="text-sent-neg-ink">suppressed</span>;
   if (r.status === "island") return <span className="text-muted-foreground">island</span>;
   return <span className="text-muted-foreground">no tweets</span>;
 }

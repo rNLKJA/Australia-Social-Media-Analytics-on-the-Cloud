@@ -45,6 +45,22 @@ function mapStatus(status: number, detail: { type?: string; code?: string; messa
   return new AiError("bad_request", { status, detail: msg });
 }
 
+/**
+ * Parse a 2xx body. A success status with a body that is not JSON comes from
+ * something between the browser and the provider (a captive portal or proxy),
+ * not from the model, so it is reported as a network problem.
+ */
+async function successBody<T>(res: Response): Promise<T> {
+  try {
+    return (await res.json()) as T;
+  } catch {
+    throw new AiError("network", {
+      status: res.status,
+      detail: "the response was not JSON; a proxy or captive portal may be in the way",
+    });
+  }
+}
+
 interface AnthropicMessage {
   model: string;
   content: { type: string; text?: string }[];
@@ -81,18 +97,15 @@ export async function callAnthropic(req: ProviderRequest): Promise<ProviderReply
     }),
   });
   if (!res.ok) throw mapStatus(res.status, await errorDetail(res));
-  const msg = (await res.json()) as AnthropicMessage;
-  if (msg.stop_reason === "refusal") throw new AiError("refusal");
-  if (msg.stop_reason === "max_tokens") throw new AiError("truncated");
-  const text = msg.content.find((b) => b.type === "text")?.text;
-  if (!text) throw new AiError("invalid_output", { detail: "no text in the reply" });
-  return {
-    text,
-    model: msg.model,
-    usage: msg.usage
-      ? { inputTokens: msg.usage.input_tokens ?? 0, outputTokens: msg.usage.output_tokens ?? 0 }
-      : null,
-  };
+  const msg = await successBody<AnthropicMessage>(res);
+  const usage = msg.usage
+    ? { inputTokens: msg.usage.input_tokens ?? 0, outputTokens: msg.usage.output_tokens ?? 0 }
+    : null;
+  if (msg.stop_reason === "refusal") throw new AiError("refusal", { usage });
+  if (msg.stop_reason === "max_tokens") throw new AiError("truncated", { usage });
+  const text = Array.isArray(msg.content) ? msg.content.find((b) => b.type === "text")?.text : undefined;
+  if (!text) throw new AiError("invalid_output", { detail: "no text in the reply", usage });
+  return { text, model: msg.model, usage };
 }
 
 interface OpenAiCompletion {
@@ -122,17 +135,15 @@ export async function callOpenAi(req: ProviderRequest): Promise<ProviderReply> {
     }),
   });
   if (!res.ok) throw mapStatus(res.status, await errorDetail(res));
-  const body = (await res.json()) as OpenAiCompletion;
+  const body = await successBody<OpenAiCompletion>(res);
+  const usage = body.usage
+    ? { inputTokens: body.usage.prompt_tokens ?? 0, outputTokens: body.usage.completion_tokens ?? 0 }
+    : null;
   const choice = body.choices?.[0];
-  if (!choice) throw new AiError("invalid_output", { detail: "no choices in the reply" });
-  if (choice.message.refusal) throw new AiError("refusal", { detail: choice.message.refusal.slice(0, 200) });
-  if (choice.finish_reason === "length") throw new AiError("truncated");
-  if (!choice.message.content) throw new AiError("invalid_output", { detail: "empty reply" });
-  return {
-    text: choice.message.content,
-    model: body.model,
-    usage: body.usage
-      ? { inputTokens: body.usage.prompt_tokens ?? 0, outputTokens: body.usage.completion_tokens ?? 0 }
-      : null,
-  };
+  if (!choice) throw new AiError("invalid_output", { detail: "no choices in the reply", usage });
+  if (choice.message?.refusal)
+    throw new AiError("refusal", { detail: choice.message.refusal.slice(0, 200), usage });
+  if (choice.finish_reason === "length") throw new AiError("truncated", { usage });
+  if (!choice.message?.content) throw new AiError("invalid_output", { detail: "empty reply", usage });
+  return { text: choice.message.content, model: body.model, usage };
 }

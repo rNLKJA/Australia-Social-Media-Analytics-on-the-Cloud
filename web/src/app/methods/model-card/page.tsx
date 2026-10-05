@@ -17,7 +17,7 @@ export default async function ModelCardPage() {
     <>
       <PageHeader
         kicker="Data & methods · model card"
-        title={card.title.replace(/^Model card: /, "")}
+        title={card.title.replace(/^Model card: /, "").replace(/^./, (c) => c.toUpperCase())}
         lede={
           <>
             What each model is for, what it was built from, how it was evaluated (with intervals), how it

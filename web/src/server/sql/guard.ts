@@ -10,11 +10,12 @@ import { ALLOWED } from "@/lib/sql/schema";
  * Layers, in order:
  *  1. A small SQLite-faithful lexer: one statement only, no block comments,
  *     no backslashes, no bind parameters, no write/DDL/PRAGMA/ATTACH keywords,
- *     no recursive CTEs, bounded length.
+ *     no RECURSIVE keyword, bounded length.
  *  2. A real SQL parser (node-sql-parser, PostgreSQL grammar, whose quoting
  *     rules match SQLite's: 'text', "identifier"): the statement must be a
  *     single SELECT; every table must be on the allow-list (or a CTE defined
- *     in the query); every column must exist in a referenced table (or be an
+ *     earlier in the query: a CTE that refers to itself is recursive in
+ *     SQLite even without the RECURSIVE keyword, so it is refused); every column must exist in a referenced table (or be an
  *     alias); every function must be on the allow-list; table-valued
  *     functions and schema qualifiers other than `main` are refused.
  *  3. Execution (execute.ts) wraps the statement as
@@ -120,6 +121,7 @@ export type IssueCode =
   | "block_comment"
   | "not_select"
   | "unknown_table"
+  | "recursive_cte"
   | "schema_qualifier"
   | "table_function"
   | "unknown_column"
@@ -324,6 +326,8 @@ export function guardSql(input: string): GuardResult {
 
   // CTE names and declared columns
   const ctes = new Set<string>();
+  /** CTEs whose body is being walked (not yet in scope) */
+  const defining: string[] = [];
   const aliases = new Set<string>();
   const columnRefs: string[] = [];
   let tableRefs = 0;
@@ -342,9 +346,18 @@ export function guardSql(input: string): GuardResult {
       return;
     }
     if (Array.isArray(v.with)) {
+      // In order: a CTE's body is checked before its own name comes into
+      // scope, so a body that refers to itself (SQLite treats that as a
+      // recursive CTE, with or without the RECURSIVE keyword) or to a CTE
+      // defined after it is refused rather than run.
       for (const w of v.with as Node[]) {
-        const name = nameOf(w.name);
-        if (name) ctes.add(name.toLowerCase());
+        const name = nameOf(w.name)?.toLowerCase() ?? null;
+        if (name) defining.push(name);
+        walk(w.stmt, depth + 1);
+        if (name) {
+          defining.pop();
+          ctes.add(name);
+        }
         if (Array.isArray(w.columns))
           for (const col of w.columns) {
             const cn = nameOf(col);
@@ -369,7 +382,12 @@ export function guardSql(input: string): GuardResult {
               code: "schema_qualifier",
               message: `Schema "${f.db}" is not available; use the table name alone.`,
             });
-          if (!ALLOWED.has(t) && !ctes.has(t))
+          if (defining.includes(t))
+            issues.push({
+              code: "recursive_cte",
+              message: `The CTE "${f.table}" refers to itself; recursive queries are not allowed.`,
+            });
+          else if (!ALLOWED.has(t) && !ctes.has(t))
             issues.push({
               code: "unknown_table",
               message: `Table "${f.table}" is not one of the documented tables.`,
@@ -396,10 +414,7 @@ export function guardSql(input: string): GuardResult {
       if (col && col !== "*") columnRefs.push(col);
     }
     for (const [k, child] of Object.entries(v)) {
-      if (k === "with" && Array.isArray(child)) {
-        for (const w of child as Node[]) walk(w.stmt, depth + 1);
-        continue;
-      }
+      if (k === "with" && Array.isArray(child)) continue; // walked above, in order
       if (isObj(child) || Array.isArray(child)) walk(child, depth);
     }
   };

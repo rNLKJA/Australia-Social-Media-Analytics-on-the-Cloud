@@ -10,6 +10,7 @@ import {
   Loader2,
   Play,
   RotateCcw,
+  Settings2,
   ShieldCheck,
   ThumbsDown,
   ThumbsUp,
@@ -21,7 +22,8 @@ import { openAiSettings } from "@/components/ai/ai-settings-dialog";
 import { AutoChart, ResultTable } from "@/components/ask/result-table";
 import { Button } from "@/components/ui/button";
 import { useAiSettings } from "@/hooks/use-ai-settings";
-import { appendEntry, type AuditEntry, type HumanDecision, newId, updateEntry } from "@/lib/ai/audit-log";
+import { type AskFlow, finishFlow, hasAiOutput, rerunFlow, startFlow, toEntry } from "@/lib/ai/ask-record";
+import { appendEntry, decisionPatch, updateEntry } from "@/lib/ai/audit-log";
 import { addUsage } from "@/lib/ai/client";
 import { getKey } from "@/lib/ai/settings";
 import {
@@ -31,7 +33,7 @@ import {
   generateSql,
   ROWS_SENT,
 } from "@/lib/ai/text-to-sql";
-import { AiError, modelFor, PROVIDER_LABEL, type TokenUsage } from "@/lib/ai/types";
+import { AiError, modelFor, PROVIDER_LABEL } from "@/lib/ai/types";
 import { runSql, type SqlRunResponse, verdictSummary } from "@/lib/sql/client";
 import { cn } from "@/lib/utils";
 
@@ -45,58 +47,13 @@ const EXAMPLES = [
 
 type Step = "sql" | "run" | "explain" | null;
 
-interface Flow {
-  id: string;
-  question: string;
-  provider: AuditEntry["provider"];
-  model: string;
-  servedModel?: string;
-  started: number;
-  reply?: { answerable: boolean; sql: string; reason: string };
-  modelMs?: number;
-  run?: SqlRunResponse;
-  sqlMs?: number;
-  explain?: { data: ExplainReply; check: CitationCheck; ms: number };
-  usage: TokenUsage | null;
-  editedSql?: string;
-  error?: string;
-  decision: HumanDecision;
-  logged: boolean;
-}
-
-function toEntry(f: Flow): AuditEntry {
-  const total = Math.round(performance.now() - f.started);
-  return {
-    id: f.id,
-    timestamp: new Date().toISOString(),
-    feature: "ask-the-data",
-    provider: f.provider,
-    model: f.model,
-    servedModel: f.servedModel,
-    input: { question: f.question },
-    output: {
-      answerable: f.reply?.answerable,
-      reason: f.reply?.reason,
-      generatedSql: f.reply?.sql || undefined,
-      editedSql: f.editedSql,
-      answer: f.explain?.data.answer,
-      caveat: f.explain?.data.caveat || undefined,
-      citedRows: f.explain?.check.cited,
-      grounded: f.explain?.check.grounded,
-    },
-    validation: f.run ? { verdict: f.run.verdict, issues: f.run.issues.map((i) => i.message) } : undefined,
-    rowCount: f.run?.rowCount,
-    latencyMs: { model: f.modelMs ?? 0, sql: f.sqlMs, explain: f.explain?.ms, total },
-    usage: f.usage,
-    decision: f.decision,
-    error: f.error,
-  };
-}
+/** Key and settings problems the visitor can fix in AI settings. */
+const SETTINGS_ERRORS = new Set(["no_key", "invalid_key", "quota", "model_not_found"]);
 
 export function AskData() {
   const { settings, hasKey } = useAiSettings();
   const [question, setQuestion] = useState("");
-  const [flow, setFlow] = useState<Flow | null>(null);
+  const [flow, setFlow] = useState<AskFlow | null>(null);
   const [step, setStep] = useState<Step>(null);
   const [sqlDraft, setSqlDraft] = useState("");
   const [highlight, setHighlight] = useState<Set<number>>(new Set());
@@ -104,11 +61,11 @@ export function AskData() {
   const abort = useRef<AbortController | null>(null);
   const busy = step !== null;
 
-  const log = async (f: Flow) => {
-    const key = getKey(f.provider);
+  /** Write the finished interaction to the audit log, once. Later only the decision changes. */
+  const log = async (f: AskFlow): Promise<AskFlow> => {
+    f = finishFlow(f, performance.now());
     try {
-      if (f.logged) await updateEntry(f.id, toEntry(f), [key]);
-      else await appendEntry(toEntry(f), [key]);
+      await appendEntry(toEntry(f), [getKey(f.provider)]);
       return { ...f, logged: true };
     } catch {
       return f; // IndexedDB unavailable (e.g. private mode): the feature still works
@@ -116,7 +73,7 @@ export function AskData() {
   };
 
   /** Run SQL on the server, then (if there are rows) ask the model to explain them. */
-  const runAndExplain = async (f: Flow, sql: string, signal: AbortSignal): Promise<Flow> => {
+  const runAndExplain = async (f: AskFlow, sql: string, signal: AbortSignal): Promise<AskFlow> => {
     setStep("run");
     const t0 = performance.now();
     const run = await runSql(sql, signal);
@@ -139,12 +96,23 @@ export function AskData() {
       );
       return {
         ...f,
-        explain: { data: ex.data, check: ex.check, ms: ex.latencyMs },
+        explain: {
+          data: ex.data,
+          check: ex.check,
+          ms: ex.latencyMs,
+          sql: run.sql,
+          rowsSent: Math.min(run.rowCount, ROWS_SENT),
+        },
         usage: addUsage(f.usage, ex.usage),
         servedModel: ex.servedModel,
       };
     } catch (e) {
-      return { ...f, error: `Explanation failed: ${e instanceof Error ? e.message : String(e)}` };
+      return {
+        ...f,
+        usage: e instanceof AiError ? addUsage(f.usage, e.usage) : f.usage,
+        errorKind: e instanceof AiError ? e.kind : undefined,
+        error: `Explanation failed: ${e instanceof Error ? e.message : String(e)}`,
+      };
     }
   };
 
@@ -159,16 +127,10 @@ export function AskData() {
     const ctl = new AbortController();
     abort.current = ctl;
     setManual(null);
-    let f: Flow = {
-      id: newId(),
-      question: text,
-      provider: settings.provider,
-      model: modelFor(settings),
-      started: performance.now(),
-      usage: null,
-      decision: "pending",
-      logged: false,
-    };
+    let f = startFlow(text, settings.provider, modelFor(settings), {
+      now: performance.now(),
+      date: new Date(),
+    });
     setFlow(f);
     setStep("sql");
     try {
@@ -178,18 +140,33 @@ export function AskData() {
       setSqlDraft(res.data.sql);
       if (res.data.answerable && res.data.sql.trim()) f = await runAndExplain(f, res.data.sql, ctl.signal);
     } catch (e) {
-      f = { ...f, error: e instanceof AiError ? e.message : e instanceof Error ? e.message : String(e) };
+      f = {
+        ...f,
+        modelMs: e instanceof AiError ? e.latencyMs : undefined,
+        usage: e instanceof AiError ? e.usage : null,
+        errorKind: e instanceof AiError ? e.kind : undefined,
+        error: e instanceof Error ? e.message : String(e),
+      };
     }
     setStep(null);
     f = await log(f);
     setFlow(f);
   };
 
+  /** Running edited SQL is a new interaction with its own record; the original is kept as it was. */
   const rerun = async () => {
     if (!flow || busy || !sqlDraft.trim()) return;
     const ctl = new AbortController();
     abort.current = ctl;
-    let f: Flow = { ...flow, editedSql: sqlDraft, decision: "edited", error: undefined };
+    if (flow.logged && flow.decision === "pending") {
+      try {
+        await updateEntry(flow.id, decisionPatch("edited"));
+      } catch {
+        /* best effort */
+      }
+    }
+    let f = rerunFlow(flow, sqlDraft, { now: performance.now(), date: new Date() });
+    setFlow(f);
     try {
       f = await runAndExplain(f, sqlDraft, ctl.signal);
     } catch (e) {
@@ -200,11 +177,18 @@ export function AskData() {
     setFlow(f);
   };
 
+  /** Record the person's call. Only the decision fields change; the AI fields stay as logged. */
   const decide = async (d: "accepted" | "rejected") => {
     if (!flow) return;
-    const decision: HumanDecision = d === "accepted" && flow.editedSql ? "edited" : d;
-    const f = await log({ ...flow, decision });
-    setFlow(f);
+    const patch = decisionPatch(d);
+    if (flow.logged) {
+      try {
+        await updateEntry(flow.id, patch);
+      } catch {
+        /* best effort */
+      }
+    }
+    setFlow({ ...flow, ...patch });
   };
 
   const runManual = async () => {
@@ -220,7 +204,8 @@ export function AskData() {
     document.getElementById(`ask-r${n}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
-  const sqlEdited = !!flow?.reply && sqlDraft.trim() !== flow.reply.sql.trim();
+  // compared with the SQL that last ran, so the same edit is not re-run twice
+  const sqlEdited = !!flow?.reply && sqlDraft.trim() !== (flow.editedSql ?? flow.reply.sql).trim();
   const run = flow?.run ?? manual;
 
   return (
@@ -246,8 +231,12 @@ export function AskData() {
           rows={2}
           maxLength={500}
           placeholder="e.g. Which Victorian suburbs had the most income-related tweets?"
+          aria-describedby="ask-q-note"
           className="border-input bg-background focus-visible:ring-ring/40 w-full resize-y rounded-md border px-3 py-2 text-base focus-visible:ring-2 focus-visible:outline-none"
         />
+        <p id="ask-q-note" className="text-muted-foreground -mt-1 text-xs">
+          Sent to your AI provider exactly as typed, so leave out anything personal.
+        </p>
         <div className="flex flex-wrap gap-1.5" aria-label="Example questions">
           {EXAMPLES.map((ex) => (
             <button
@@ -395,7 +384,36 @@ export function AskData() {
             </StepCard>
           )}
 
-          {!busy && (
+          {!busy && !hasAiOutput(flow) && flow.error && (
+            <li className="border-border bg-muted/30 flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4">
+              <p className="text-muted-foreground text-sm">
+                Nothing came back to judge. The failed call is still in the{" "}
+                <Link className="link" href="/ai-log">
+                  audit log
+                </Link>
+                .
+              </p>
+              <div className="flex gap-2">
+                {flow.errorKind && SETTINGS_ERRORS.has(flow.errorKind) && (
+                  <Button size="sm" variant="outline" onClick={openAiSettings}>
+                    <Settings2 aria-hidden /> Check AI settings
+                  </Button>
+                )}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    if (flow.parentId) void rerun();
+                    else void ask(flow.question);
+                  }}
+                >
+                  <RotateCcw aria-hidden /> Try again
+                </Button>
+              </div>
+            </li>
+          )}
+
+          {!busy && hasAiOutput(flow) && (
             <li className="border-border bg-muted/30 flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4">
               <div className="text-sm">
                 <p className="font-medium">Your call</p>
@@ -405,12 +423,14 @@ export function AskData() {
                     audit log
                   </Link>{" "}
                   (this browser only): <strong className="text-foreground">{flow.decision}</strong>
+                  {flow.parentId && " · a re-run of edited SQL, logged as its own record"}
                 </p>
               </div>
               <div className="flex gap-2">
                 <Button
                   size="sm"
-                  variant={flow.decision === "accepted" || flow.decision === "edited" ? "default" : "outline"}
+                  variant={flow.decision === "accepted" ? "default" : "outline"}
+                  aria-pressed={flow.decision === "accepted"}
                   onClick={() => void decide("accepted")}
                 >
                   <ThumbsUp aria-hidden /> Accept
@@ -418,6 +438,7 @@ export function AskData() {
                 <Button
                   size="sm"
                   variant={flow.decision === "rejected" ? "destructive" : "outline"}
+                  aria-pressed={flow.decision === "rejected"}
                   onClick={() => void decide("rejected")}
                 >
                   <ThumbsDown aria-hidden /> Reject
@@ -506,7 +527,11 @@ function StepCard({
   children?: React.ReactNode;
 }) {
   const icon = {
-    waiting: <span className="num text-xs">{n}</span>,
+    waiting: (
+      <span className="num text-xs" aria-hidden>
+        {n}
+      </span>
+    ),
     running: <Loader2 className="size-4 animate-spin" aria-hidden />,
     done: <Check className="size-4" aria-hidden />,
     failed: <Ban className="size-4" aria-hidden />,
@@ -518,12 +543,14 @@ function StepCard({
       <span
         className={cn(
           "border-border bg-card grid size-8 place-items-center rounded-full border font-serif",
-          state === "done" && "border-sent-pos text-sent-pos",
-          (state === "failed" || state === "warning") && "border-sent-neg text-sent-neg",
+          state === "done" && "border-sent-pos text-sent-pos-ink",
+          (state === "failed" || state === "warning") && "border-sent-neg text-sent-neg-ink",
         )}
-        aria-label={`Step ${n}: ${state}`}
       >
         {icon}
+        <span className="sr-only">
+          Step {n}: {state}
+        </span>
       </span>
       <div className="border-border bg-card min-w-0 rounded-lg border p-4">
         <p className="font-medium">{title}</p>
@@ -538,7 +565,7 @@ function Verdict({ run, ms }: { run: SqlRunResponse; ms?: number }) {
   if (run.verdict === "allowed")
     return (
       <div className="space-y-2 text-sm">
-        <p className="text-sent-pos flex items-start gap-1.5 font-medium">
+        <p className="text-sent-pos-ink flex items-start gap-1.5 font-medium">
           <ShieldCheck className="mt-0.5 size-4 shrink-0" aria-hidden />
           <span>
             Allowed and run · {run.rowCount} row{run.rowCount === 1 ? "" : "s"}
@@ -561,7 +588,7 @@ function Verdict({ run, ms }: { run: SqlRunResponse; ms?: number }) {
     );
   return (
     <div className="space-y-2 text-sm" role="alert">
-      <p className="text-sent-neg flex items-center gap-1.5 font-medium">
+      <p className="text-sent-neg-ink flex items-center gap-1.5 font-medium">
         <Ban className="size-4" aria-hidden />
         {run.verdict === "blocked" ? "Blocked by the validator, not run" : "Not completed"}
       </p>
@@ -610,7 +637,7 @@ function Answer({
                 "num mx-0.5 rounded px-1 align-baseline font-mono text-[11px]",
                 valid
                   ? "bg-primary/10 text-primary hover:bg-primary/20"
-                  : "bg-sent-neg/15 text-sent-neg line-through",
+                  : "bg-sent-neg/15 text-sent-neg-ink line-through",
               )}
               aria-label={valid ? `Show row ${n}` : `Row ${n} does not exist`}
             >
@@ -621,7 +648,7 @@ function Answer({
       </p>
       {explain.data.caveat && <p className="text-muted-foreground text-xs">Caveat: {explain.data.caveat}</p>}
       {explain.check.grounded ? (
-        <p className="text-sent-pos flex items-start gap-1.5 text-xs">
+        <p className="text-sent-pos-ink flex items-start gap-1.5 text-xs">
           <CheckCircle2 className="mt-px size-3.5 shrink-0" aria-hidden />
           <span>
             Cites returned rows {explain.check.cited.map((c) => `r${c}`).join(", ")}. Check them against the
@@ -629,7 +656,7 @@ function Answer({
           </span>
         </p>
       ) : (
-        <p className="text-sent-neg flex items-start gap-1.5 text-xs">
+        <p className="text-sent-neg-ink flex items-start gap-1.5 text-xs">
           <AlertTriangle className="mt-px size-3.5 shrink-0" aria-hidden />
           {explain.check.invalid.length
             ? `Cites rows that were not returned (${explain.check.invalid.map((c) => `r${c}`).join(", ")}): treat the answer as unreliable.`
@@ -642,7 +669,7 @@ function Answer({
 
 function ErrorNote({ message }: { message: string }) {
   return (
-    <p className="text-sent-neg flex items-start gap-1.5 text-sm" role="alert">
+    <p className="text-sent-neg-ink flex items-start gap-1.5 text-sm" role="alert">
       <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
       {message}
     </p>

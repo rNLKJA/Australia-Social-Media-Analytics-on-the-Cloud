@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AreaCaveats } from "@/components/editorial/caveats";
 import { Finding, Note, PageHeader, Section } from "@/components/editorial/page-header";
+import { ScrollRegion } from "@/components/ui/scroll-region";
 import { fmtInt } from "@/lib/format";
 import { SITE } from "@/lib/site";
 import { getFacts, getHistogram } from "@/server/analytics";
@@ -100,8 +101,8 @@ const UNCERTAINTY = [
   },
   {
     what: "Two AI models compared",
-    how: "Paired by question; exact McNemar test on the discordant questions, with the accuracy difference",
-    ref: "statsmodels mcnemar(exact=True)",
+    how: "Paired by question; exact McNemar test on the discordant questions, and the accuracy difference with a Tango score 95% interval",
+    ref: "statsmodels mcnemar(exact=True), R PropCIs scoreci.mp",
   },
   {
     what: "Model latency",
@@ -112,7 +113,7 @@ const UNCERTAINTY = [
 
 function Status({ exact }: { exact: boolean }) {
   return exact ? (
-    <span className="text-sent-pos inline-flex shrink-0 items-center gap-1 text-xs font-medium">
+    <span className="text-sent-pos-ink inline-flex shrink-0 items-center gap-1 text-xs font-medium">
       <Check className="size-4" aria-hidden /> exact
     </span>
   ) : (
@@ -445,7 +446,10 @@ export default async function MethodsPage() {
           </p>
         }
       >
-        <div className="border-border bg-card relative overflow-x-auto rounded-lg border">
+        <ScrollRegion
+          label="Uncertainty methods (scrolls sideways)"
+          className="border-border bg-card relative rounded-lg border"
+        >
           <table className="w-full text-sm">
             <caption className="sr-only">Uncertainty methods</caption>
             <thead className="bg-muted/60 text-muted-foreground text-left text-xs">
@@ -473,7 +477,7 @@ export default async function MethodsPage() {
               ))}
             </tbody>
           </table>
-        </div>
+        </ScrollRegion>
         <div className="prose-civic text-muted-foreground mt-6">
           <p>
             Analytic quantities agree with the Python reference to between 1e-9 and 1e-12; permutation and
@@ -616,7 +620,7 @@ export default async function MethodsPage() {
             ],
             [
               "Data sent to the provider",
-              "From the visitor's browser, with their key: the question, the documented schema, the generated SQL and up to 30 result rows of public aggregates. No personal data is held, so none can be sent. This site's server receives only the SQL.",
+              "From the visitor's browser, with their key: the question exactly as typed, the documented schema, the generated SQL and up to 30 result rows of public aggregates. The database holds no personal data, but anything typed into the question is sent as is, so do not include personal information. This site's server receives only the SQL.",
             ],
             [
               "Human in the loop",
@@ -624,11 +628,11 @@ export default async function MethodsPage() {
             ],
             [
               "Records",
-              "Each call is logged in the visitor's browser (IndexedDB) with id, time, feature, provider, model, question, generated and edited SQL, validator verdict, row count, answer, latency, token usage and the decision, viewable and exportable as JSON or CSV at /ai-log. Keys are redacted before every write.",
+              "Each question (two model calls: writing the SQL, then explaining the rows) is logged as one record in the visitor's browser (IndexedDB): id, time, feature, provider, model, question, generated SQL, what the explanation call was sent (the SQL and the number of rows), validator verdict, row count, answer, end-to-end latency, token usage and the decision with its time. Each benchmark question is one record. Re-running edited SQL adds a new record linked to the original; once written, only the decision changes. Viewable and exportable as JSON or CSV at /ai-log. Keys are redacted before every write.",
             ],
             [
               "Measurement and limits",
-              "The benchmark reports accuracy with Wilson intervals and compares models with a paired exact test. The project publishes no AI scores of its own. Known failure modes are listed in the model card.",
+              "The benchmark reports accuracy with Wilson intervals, counts malformed or truncated replies as wrong, and compares models with a paired exact test and a score interval for the difference. The project publishes no AI scores of its own. Known failure modes are listed in the model card.",
             ],
           ].map(([h, d]) => (
             <div key={h} className="border-border bg-card rounded-lg border p-4">

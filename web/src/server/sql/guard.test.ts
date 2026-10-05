@@ -24,6 +24,7 @@ describe("guardSql: queries that should run", () => {
     "SELECT CAST(value AS INTEGER) AS v FROM facts WHERE key = 'tweets_processed' -- a comment",
     "SELECT \"name\" FROM regions_lga WHERE name LIKE 'Greater%'",
     "SELECT name || ' (' || state || ')' AS label FROM regions_sal LIMIT 3",
+    "WITH a AS (SELECT lga_name, total FROM crime_lga), b AS (SELECT lga_name FROM a WHERE total > 10000) SELECT lga_name FROM b",
   ];
   for (const sql of ok) {
     it(sql.slice(0, 70), () => {
@@ -64,6 +65,19 @@ describe("guardSql: queries that must be blocked", () => {
     ["SELECT printf('%.*c', 1000000000, 'x')", "function_not_allowed"],
     ["SELECT sqlite_version()", "function_not_allowed"],
     ["WITH RECURSIVE c(x) AS (SELECT 1 UNION ALL SELECT x + 1 FROM c) SELECT x FROM c", "forbidden_keyword"],
+    // SQLite treats a self-referencing CTE as recursive even without the keyword
+    ["WITH c AS (SELECT 1 AS x UNION ALL SELECT x + 1 FROM c) SELECT count(*) AS n FROM c", "recursive_cte"],
+    [
+      "WITH c AS (SELECT 1 AS x UNION ALL SELECT x + 1 FROM c WHERE x < 100000) SELECT count(*) AS n FROM c",
+      "recursive_cte",
+    ],
+    [
+      "WITH c(x) AS (SELECT 1 UNION ALL SELECT x + 1 FROM (SELECT x FROM c) s) SELECT x FROM c",
+      "recursive_cte",
+    ],
+    ["WITH facts AS (SELECT key, value FROM facts) SELECT key FROM facts", "recursive_cte"],
+    // a CTE may only use CTEs defined before it
+    ["WITH a AS (SELECT n FROM b), b AS (SELECT 1 AS n) SELECT n FROM a", "unknown_table"],
     ["SELECT 1 /* hidden */", "block_comment"],
     ["SELECT 'a\\' , (SELECT sql FROM sqlite_master) , '' ", "forbidden_character"],
     ["SELECT * FROM facts WHERE key = ?", "forbidden_character"],
@@ -149,6 +163,20 @@ describe("runGuardedQuery (real database, read-only connection)", () => {
     expect(r.verdict).toBe("error");
     expect(r.error?.code).toBe("timeout");
     expect(r.elapsedMs).toBeLessThan(2000);
+  });
+  it("stops a query that would build a huge string (memory cap)", async () => {
+    let q = "'aaaaaaaaaa'";
+    for (let i = 0; i < 8; i++) q = `replace(${q}, 'a', 'aaaaaaaaaa')`;
+    const sql = `SELECT length(${q}) AS n`;
+    expect(guardSql(sql).ok).toBe(true); // allowed functions only, so the cap has to catch it
+    const r = await runGuardedQuery(sql);
+    expect(r.verdict).toBe("error");
+    expect(r.error?.code).toBe("too_large");
+    const cross = await runGuardedQuery("SELECT group_concat(a.name) AS s FROM regions_sal a, regions_sal b");
+    expect(cross.verdict).toBe("error");
+    expect(["too_large", "timeout"]).toContain(cross.error?.code);
+    // ordinary queries still run afterwards
+    expect((await runGuardedQuery("SELECT COUNT(*) AS n FROM facts")).verdict).toBe("allowed");
   });
   it("leaves the database unchanged and creates no files", async () => {
     const before = await runGuardedQuery("SELECT COUNT(*) FROM facts");

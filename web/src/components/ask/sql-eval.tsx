@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AiGeneratedLabel } from "@/components/ai/ai-label";
 import { openAiSettings } from "@/components/ai/ai-settings-dialog";
 import { Button } from "@/components/ui/button";
+import { ScrollRegion } from "@/components/ui/scroll-region";
 import { useAiSettings } from "@/hooks/use-ai-settings";
 import { appendEntry, newId } from "@/lib/ai/audit-log";
 import {
@@ -23,7 +24,7 @@ import {
 } from "@/lib/ai/eval";
 import { getKey } from "@/lib/ai/settings";
 import { generateSql } from "@/lib/ai/text-to-sql";
-import { AiError, modelFor, PROVIDER_LABEL } from "@/lib/ai/types";
+import { AiError, modelFor, PROVIDER_LABEL, type TokenUsage } from "@/lib/ai/types";
 import { BENCHMARK } from "@/lib/sql/benchmark";
 import { runSql, verdictSummary } from "@/lib/sql/client";
 import type { ResultSet } from "@/lib/sql/compare";
@@ -33,19 +34,25 @@ import { cn } from "@/lib/utils";
 const ANSWERABLE = new Set(BENCHMARK.filter((b) => b.goldSql).map((b) => b.id));
 
 const pct = (x: number) => `${(x * 100).toFixed(0)}%`;
+/** signed percentage points, with a true minus sign */
+const pts = (x: number) => {
+  const v = Math.round(x * 100);
+  return v < 0 ? `−${-v}` : v > 0 ? `+${v}` : "0";
+};
 function fmtProp(p: ProportionInterval) {
   if (!p.n) return "–";
   return `${p.k}/${p.n} = ${pct(p.estimate)} [${pct(p.lower)}, ${pct(p.upper)}]`;
 }
 
 const STATUS_TONE: Record<ItemStatus, string> = {
-  correct: "text-sent-pos",
-  correct_refusal: "text-sent-pos",
-  wrong: "text-sent-neg",
-  blocked: "text-sent-neg",
-  sql_error: "text-sent-neg",
-  refused: "text-sent-neg",
-  missed_refusal: "text-sent-neg",
+  correct: "text-sent-pos-ink",
+  correct_refusal: "text-sent-pos-ink",
+  wrong: "text-sent-neg-ink",
+  blocked: "text-sent-neg-ink",
+  sql_error: "text-sent-neg-ink",
+  refused: "text-sent-neg-ink",
+  missed_refusal: "text-sent-neg-ink",
+  invalid_output: "text-sent-neg-ink",
   ai_error: "text-muted-foreground",
 };
 
@@ -67,6 +74,7 @@ export function SqlEval({ gold }: { gold: Record<string, ResultSet> }) {
   const [runs, setRuns] = useState<EvalRun[]>([]);
   const [pick, setPick] = useState<string[]>([]);
   const [storageError, setStorageError] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const abort = useRef<AbortController | null>(null);
 
   const refresh = useCallback(
@@ -110,7 +118,7 @@ export function SqlEval({ gold }: { gold: Record<string, ResultSet> }) {
         let reply: { answerable: boolean; sql: string } | null = null;
         let aiError: string | undefined;
         let latency: number | null = null;
-        let usage = null;
+        let usage: TokenUsage | null = null;
         let served: string | undefined;
         try {
           const res = await generateSql(item.question, settings, key, { signal: ctl.signal });
@@ -120,6 +128,11 @@ export function SqlEval({ gold }: { gold: Record<string, ResultSet> }) {
           served = res.servedModel;
         } catch (e) {
           aiError = e instanceof AiError ? e.kind : e instanceof Error ? e.message : String(e);
+          // a failed call can still be billed and timed: keep both
+          if (e instanceof AiError) {
+            latency = e.latencyMs ?? null;
+            usage = e.usage;
+          }
         }
         const run = reply?.answerable && reply.sql.trim() ? await runSql(reply.sql, ctl.signal) : null;
         const score = scoreItem(item, reply, run, gold[item.id] ?? null, aiError);
@@ -254,7 +267,7 @@ export function SqlEval({ gold }: { gold: Record<string, ResultSet> }) {
         </div>
       </div>
       {storageError && (
-        <p className="text-sent-neg text-sm" role="alert">
+        <p className="text-sent-neg-ink text-sm" role="alert">
           This browser blocked IndexedDB, so runs are shown but not saved.
         </p>
       )}
@@ -362,18 +375,35 @@ export function SqlEval({ gold }: { gold: Record<string, ResultSet> }) {
             >
               <Download aria-hidden /> JSON
             </Button>
-            <Button
-              size="sm"
-              variant="destructive"
-              disabled={!runs.length || running}
-              onClick={async () => {
-                await deleteRuns();
-                setPick([]);
-                await refresh();
-              }}
-            >
-              <Trash2 aria-hidden /> Delete
-            </Button>
+            {confirmDelete ? (
+              <>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  disabled={running}
+                  onClick={async () => {
+                    await deleteRuns();
+                    setPick([]);
+                    setConfirmDelete(false);
+                    await refresh();
+                  }}
+                >
+                  Yes, delete {runs.length} run{runs.length === 1 ? "" : "s"}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => setConfirmDelete(false)}>
+                  Keep
+                </Button>
+              </>
+            ) : (
+              <Button
+                size="sm"
+                variant="destructive"
+                disabled={!runs.length || running}
+                onClick={() => setConfirmDelete(true)}
+              >
+                <Trash2 aria-hidden /> Delete all
+              </Button>
+            )}
           </div>
         </div>
         {runs.length === 0 ? (
@@ -402,7 +432,7 @@ export function SqlEval({ gold }: { gold: Record<string, ResultSet> }) {
                     Refusals
                   </th>
                   <th scope="col" className="px-3 py-2 font-medium">
-                    Invalid SQL
+                    Unusable or invalid SQL
                   </th>
                 </tr>
               </thead>
@@ -464,7 +494,7 @@ function SummaryStrip({ results }: { results: EvalItemResult[] }) {
   const stats = [
     { label: "Execution accuracy (answerable)", value: fmtProp(s.accuracy) },
     { label: "Correct refusals (unanswerable)", value: fmtProp(s.refusal) },
-    { label: "Blocked or failing SQL", value: fmtProp(s.invalidSql) },
+    { label: "Unusable, blocked or failing SQL", value: fmtProp(s.invalidSql) },
     {
       label: "Median model latency [95% CI]",
       value: s.latency
@@ -488,9 +518,11 @@ function SummaryStrip({ results }: { results: EvalItemResult[] }) {
       </dl>
       <p className="text-muted-foreground text-xs">
         Wilson 95% intervals; with {ANSWERABLE.size} answerable questions an interval is up to about ±25
-        points wide, so treat a single run as a rough reading, not a ranking. Provider errors ({s.aiErrors})
-        are excluded from the denominators. Latency interval: percentile bootstrap of the median (2,000
-        resamples, seed 57).
+        points wide, so treat a single run as a rough reading, not a ranking. Unusable model replies
+        (malformed or cut off: {s.modelFailures}) count as wrong, and their tokens and time are included. Only
+        infrastructure failures (key, quota, rate limit, network or provider outage: {s.aiErrors}) are left
+        out of the denominators. Latency interval: percentile bootstrap of the median (2,000 resamples, seed
+        57).
       </p>
     </>
   );
@@ -498,7 +530,10 @@ function SummaryStrip({ results }: { results: EvalItemResult[] }) {
 
 function ItemTable({ results }: { results: EvalItemResult[] }) {
   return (
-    <div className="border-border bg-card overflow-x-auto rounded-lg border">
+    <ScrollRegion
+      label="Per-question results (scrolls sideways)"
+      className="border-border bg-card rounded-lg border"
+    >
       <table className="w-full text-sm">
         <caption className="sr-only">Per-question results</caption>
         <thead className="bg-muted/60 text-muted-foreground text-left text-xs">
@@ -545,7 +580,7 @@ function ItemTable({ results }: { results: EvalItemResult[] }) {
           ))}
         </tbody>
       </table>
-    </div>
+    </ScrollRegion>
   );
 }
 
@@ -590,13 +625,17 @@ function PairedPanel({ a, b, cmp }: { a: EvalRun; b: EvalRun; cmp: ReturnType<ty
         <span className="bg-card num p-2">{cmp.neither}</span>
       </div>
       <p className="text-sm">
-        Accuracy difference A − B: <strong className="num">{(cmp.difference * 100).toFixed(0)} points</strong>
+        Accuracy difference A − B:{" "}
+        <strong className="num">
+          {pts(cmp.difference)} points [95% CI {pts(cmp.differenceCi.lower)}, {pts(cmp.differenceCi.upper)}]
+        </strong>
         . Exact McNemar test on the {cmp.onlyA + cmp.onlyB} discordant questions:{" "}
         <strong className="num">p = {cmp.mcnemar.p.toFixed(3)}</strong>.
       </p>
       <p className="text-muted-foreground text-xs">
-        Only questions where exactly one run was right carry information about which is better. With 14
-        questions, a real difference needs to be large to show up; a non-significant p here is not evidence
+        Interval: Tango&apos;s score interval for a paired difference (checked against R&apos;s PropCIs). Only
+        questions where exactly one run was right carry information about which is better. With {cmp.pairs}{" "}
+        questions a real difference needs to be large to show up; an interval that spans zero is not evidence
         that the two are equal.
       </p>
     </div>

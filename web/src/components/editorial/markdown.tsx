@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { ScrollRegion } from "@/components/ui/scroll-region";
 import { cn } from "@/lib/utils";
 
 const components: Components = {
@@ -25,12 +26,17 @@ const components: Components = {
       </a>
     ),
   code: ({ children }) => (
-    <code className="bg-muted rounded px-1 py-0.5 font-mono text-[0.85em]">{children}</code>
+    <code className="bg-muted rounded px-1 py-0.5 font-mono text-[0.85em] [overflow-wrap:anywhere]">
+      {children}
+    </code>
   ),
   table: ({ children }) => (
-    <div className="border-border bg-card relative my-5 overflow-x-auto rounded-lg border">
+    <ScrollRegion
+      label="Table (scrolls sideways)"
+      className="border-border bg-card relative my-5 rounded-lg border"
+    >
       <table className="w-full text-sm">{children}</table>
-    </div>
+    </ScrollRegion>
   ),
   thead: ({ children }) => (
     <thead className="bg-muted/60 text-muted-foreground text-left text-xs">{children}</thead>

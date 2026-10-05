@@ -53,6 +53,9 @@
   --sent-9: #0f625c;
   --sent-neg: #c8553d;
   --sent-pos: #2e8c82;
+  /* darker text-only variants: >= 4.6:1 on card, paper and muted in light mode */
+  --sent-neg-ink: #b0432c;
+  --sent-pos-ink: #1f6f67;
 
   /* sequential 0..6 */
   --seq-0: #f0edf6;
@@ -112,6 +115,8 @@
   --sent-9: #6fd3c4;
   --sent-neg: #f07a5c;
   --sent-pos: #5cc7bb;
+  --sent-neg-ink: #f07a5c;
+  --sent-pos-ink: #5cc7bb;
 
   --seq-0: #222033;
   --seq-1: #332e55;
@@ -173,6 +178,8 @@
   --color-sent-9: var(--sent-9);
   --color-sent-neg: var(--sent-neg);
   --color-sent-pos: var(--sent-pos);
+  --color-sent-neg-ink: var(--sent-neg-ink);
+  --color-sent-pos-ink: var(--sent-pos-ink);
   --color-seq-0: var(--seq-0);
   --color-seq-1: var(--seq-1);
   --color-seq-2: var(--seq-2);

@@ -11,11 +11,13 @@ import {
   mcnemarExact,
   type McNemarResult,
   medianBootstrap,
+  type PairedDifferenceInterval,
+  pairedDifferenceScoreCi,
   type ProportionInterval,
   wilson,
 } from "@/lib/stats";
 import { EVAL_STORE, tx } from "./idb";
-import type { Provider, TokenUsage } from "./types";
+import { isModelFailure, type Provider, type TokenUsage } from "./types";
 
 export type ItemStatus =
   | "correct" // answerable: result matched the gold result
@@ -25,7 +27,8 @@ export type ItemStatus =
   | "refused" // answerable: the model said it could not answer
   | "correct_refusal" // unanswerable: the model refused
   | "missed_refusal" // unanswerable: the model produced SQL anyway
-  | "ai_error"; // the provider call failed (key, rate limit, network, invalid output)
+  | "invalid_output" // the model replied, but the reply was malformed or cut off: counts as wrong
+  | "ai_error"; // infrastructure failure (key, quota, rate limit, network, outage): not scored
 
 export const STATUS_LABEL: Record<ItemStatus, string> = {
   correct: "Correct",
@@ -35,7 +38,8 @@ export const STATUS_LABEL: Record<ItemStatus, string> = {
   refused: "Refused (answerable)",
   correct_refusal: "Correct refusal",
   missed_refusal: "Should have refused",
-  ai_error: "Provider error",
+  invalid_output: "Unusable reply",
+  ai_error: "Not scored (provider or network)",
 };
 
 export interface EvalItemResult {
@@ -61,6 +65,13 @@ export interface EvalRun {
   results: EvalItemResult[];
 }
 
+/**
+ * Score one benchmark item. `aiError` is the AiError kind (or message) when
+ * the provider call failed. Failures that are the model's own (a malformed or
+ * truncated reply, a safety refusal) are scored against it; infrastructure
+ * failures (key, quota, rate limit, network, outage) are not scored at all,
+ * because they say nothing about the model.
+ */
 export function scoreItem(
   item: BenchmarkItem,
   reply: { answerable: boolean; sql: string } | null,
@@ -68,6 +79,19 @@ export function scoreItem(
   gold: ResultSet | null,
   aiError?: string,
 ): Pick<EvalItemResult, "status" | "detail"> {
+  if (aiError && isModelFailure(aiError)) {
+    if (aiError === "refusal")
+      return item.goldSql
+        ? { status: "refused", detail: "the model declined (refusal stop reason)" }
+        : { status: "correct_refusal", detail: "declined (refusal stop reason)" };
+    return {
+      status: "invalid_output",
+      detail:
+        aiError === "truncated"
+          ? "the reply was cut off before it finished"
+          : "the reply was not valid JSON in the required shape",
+    };
+  }
   if (aiError || !reply) return { status: "ai_error", detail: aiError ?? "no reply" };
   if (!item.goldSql) {
     return reply.answerable && reply.sql.trim()
@@ -88,12 +112,18 @@ export function scoreItem(
 
 export interface RunSummary {
   questions: number;
-  /** execution accuracy on answerable questions */
+  /** execution accuracy on answerable questions (unusable replies count as wrong) */
   accuracy: ProportionInterval;
   /** refusals on the unanswerable questions */
   refusal: ProportionInterval;
-  /** validator-blocked or SQLite-failed SQL, among answerable questions where SQL was produced */
+  /**
+   * unusable replies, validator-blocked or SQLite-failed SQL, among answerable
+   * questions where the model did not decline
+   */
   invalidSql: ProportionInterval;
+  /** model replies that were malformed or cut off (all questions) */
+  modelFailures: number;
+  /** infrastructure failures, excluded from every denominator */
   aiErrors: number;
   latency: { median: number; lower: number; upper: number; n: number } | null;
   tokens: { input: number; output: number; perQuestion: number } | null;
@@ -117,9 +147,12 @@ export function summariseRun(results: EvalItemResult[], answerableIds: Set<strin
       unans.filter((r) => r.status !== "ai_error").length,
     ),
     invalidSql: wilson(
-      produced.filter((r) => r.status === "blocked" || r.status === "sql_error").length,
+      produced.filter(
+        (r) => r.status === "blocked" || r.status === "sql_error" || r.status === "invalid_output",
+      ).length,
       produced.length,
     ),
+    modelFailures: results.filter((r) => r.status === "invalid_output").length,
     aiErrors: results.filter((r) => r.status === "ai_error").length,
     latency: boot ? { median: boot.estimate, lower: boot.lower, upper: boot.upper, n: lat.length } : null,
     tokens: used.length
@@ -136,10 +169,15 @@ export interface PairedComparison {
   neither: number;
   /** accuracy of A minus accuracy of B on the paired questions */
   difference: number;
+  /** Tango score 95% interval for that difference */
+  differenceCi: PairedDifferenceInterval;
   mcnemar: McNemarResult;
 }
 
-/** Paired comparison of two runs on the answerable questions both scored. */
+/**
+ * Paired comparison of two runs on the answerable questions both scored.
+ * Unusable replies count as wrong; only infrastructure failures drop a pair.
+ */
 export function compareRuns(a: EvalRun, b: EvalRun, answerableIds: Set<string>): PairedComparison {
   const bById = new Map(b.results.map((r) => [r.id, r]));
   let both = 0;
@@ -165,6 +203,7 @@ export function compareRuns(a: EvalRun, b: EvalRun, answerableIds: Set<string>):
     onlyB,
     neither,
     difference: pairs ? (onlyA - onlyB) / pairs : 0,
+    differenceCi: pairedDifferenceScoreCi(onlyA, onlyB, pairs),
     mcnemar: mcnemarExact(onlyA, onlyB),
   };
 }

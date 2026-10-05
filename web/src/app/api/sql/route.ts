@@ -72,6 +72,8 @@ export async function POST(request: Request) {
         ? 422
         : outcome.error?.code === "timeout"
           ? 504
-          : 400;
+          : outcome.error?.code === "too_large"
+            ? 413
+            : 400;
   return json(payload, status);
 }

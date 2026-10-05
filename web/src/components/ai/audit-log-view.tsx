@@ -28,9 +28,9 @@ function download(name: string, text: string, type: string) {
 }
 
 const DECISION_TONE: Record<AuditEntry["decision"], string> = {
-  accepted: "text-sent-pos",
-  edited: "text-sent-pos",
-  rejected: "text-sent-neg",
+  accepted: "text-sent-pos-ink",
+  edited: "text-sent-pos-ink",
+  rejected: "text-sent-neg-ink",
   pending: "text-muted-foreground",
   "not-applicable": "text-muted-foreground",
 };
@@ -66,6 +66,7 @@ export function AuditLogView() {
     [entries, filter],
   );
   const asks = (entries ?? []).filter((e) => e.feature === "ask-the-data");
+  const questions = asks.filter((e) => !e.parentId).length;
   const decided = asks.filter((e) => e.decision !== "pending");
   const kept = decided.filter((e) => e.decision === "accepted" || e.decision === "edited").length;
   const acceptance = wilson(kept, decided.length);
@@ -79,7 +80,7 @@ export function AuditLogView() {
   return (
     <div className="space-y-6">
       {error && (
-        <p className="text-sent-neg text-sm" role="alert">
+        <p className="text-sent-neg-ink text-sm" role="alert">
           The log could not be read in this browser ({error}). Private browsing modes sometimes block
           IndexedDB.
         </p>
@@ -87,9 +88,9 @@ export function AuditLogView() {
       <dl className="border-border bg-border grid grid-cols-2 gap-px overflow-hidden rounded-lg border md:grid-cols-4">
         {[
           ["Records", entries.length.toLocaleString("en-AU")],
-          ["Questions asked", asks.length.toLocaleString("en-AU")],
+          ["Questions asked", questions.toLocaleString("en-AU")],
           [
-            "Kept by a person (accepted or edited)",
+            "Outputs kept by a person (accepted or edited)",
             decided.length
               ? `${kept}/${decided.length} [${(acceptance.lower * 100).toFixed(0)}–${(acceptance.upper * 100).toFixed(0)}%]`
               : "–",
@@ -189,9 +190,20 @@ export function AuditLogView() {
                     · {e.provider} · <code>{e.servedModel ?? e.model}</code>
                   </p>
                   <p className="mt-1 font-medium break-words">{e.input.question}</p>
+                  {e.parentId && (
+                    <p className="text-muted-foreground mt-0.5 text-xs">
+                      Re-run of SQL a person edited (original record{" "}
+                      <code className="num">{e.parentId.slice(0, 8)}</code>)
+                    </p>
+                  )}
                 </div>
                 <span className={cn("text-xs font-semibold", DECISION_TONE[e.decision])}>
                   {e.decision === "not-applicable" ? "scored automatically" : `human decision: ${e.decision}`}
+                  {e.decidedAt && (
+                    <span className="text-muted-foreground num block font-normal">
+                      {new Date(e.decidedAt).toLocaleString("en-AU")}
+                    </span>
+                  )}
                 </span>
               </div>
               <dl className="text-muted-foreground mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs sm:grid-cols-4">
@@ -206,7 +218,7 @@ export function AuditLogView() {
                   <dd className="text-foreground num inline">{e.rowCount ?? "–"}</dd>
                 </div>
                 <div>
-                  <dt className="inline">Latency: </dt>
+                  <dt className="inline">Latency (end to end): </dt>
                   <dd className="text-foreground num inline">
                     {e.latencyMs.total.toLocaleString("en-AU")} ms
                   </dd>
@@ -235,16 +247,22 @@ export function AuditLogView() {
                         {e.output.generatedSql}
                       </pre>
                     )}
+                    {e.input.explainInput && (
+                      <p className="text-muted-foreground text-xs">
+                        Explanation call was sent the question, the SQL below and{" "}
+                        {e.input.explainInput.rowsSent} row{e.input.explainInput.rowsSent === 1 ? "" : "s"}.
+                      </p>
+                    )}
                     {e.output.editedSql && (
                       <>
-                        <p className="text-xs font-medium">Edited by a person and run instead:</p>
+                        <p className="text-xs font-medium">SQL a person edited and ran:</p>
                         <pre className="bg-muted/60 overflow-x-auto rounded p-2 font-mono text-[11px] whitespace-pre-wrap">
                           {e.output.editedSql}
                         </pre>
                       </>
                     )}
                     {!!e.validation?.issues.length && (
-                      <ul className="text-sent-neg list-disc pl-5 text-xs">
+                      <ul className="text-sent-neg-ink list-disc pl-5 text-xs">
                         {e.validation.issues.map((i) => (
                           <li key={i}>{i}</li>
                         ))}
@@ -254,14 +272,14 @@ export function AuditLogView() {
                       <p>
                         {e.output.answer}
                         {e.output.grounded === false && (
-                          <span className="text-sent-neg block text-xs">
+                          <span className="text-sent-neg-ink block text-xs">
                             Answer did not cite returned rows.
                           </span>
                         )}
                       </p>
                     )}
                     {e.output.score && <p className="text-xs">Benchmark result: {e.output.score}</p>}
-                    {e.error && <p className="text-sent-neg text-xs">{e.error}</p>}
+                    {e.error && <p className="text-sent-neg-ink text-xs">{e.error}</p>}
                   </div>
                 </details>
               )}

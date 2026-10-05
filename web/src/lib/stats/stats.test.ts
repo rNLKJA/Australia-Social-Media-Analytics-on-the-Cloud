@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { bootstrapCI, meanBootstrap, medianBootstrap, quantileSorted, spearmanBootstrap } from "./bootstrap";
-import { benjaminiHochberg, mcnemarExact } from "./multiple";
+import { benjaminiHochberg, mcnemarExact, pairedDifferenceScoreCi } from "./multiple";
 import { wilson } from "./proportion";
 import { createRng, shuffleInPlace } from "./random";
 import { invert, ols } from "./regression";
@@ -110,6 +110,20 @@ describe("multiple testing and paired comparisons", () => {
   it("McNemar is symmetric and 1 without discordant pairs", () => {
     expect(mcnemarExact(0, 0).p).toBe(1);
     expect(mcnemarExact(2, 9).p).toBeCloseTo(mcnemarExact(9, 2).p, 15);
+    // paired-difference interval: mirror-symmetric, contains the estimate, stays in [-1, 1]
+    const ab = pairedDifferenceScoreCi(5, 1, 14);
+    const ba = pairedDifferenceScoreCi(1, 5, 14);
+    expect(ab.lower).toBeCloseTo(-ba.upper, 12);
+    expect(ab.upper).toBeCloseTo(-ba.lower, 12);
+    expect(ab.lower).toBeLessThan(ab.estimate);
+    expect(ab.upper).toBeGreaterThan(ab.estimate);
+    expect(pairedDifferenceScoreCi(14, 0, 14).upper).toBe(1);
+    expect(pairedDifferenceScoreCi(0, 14, 14).lower).toBe(-1);
+    expect(pairedDifferenceScoreCi(0, 0, 0).lower).toBeNaN();
+    expect(pairedDifferenceScoreCi(9, 9, 10).lower).toBeNaN(); // more discordant pairs than pairs
+    // a wider level gives a wider interval
+    const w90 = pairedDifferenceScoreCi(5, 1, 14, 0.9);
+    expect(w90.upper - w90.lower).toBeLessThan(ab.upper - ab.lower);
     expect(mcnemarExact(0, 6).p).toBeCloseTo(2 / 64, 15);
   });
 });

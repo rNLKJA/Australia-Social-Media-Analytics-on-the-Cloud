@@ -28,7 +28,8 @@ The data is small, static and public, so a file that ships with the code is the 
 - Cold starts copy the file in about 2 ms; static pages read it at build time, so only the records pages and `/api/sql` touch it at request time.
 - The tests run the real executor against the real file: writes fail with `SQLITE_READONLY`, an `ATTACH` smuggled after a closing parenthesis never runs (libSQL compiles only the first statement), the database is unchanged afterwards, and a deliberately explosive cross join is interrupted at 200 ms in the test (2.5 s in production).
 - I tried to use SQLite's authorizer as a second allow-list. libSQL's binding only accepts table rules and denies every function, including `COUNT`, so it could not be used; the function allow-list lives in the validator instead. That is a weaker guarantee than an authorizer would have been, and the tests carry the weight.
-- There is no rate limit on `/api/sql` beyond Vercel's own function limits. Each query is capped at 200 rows and 2.5 seconds, so the cost of abuse is bounded but not zero.
+- Review before merge showed that rows and time were not enough. Allowed functions (`REPLACE`, `GROUP_CONCAT`) can build a string of up to SQLite's 1 GB limit well inside 2.5 seconds: one nested `REPLACE` query took the server from 147 MB to 2.2 GB of memory in 1.2 s. SQLite's heap is now capped at 64 MB with `PRAGMA hard_heap_limit`, and such a query fails with a "query too large" message instead. The cap is process-wide, so one oversized query can make a concurrent query on the same instance fail too; with a 1.7 MB database no legitimate query comes near it.
+- There is no rate limit on `/api/sql` beyond Vercel's own function limits. Each query is capped at 200 rows, 2.5 seconds and 64 MB, so the cost of one query is bounded; the number of queries is not.
 
 ## What I'd change
 

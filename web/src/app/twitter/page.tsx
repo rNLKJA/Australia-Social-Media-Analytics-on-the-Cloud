@@ -25,7 +25,9 @@ function ExtremeList({ title, items, tone }: { title: string; items: SalRegion[]
             <span className="num text-muted-foreground shrink-0 text-xs">
               {fmtInt(r.all!.n)} tweets ·{" "}
               <span
-                className={tone === "neg" ? "text-sent-neg font-semibold" : "text-sent-pos font-semibold"}
+                className={
+                  tone === "neg" ? "text-sent-neg-ink font-semibold" : "text-sent-pos-ink font-semibold"
+                }
               >
                 {fmtScore(r.all!.avg)}
               </span>

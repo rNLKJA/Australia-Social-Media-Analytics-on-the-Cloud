@@ -2,9 +2,17 @@
 
 import { KeyRound, ShieldCheck } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useId, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useId, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useAiSettings } from "@/hooks/use-ai-settings";
 import { forgetKeys, getKey, maskKey, saveSettings, setKey } from "@/lib/ai/settings";
 import { ANTHROPIC_MODELS, type AiSettings, DEFAULT_OPENAI_MODEL, type Provider } from "@/lib/ai/types";
@@ -21,33 +29,69 @@ export function openAiSettings() {
 export function AiSettingsDialog() {
   const { settings, hasKey } = useAiSettings();
   const [open, setOpen] = useState(false);
+  // the control that opened the dialog from elsewhere on the page ("Add your key", "Change")
+  const opener = useRef<HTMLElement | null>(null);
+  const pathname = usePathname();
+  const [shownOn, setShownOn] = useState(pathname);
+
+  // following a link inside the dialog (or any navigation) closes it
+  if (pathname !== shownOn) {
+    setShownOn(pathname);
+    if (open) setOpen(false);
+  }
 
   useEffect(() => {
-    const onOpen = () => setOpen(true);
+    const onOpen = () => {
+      opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      setOpen(true);
+    };
     window.addEventListener(OPEN_EVENT, onOpen);
     return () => window.removeEventListener(OPEN_EVENT, onOpen);
   }, []);
 
+  /** Return focus to whatever opened the dialog; Radix falls back to the header trigger. */
+  const restoreFocus = (e: Event) => {
+    const el = opener.current;
+    opener.current = null;
+    if (el && el.isConnected) {
+      e.preventDefault();
+      el.focus();
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="text-muted-foreground hover:text-foreground relative gap-1.5"
-        onClick={() => setOpen(true)}
-        aria-label={hasKey ? "AI settings (your key is set)" : "AI settings (optional, bring your own key)"}
-        title="AI settings"
-      >
-        <KeyRound className="size-4" aria-hidden />
-        <span className="hidden xl:inline">AI</span>
-        {hasKey && <span className="bg-sent-pos absolute top-1 right-1 size-1.5 rounded-full" aria-hidden />}
-      </Button>
-      {open && <SettingsBody initial={settings} onDone={() => setOpen(false)} />}
+      <DialogTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-muted-foreground hover:text-foreground relative gap-1.5"
+          aria-label={hasKey ? "AI settings (your key is set)" : "AI settings (optional, bring your own key)"}
+          title="AI settings"
+        >
+          <KeyRound className="size-4" aria-hidden />
+          <span className="hidden xl:inline">AI</span>
+          {hasKey && (
+            <span className="bg-sent-pos absolute top-1 right-1 size-1.5 rounded-full" aria-hidden />
+          )}
+        </Button>
+      </DialogTrigger>
+      {open && (
+        <SettingsBody initial={settings} onDone={() => setOpen(false)} onCloseAutoFocus={restoreFocus} />
+      )}
     </Dialog>
   );
 }
 
-function SettingsBody({ initial, onDone }: { initial: AiSettings; onDone: () => void }) {
+function SettingsBody({
+  initial,
+  onDone,
+  onCloseAutoFocus,
+}: {
+  initial: AiSettings;
+  onDone: () => void;
+  onCloseAutoFocus: (e: Event) => void;
+}) {
   const ids = { key: useId(), model: useId(), remember: useId(), keyHelp: useId() };
   const [draft, setDraft] = useState<AiSettings>(initial);
   const [keyDraft, setKeyDraft] = useState("");
@@ -79,7 +123,7 @@ function SettingsBody({ initial, onDone }: { initial: AiSettings; onDone: () => 
   };
 
   return (
-    <DialogContent aria-describedby={ids.keyHelp}>
+    <DialogContent aria-describedby={ids.keyHelp} onCloseAutoFocus={onCloseAutoFocus}>
       <DialogHeader>
         <p className="kicker">Optional · bring your own key</p>
         <DialogTitle>AI settings</DialogTitle>
@@ -196,15 +240,15 @@ function SettingsBody({ initial, onDone }: { initial: AiSettings; onDone: () => 
       </div>
 
       <div className="border-border bg-muted/40 flex gap-2 rounded-md border p-3 text-xs leading-relaxed">
-        <ShieldCheck className="text-sent-pos mt-0.5 size-4 shrink-0" aria-hidden />
+        <ShieldCheck className="text-sent-pos-ink mt-0.5 size-4 shrink-0" aria-hidden />
         <p className="text-muted-foreground">
           Calls are billed to your key by the provider. One question makes two calls (writing the SQL, then
-          explaining the rows). Every call is recorded in an{" "}
-          <Link className="link" href="/ai-log">
+          explaining the rows), recorded together as one entry in an{" "}
+          <Link className="link" href="/ai-log" onClick={onDone}>
             audit log
           </Link>{" "}
           kept only in this browser, without the key. Read the{" "}
-          <Link className="link" href="/methods#ai-use">
+          <Link className="link" href="/methods#ai-use" onClick={onDone}>
             AI use statement
           </Link>
           .

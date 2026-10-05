@@ -60,11 +60,11 @@ Exploratory questions about the public aggregates in `analytics.db`, with every 
 
 ### Data
 
-The provider receives the question, the documented schema (table and column descriptions), the generated SQL and up to 30 result rows. All of it is public aggregate data. This site receives only the SQL. The key stays in the visitor's browser.
+The provider receives the question exactly as the visitor typed it, the documented schema (table and column descriptions), the generated SQL and up to 30 result rows. The database holds only public aggregate data, but anything a visitor types into the question is sent as is, so the page asks people not to include personal information. This site receives only the SQL. The key stays in the visitor's browser.
 
 ### Evaluation
 
-The `/ask/eval` page runs 16 questions with hand-written gold SQL (14 answerable, 2 that should be refused) on the visitor's model and reports execution accuracy and refusal rates with Wilson 95% intervals, the share of SQL the validator blocked or SQLite rejected, latency (median with a bootstrap interval) and token use, and compares two runs with an exact McNemar test. **No results are published here.** The project has no AI budget and does not report scores it ran itself. With 14 scored questions an interval is up to about ±25 points wide, so the harness is a smoke test for a broken prompt or a weak model, not a ranking.
+The `/ask/eval` page runs 16 questions with hand-written gold SQL (14 answerable, 2 that should be refused) on the visitor's model and reports execution accuracy and refusal rates with Wilson 95% intervals, the share of SQL the validator blocked or SQLite rejected, latency (median with a bootstrap interval) and token use, and compares two runs with an exact McNemar test and a Tango score 95% interval for the paired accuracy difference (checked against R's PropCIs). A reply that is malformed, cut off or refused counts as wrong, and its tokens and time are counted; only infrastructure failures (key, quota, rate limit, network, provider outage) are left out of the denominators. **No results are published here.** The project has no AI budget and does not report scores it ran itself. With 14 scored questions an interval is up to about ±25 points wide, so the harness is a smoke test for a broken prompt or a weak model, not a ranking.
 
 ### Known failure modes
 
@@ -76,7 +76,7 @@ The `/ask/eval` page runs 16 questions with hand-written gold SQL (14 answerable
 
 ### Safeguards
 
-Validator (single SELECT, allow-listed tables, columns and functions, no PRAGMA, ATTACH, writes, recursive CTEs, escapes or bind parameters), read-only execution (`query_only`, one statement, 200-row cap, 2.5 s interrupt), a Content Security Policy that limits where the page can send requests, AI-generated labels on every output, citation checks, a human accept, edit or reject step, and a per-browser audit log with JSON and CSV export (`/ai-log`). See DR-002 and DR-004.
+Validator (single SELECT, allow-listed tables, columns and functions, no PRAGMA, ATTACH, writes, recursive CTEs with or without the RECURSIVE keyword, escapes or bind parameters), read-only execution (`query_only`, one statement, 200-row cap, 2.5 s interrupt, 64 MB cap on SQLite's memory), a Content Security Policy that limits where the page can send requests, AI-generated labels on every output, citation checks, a human accept, edit or reject step, and a per-browser audit log with JSON and CSV export (`/ai-log`): one record per question covering its two model calls, a new linked record when edited SQL is re-run, and only the human decision updated after a record is written. See DR-002 and DR-004.
 
 ### Ethical considerations
 

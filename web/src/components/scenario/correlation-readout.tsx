@@ -50,7 +50,7 @@ export function CorrelationReadout({
         ))}
       </dl>
       {c.n < CAUTION_N && (
-        <p className="text-sent-neg flex items-start gap-1.5 text-[11px]">
+        <p className="text-sent-neg-ink flex items-start gap-1.5 text-[11px]">
           <AlertTriangle className="mt-px size-3.5 shrink-0" aria-hidden />
           Only {c.n} regions pass this threshold: too few for a reliable estimate
           {showP ? ", so read these numbers with caution." : ", so p-values are not shown."}
@@ -58,7 +58,7 @@ export function CorrelationReadout({
       )}
       {agrees && (
         <p className="text-muted-foreground flex items-center gap-1.5 text-[11px]">
-          <BadgeCheck className="text-sent-pos size-3.5" aria-hidden />
+          <BadgeCheck className="text-sent-pos-ink size-3.5" aria-hidden />
           Computed in your browser; identical to the scipy values stored by the build script.
         </p>
       )}

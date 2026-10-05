@@ -80,16 +80,37 @@ const HINT: Record<AiErrorKind, string> = {
   server: "The provider returned a server error. Try again shortly.",
 };
 
+/**
+ * Failures that are the model's own doing: it answered, but the reply was
+ * malformed, cut off or a refusal. An evaluation must count these against the
+ * model. Every other kind (key, quota, rate limit, network, provider outage)
+ * is an infrastructure failure that says nothing about the model's ability.
+ */
+export const MODEL_FAILURE_KINDS: readonly AiErrorKind[] = ["invalid_output", "truncated", "refusal"];
+
+export function isModelFailure(kind: string | undefined): boolean {
+  return !!kind && (MODEL_FAILURE_KINDS as readonly string[]).includes(kind);
+}
+
 export class AiError extends Error {
   readonly kind: AiErrorKind;
   readonly status?: number;
   readonly detail?: string;
-  constructor(kind: AiErrorKind, opts: { status?: number; detail?: string } = {}) {
+  /** tokens the provider billed for the failed call, when it reported them */
+  usage: TokenUsage | null;
+  /** time from request to failure, filled in by callStructured */
+  latencyMs?: number;
+  constructor(
+    kind: AiErrorKind,
+    opts: { status?: number; detail?: string; usage?: TokenUsage | null; latencyMs?: number } = {},
+  ) {
     super(opts.detail ? `${HINT[kind]} (${opts.detail})` : HINT[kind]);
     this.name = "AiError";
     this.kind = kind;
     this.status = opts.status;
     this.detail = opts.detail;
+    this.usage = opts.usage ?? null;
+    this.latencyMs = opts.latencyMs;
   }
 }
 

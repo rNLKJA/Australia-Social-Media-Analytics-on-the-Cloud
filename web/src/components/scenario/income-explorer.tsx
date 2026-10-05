@@ -269,7 +269,7 @@ export function IncomeExplorer({
                   : `pooled from ${sel.salCount} suburb${sel.salCount === 1 ? "" : "s"} with tweets`}
               </p>
               {!sel.kept && (
-                <p className="text-sent-neg mt-2 text-sm">
+                <p className="text-sent-neg-ink mt-2 text-sm">
                   Removed by the team&apos;s IQR outlier rule, so it is not in the chart or the fit.
                 </p>
               )}

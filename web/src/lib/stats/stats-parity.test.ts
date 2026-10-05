@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
+import pd from "@/lib/__fixtures__/paired-diff-parity.json";
 import fx from "@/lib/__fixtures__/stats-parity.json";
 import { buildWeights } from "@/lib/spatial-analysis";
 import type { Adjacency } from "@/lib/types";
 import { getAdjacency, getAreaRecords } from "@/server/spatial";
 import { spearmanBootstrap } from "./bootstrap";
 import { pearson, rankdata } from "./correlation";
-import { benjaminiHochberg, mcnemarExact } from "./multiple";
+import { benjaminiHochberg, mcnemarExact, pairedDifferenceScoreCi } from "./multiple";
 import { wilson } from "./proportion";
 import { ols } from "./regression";
 import { areaMean, varianceComponents } from "./reliability";
@@ -46,6 +47,16 @@ describe("intervals and tests (statsmodels)", () => {
   });
   it("exact McNemar test", () => {
     for (const [b, c, p] of fx.mcnemar) expect(mcnemarExact(b, c).p).toBeCloseTo(p, 12);
+  });
+  it("Tango score interval for a paired difference (R PropCIs::scoreci.mp)", () => {
+    // PropCIs stops its search at a step of 1e-7, so agreement is to about 1e-7
+    expect(pd.cases.length).toBeGreaterThan(20);
+    for (const [onlyA, onlyB, n, level, lo, hi] of pd.cases) {
+      const ci = pairedDifferenceScoreCi(onlyA, onlyB, n, level);
+      expect(ci.estimate).toBeCloseTo((onlyA - onlyB) / n, 14);
+      expect(Math.abs(ci.lower - lo)).toBeLessThan(5e-7);
+      expect(Math.abs(ci.upper - hi)).toBeLessThan(5e-7);
+    }
   });
   it("Benjamini-Hochberg adjusted p-values", () => {
     const adj = benjaminiHochberg(fx.bh.p);

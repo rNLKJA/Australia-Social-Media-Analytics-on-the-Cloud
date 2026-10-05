@@ -13,7 +13,7 @@ export function AreaInterval({ sums }: { sums: ScoreSums | null | undefined }) {
         {m.lower === null ? "one tweet: no interval" : `95% CI ${fmtScore(m.lower)}–${fmtScore(m.upper)}`}
       </span>
       {sums.n < MIN_TWEETS_RELIABLE && (
-        <span className="text-sent-neg flex items-center gap-1">
+        <span className="text-sent-neg-ink flex items-center gap-1">
           <AlertTriangle className="size-3" aria-hidden /> under {MIN_TWEETS_RELIABLE} tweets: low reliability
         </span>
       )}

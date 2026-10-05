@@ -15,7 +15,7 @@ function CaveatBox({
   return (
     <aside className={cn("border-sent-neg/50 bg-card rounded-lg border border-l-4 p-4", className)}>
       <p className="flex items-center gap-1.5 text-sm font-semibold">
-        <AlertTriangle className="text-sent-neg size-4" aria-hidden />
+        <AlertTriangle className="text-sent-neg-ink size-4" aria-hidden />
         {title}
       </p>
       <div className="text-muted-foreground mt-1.5 space-y-2 text-sm leading-relaxed">{children}</div>

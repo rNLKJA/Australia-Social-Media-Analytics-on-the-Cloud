@@ -41,8 +41,8 @@ The upgrade adds the questions a statistician would ask of the 2023 results, and
 - **Uncertainty everywhere it matters.** Every area average now carries its tweet count and a t-based 95% interval (recovered exactly from the CouchDB `_stats` sums of squares). The scenario relationships get Spearman's rho with a paired percentile bootstrap (2,000 resamples, seed 57), an OLS slope with HC3 robust standard errors and a residual Moran's I. Statistical helpers live in [`web/src/lib/stats/`](web/src/lib/stats) and are tested against scipy, statsmodels and PySAL values computed by [`scripts/verify_stats.py`](scripts/verify_stats.py).
 - **Spatial statistics** ([/spatial](https://comp90024-social-sense.vercel.app/spatial)). Global Moran's I with analytic moments and a permutation p-value, a LISA cluster map (High-High, Low-Low and the two outlier types) on the MapLibre choropleth with optional false-discovery-rate control, 6-nearest-neighbour or shared-border weights (rook contiguity read from the TopoJSON arcs, identical to libpysal's), and a sensitivity table across thresholds, weights and area units.
 - **Small-area reliability.** Areas whose average rests on fewer than 30 tweets are suppressed from the spatial statistics and flagged on the scenario pages ([DR-003](docs/decisions/DR-003-small-area-suppression.md)). Ecological-fallacy and MAUP caveats sit on the scenario pages, `/spatial` and `/methods`.
-- **Ask the data, bring your own key** ([/ask](https://comp90024-social-sense.vercel.app/ask)). The visitor's own model writes one SQL query; this site validates it and runs it read-only; the model explains the rows and must cite them. Every output is labelled AI-generated, every call is logged in the visitor's browser, and a person accepts, edits or rejects the answer ([DR-004](docs/decisions/DR-004-byok-text-to-sql.md)).
-- **A text-to-SQL evaluation harness** ([/ask/eval](https://comp90024-social-sense.vercel.app/ask/eval)). Sixteen questions with hand-written gold SQL (two deliberately unanswerable), execution accuracy and refusal rate with Wilson 95% intervals, the blocked-SQL rate, latency and tokens, repeated runs, and paired comparison of two models with an exact McNemar test. No scores are published: the project has no AI budget and does not report results it ran itself.
+- **Ask the data, bring your own key** ([/ask](https://comp90024-social-sense.vercel.app/ask)). The visitor's own model writes one SQL query; this site validates it and runs it read-only; the model explains the rows and must cite them. Every output is labelled AI-generated, every question (both of its model calls) is logged in the visitor's browser, and a person accepts, edits or rejects the answer ([DR-004](docs/decisions/DR-004-byok-text-to-sql.md)).
+- **A text-to-SQL evaluation harness** ([/ask/eval](https://comp90024-social-sense.vercel.app/ask/eval)). Sixteen questions with hand-written gold SQL (two deliberately unanswerable), execution accuracy and refusal rate with Wilson 95% intervals, the blocked-SQL rate, latency and tokens, repeated runs, and paired comparison of two models with an exact McNemar test and a Tango score interval for the accuracy difference (checked against R's PropCIs). Malformed or truncated replies count as wrong. No scores are published: the project has no AI budget and does not report results it ran itself.
 - **Methods, model card and decision records** under [/methods](https://comp90024-social-sense.vercel.app/methods): uncertainty methods, assumptions, an AI use statement, what I'd change, a [model card](docs/model-card.md) and four [decision records](docs/decisions).
 
 ### Key results (recomputed)
@@ -118,6 +118,7 @@ The upgrade adds the questions a statistician would ask of the 2023 results, and
 │   ├── build_mastodon.py        re-score the surviving raw toots (aggregates only)
 │   ├── build_analytics.py       analytics.db, TopoJSON, parity fixtures, 18 assertions
 │   ├── verify_stats.py          scipy / statsmodels / PySAL reference values for the TypeScript statistics
+│   ├── verify_paired_diff.R     R PropCIs reference values for the paired-difference interval
 │   ├── derived/                 committed intermediate aggregates
 │   └── fixtures/                synthetic NLP test corpora (tweets and toot HTML)
 └── web/                         the deployable Next.js app (Vercel root)
@@ -198,6 +199,7 @@ uv run scripts/build_nlp_assets.py                    # NLTK assets + NLP parity
 uv run scripts/build_mastodon.py                      # optional; output already committed
 uv run scripts/build_analytics.py                     # analytics.db + TopoJSON + parity fixtures
 uv run scripts/verify_stats.py                        # reference statistics (scipy, statsmodels, PySAL); needs no raw data
+Rscript scripts/verify_paired_diff.R                  # paired-difference interval reference (needs R package PropCIs)
 cd web && pnpm test
 ```
 

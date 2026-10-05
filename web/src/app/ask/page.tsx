@@ -80,7 +80,7 @@ export default function AskPage() {
           {[
             [
               "Sent to your provider",
-              "The question, the table and column descriptions below, the generated SQL and up to 30 result rows. All of it is public aggregate data; no personal data is involved.",
+              "Your question exactly as you type it (so leave out anything personal), the table and column descriptions below, the generated SQL and up to 30 result rows of public aggregate data.",
             ],
             [
               "Sent to this site",
@@ -88,7 +88,7 @@ export default function AskPage() {
             ],
             [
               "Kept in your browser",
-              "Your key (this tab by default) and the audit log of every call: question, model, SQL, validator verdict, row count, latency, token usage and your decision.",
+              "Your key (this tab by default) and the audit log: one record per question (both model calls), with the model, SQL, validator verdict, row count, latency, token usage and your decision.",
             ],
           ].map(([h, b]) => (
             <div key={h} className="border-border bg-card rounded-lg border p-4">
@@ -138,9 +138,9 @@ export default function AskPage() {
             </details>
           ))}
         </div>
-        <Note className="mt-4 flex items-center gap-1.5">
-          <Database className="size-3.5" aria-hidden /> Browse the same tables, with search and CSV export, on
-          the{" "}
+        <Note className="mt-4">
+          <Database className="mr-1 inline size-3.5 align-[-2px]" aria-hidden />
+          Browse the same tables, with search and CSV export, on the{" "}
           <Link className="link" href="/records">
             records pages
           </Link>

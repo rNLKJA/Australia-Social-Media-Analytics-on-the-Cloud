@@ -9,6 +9,10 @@
  * usage the provider reported and what the human did with it. It never holds
  * the API key: `redactSecrets` strips the active key and anything shaped like
  * a provider key before every write.
+ *
+ * Records are append-only for the AI fields: once written, only the human
+ * decision (`decision`, `decidedAt`) is ever updated. Running edited SQL
+ * appends a new record that points at the original through `parentId`.
  */
 import { toCsv } from "@/lib/csv";
 import { AUDIT_STORE, tx } from "./idb";
@@ -19,7 +23,9 @@ export type HumanDecision = "pending" | "accepted" | "edited" | "rejected" | "no
 
 export interface AuditEntry {
   id: string;
-  /** ISO 8601 */
+  /** the record this one re-runs with SQL a person edited */
+  parentId?: string;
+  /** ISO 8601, when the interaction started; never changed afterwards */
   timestamp: string;
   feature: AuditFeature;
   provider: Provider;
@@ -27,7 +33,13 @@ export interface AuditEntry {
   model: string;
   /** model id the provider reported serving */
   servedModel?: string;
-  input: { question: string; benchmarkId?: string; runId?: string };
+  input: {
+    question: string;
+    benchmarkId?: string;
+    runId?: string;
+    /** what the explanation call was given besides the question: the SQL and how many rows */
+    explainInput?: { sql: string; rowsSent: number };
+  };
   output: {
     answerable?: boolean;
     reason?: string;
@@ -44,10 +56,21 @@ export interface AuditEntry {
   };
   validation?: { verdict: string; issues: string[] };
   rowCount?: number;
-  latencyMs: { model: number; sql?: number; explain?: number; total: number };
+  /** measured once when the interaction finished; `model` is the SQL-writing call */
+  latencyMs: { model?: number; sql?: number; explain?: number; total: number };
   usage?: TokenUsage | null;
   decision: HumanDecision;
+  /** ISO 8601, when the person made the decision */
+  decidedAt?: string;
   error?: string;
+}
+
+/** The only change a record accepts after it is written: the human decision. */
+export function decisionPatch(
+  decision: HumanDecision,
+  at: Date = new Date(),
+): Pick<AuditEntry, "decision" | "decidedAt"> {
+  return { decision, decidedAt: at.toISOString() };
 }
 
 /** Anything shaped like an Anthropic or OpenAI secret key. */
@@ -82,15 +105,15 @@ export async function appendEntry(entry: AuditEntry, secrets: (string | null)[] 
   changed();
 }
 
-/** Update fields of a record, e.g. the human decision. */
+/** Record the human decision on a stored record. Nothing else about it can change. */
 export async function updateEntry(
   id: string,
-  patch: Partial<AuditEntry>,
-  secrets: (string | null)[] = [],
+  patch: Pick<AuditEntry, "decision" | "decidedAt">,
 ): Promise<void> {
   const current = (await tx<AuditEntry>(AUDIT_STORE, "readonly", (s) => s.get(id))) as AuditEntry | undefined;
   if (!current) return;
-  await tx(AUDIT_STORE, "readwrite", (s) => s.put(redactSecrets({ ...current, ...patch, id }, secrets)));
+  const next: AuditEntry = { ...current, decision: patch.decision, decidedAt: patch.decidedAt };
+  await tx(AUDIT_STORE, "readwrite", (s) => s.put(next));
   changed();
 }
 
@@ -107,6 +130,7 @@ export async function clearEntries(): Promise<void> {
 
 export const CSV_COLUMNS = [
   "id",
+  "parent_id",
   "timestamp",
   "feature",
   "provider",
@@ -129,6 +153,7 @@ export const CSV_COLUMNS = [
   "input_tokens",
   "output_tokens",
   "decision",
+  "decided_at",
   "error",
 ] as const;
 
@@ -137,6 +162,7 @@ export function entriesToCsv(entries: AuditEntry[]): string {
     [...CSV_COLUMNS],
     entries.map((e) => ({
       id: e.id,
+      parent_id: e.parentId ?? "",
       timestamp: e.timestamp,
       feature: e.feature,
       provider: e.provider,
@@ -155,10 +181,11 @@ export function entriesToCsv(entries: AuditEntry[]): string {
       grounded: e.output.grounded ?? "",
       score: e.output.score ?? "",
       latency_ms: e.latencyMs.total,
-      model_latency_ms: e.latencyMs.model,
+      model_latency_ms: e.latencyMs.model ?? "",
       input_tokens: e.usage?.inputTokens ?? "",
       output_tokens: e.usage?.outputTokens ?? "",
       decision: e.decision,
+      decided_at: e.decidedAt ?? "",
       error: e.error ?? "",
     })),
   );

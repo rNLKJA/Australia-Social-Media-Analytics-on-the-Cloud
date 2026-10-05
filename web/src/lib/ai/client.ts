@@ -1,6 +1,13 @@
 import type { z } from "zod";
 import { callAnthropic, callOpenAi } from "./providers";
-import { AiError, type AiSettings, modelFor, type Provider, type TokenUsage } from "./types";
+import {
+  AiError,
+  type AiSettings,
+  modelFor,
+  type Provider,
+  type ProviderReply,
+  type TokenUsage,
+} from "./types";
 
 export interface StructuredCall<T extends z.ZodType> {
   settings: AiSettings;
@@ -56,18 +63,30 @@ export async function callStructured<T extends z.ZodType>(
     signal: call.signal,
     fetchImpl: call.fetchImpl,
   };
-  const reply = provider === "anthropic" ? await callAnthropic(req) : await callOpenAi(req);
+  let reply: ProviderReply;
+  try {
+    reply = provider === "anthropic" ? await callAnthropic(req) : await callOpenAi(req);
+  } catch (e) {
+    // keep the cost and time of a failed call: an evaluation has to count them
+    if (e instanceof AiError) e.latencyMs ??= Math.round(now() - started);
+    throw e;
+  }
   const latencyMs = Math.round(now() - started);
+  const usage = reply.usage;
   let parsed: unknown;
   try {
     parsed = JSON.parse(reply.text);
   } catch {
-    throw new AiError("invalid_output", { detail: "reply was not JSON" });
+    throw new AiError("invalid_output", { detail: "reply was not JSON", usage, latencyMs });
   }
   const result = call.zodSchema.safeParse(parsed);
   if (!result.success)
-    throw new AiError("invalid_output", { detail: result.error.issues[0]?.message?.slice(0, 120) });
-  return { data: result.data, provider, model, servedModel: reply.model, usage: reply.usage, latencyMs };
+    throw new AiError("invalid_output", {
+      detail: result.error.issues[0]?.message?.slice(0, 120),
+      usage,
+      latencyMs,
+    });
+  return { data: result.data, provider, model, servedModel: reply.model, usage, latencyMs };
 }
 
 export function addUsage(a: TokenUsage | null, b: TokenUsage | null): TokenUsage | null {

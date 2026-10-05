@@ -73,9 +73,10 @@ export const BENCHMARK: BenchmarkItem[] = [
   },
   {
     id: "q08",
-    question: "In the re-scored mastodon.social week, which UTC hour had the most toots?",
+    question:
+      "In the re-scored mastodon.social week, which hourly bucket (the hour_utc timestamp) had the most toots?",
     goldSql: "SELECT hour_utc FROM mastodon_hourly ORDER BY toots DESC LIMIT 1",
-    note: "One hour, as stored in hour_utc.",
+    note: "One hourly bucket, as stored in hour_utc (not an hour of the day summed over the week).",
     skill: "ranking",
   },
   {

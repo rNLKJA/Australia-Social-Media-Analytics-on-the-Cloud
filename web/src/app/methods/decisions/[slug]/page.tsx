@@ -48,9 +48,12 @@ export default async function DecisionPage(props: PageProps<"/methods/decisions/
             </dd>
           </div>
           <div>
-            <a className="link" href={`${SITE.repo}/blob/main/docs/decisions/${d.slug}.md`}>
-              Source in docs/decisions
-            </a>
+            <dt className="sr-only">Source</dt>
+            <dd>
+              <a className="link" href={`${SITE.repo}/blob/main/docs/decisions/${d.slug}.md`}>
+                Source in docs/decisions
+              </a>
+            </dd>
           </div>
         </dl>
       </PageHeader>
