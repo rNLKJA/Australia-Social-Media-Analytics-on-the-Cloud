@@ -79,8 +79,21 @@ export function HourlyTimeline({ hours, height = 300 }: { hours: MastodonHour[];
       >
         {niceTicks(0, maxN, 4).map((t) => (
           <g key={t}>
-            <line x1={M.left} x2={W - M.right} y1={yN(t)} y2={yN(t)} stroke="var(--border)" strokeDasharray="2 4" />
-            <text x={M.left - 8} y={yN(t)} dy="0.32em" textAnchor="end" className="num fill-muted-foreground text-[11px]">
+            <line
+              x1={M.left}
+              x2={W - M.right}
+              y1={yN(t)}
+              y2={yN(t)}
+              stroke="var(--border)"
+              strokeDasharray="2 4"
+            />
+            <text
+              x={M.left - 8}
+              y={yN(t)}
+              dy="0.32em"
+              textAnchor="end"
+              className="num fill-muted-foreground text-[11px]"
+            >
               {fmtInt(t)}
             </text>
           </g>
@@ -118,15 +131,31 @@ export function HourlyTimeline({ hours, height = 300 }: { hours: MastodonHour[];
         <text x={W - M.right + 40} y={10} textAnchor="end" className="fill-sent-pos text-[11px]">
           Mean score (line)
         </text>
-        {h && <line x1={x(h.t) + bw / 2} x2={x(h.t) + bw / 2} y1={M.top} y2={H - M.bottom} stroke="var(--foreground)" strokeOpacity={0.4} />}
+        {h && (
+          <line
+            x1={x(h.t) + bw / 2}
+            x2={x(h.t) + bw / 2}
+            y1={M.top}
+            y2={H - M.bottom}
+            stroke="var(--foreground)"
+            strokeOpacity={0.4}
+          />
+        )}
       </svg>
       {h && (
         <div
-          className="pointer-events-none absolute z-10 rounded-md border border-border bg-popover px-2.5 py-1.5 text-xs shadow-md"
+          className="border-border bg-popover pointer-events-none absolute z-10 rounded-md border px-2.5 py-1.5 text-xs shadow-md"
           style={{ left: Math.min(x(h.t) + 10, W - 200), top: 20 }}
         >
           <div className="font-semibold">
-            {new Date(h.t).toLocaleString("en-AU", { weekday: "short", day: "numeric", month: "short", hour: "numeric", timeZone: "UTC" })} UTC
+            {new Date(h.t).toLocaleString("en-AU", {
+              weekday: "short",
+              day: "numeric",
+              month: "short",
+              hour: "numeric",
+              timeZone: "UTC",
+            })}{" "}
+            UTC
           </div>
           <div className="num text-muted-foreground">
             {fmtInt(h.toots)} toots · mean {h.mean.toFixed(2)} · {fmtInt(h.incomeToots)} income

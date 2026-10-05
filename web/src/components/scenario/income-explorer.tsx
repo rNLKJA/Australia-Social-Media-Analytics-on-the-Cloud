@@ -36,7 +36,14 @@ export function IncomeExplorer({
   const kept = useMemo(() => regions.filter((r) => r.kept), [regions]);
   const byCode = useMemo(() => new Map(regions.map((r) => [r.code, r])), [regions]);
   const vicMedian = useMemo(() => median(kept.map((r) => r.medianAud)), [kept]);
-  const breaks = useMemo(() => quantileBreaks(kept.map((r) => r.medianAud), 7), [kept]);
+  const breaks = useMemo(
+    () =>
+      quantileBreaks(
+        kept.map((r) => r.medianAud),
+        7,
+      ),
+    [kept],
+  );
   const rankByMedian = useMemo(() => {
     const sorted = [...kept].sort((a, b) => b.medianAud - a.medianAud);
     return new Map(sorted.map((r, i) => [r.code, i + 1]));
@@ -62,11 +69,18 @@ export function IncomeExplorer({
     [kept, yMetric, minTweets],
   );
   const corr = useMemo(
-    () => correlate(fitRegions.map((r) => r.medianAud), fitRegions.map((r) => yOf(r, yMetric) as number)),
+    () =>
+      correlate(
+        fitRegions.map((r) => r.medianAud),
+        fitRegions.map((r) => yOf(r, yMetric) as number),
+      ),
     [fitRegions, yMetric],
   );
   const storedMatch = stored.find(
-    (s) => s.unit === "sa2" && s.yMetric === (yMetric === "income" ? "avg_income" : "avg_all") && s.minTweets === minTweets,
+    (s) =>
+      s.unit === "sa2" &&
+      s.yMetric === (yMetric === "income" ? "avg_income" : "avg_all") &&
+      s.minTweets === minTweets,
   );
 
   const points: ScatterPoint[] = useMemo(
@@ -96,7 +110,7 @@ export function IncomeExplorer({
   return (
     <div className="space-y-6">
       {/* controls */}
-      <div className="grid gap-x-6 gap-y-4 rounded-lg border border-border bg-card p-4 sm:grid-cols-2 xl:grid-cols-[auto_auto_minmax(11rem,1fr)_minmax(13rem,1fr)] xl:items-start">
+      <div className="border-border bg-card grid gap-x-6 gap-y-4 rounded-lg border p-4 sm:grid-cols-2 xl:grid-cols-[auto_auto_minmax(11rem,1fr)_minmax(13rem,1fr)] xl:items-start">
         <div className="space-y-1.5">
           <span className="block text-xs font-medium">Map shows</span>
           <Segmented
@@ -149,7 +163,11 @@ export function IncomeExplorer({
             describe={(code, name) => {
               const r = byCode.get(code);
               if (!r) return { title: name, lines: ["No income data"] };
-              if (!r.kept) return { title: r.name, lines: [`${fmtAud(r.medianAud)} median`, "Removed by the IQR outlier rule"] };
+              if (!r.kept)
+                return {
+                  title: r.name,
+                  lines: [`${fmtAud(r.medianAud)} median`, "Removed by the IQR outlier rule"],
+                };
               return {
                 title: r.name,
                 lines: [
@@ -169,15 +187,22 @@ export function IncomeExplorer({
                 format={fmtAudK}
               />
             ) : (
-              <DivergingLegend mid={5.4} spread={1.4} label={`Average sentiment of ${mapMetric === "income" ? "income" : "all"} tweets (1-9)`} />
+              <DivergingLegend
+                mid={5.4}
+                spread={1.4}
+                label={`Average sentiment of ${mapMetric === "income" ? "income" : "all"} tweets (1-9)`}
+              />
             )}
-            <NoDataSwatch color={NO_DATA[theme]} label={mapMetric === "median" ? "IQR outlier / no data" : "Below tweet threshold"} />
+            <NoDataSwatch
+              color={NO_DATA[theme]}
+              label={mapMetric === "median" ? "IQR outlier / no data" : "Below tweet threshold"}
+            />
           </div>
         </div>
 
         {/* scatter + stats */}
         <div className="space-y-4">
-          <div className="rounded-lg border border-border bg-card p-3">
+          <div className="border-border bg-card rounded-lg border p-3">
             <ScatterPlot
               points={points}
               xLabel="Median personal income (AUD)"
@@ -201,28 +226,32 @@ export function IncomeExplorer({
           </div>
           <CorrelationReadout c={corr} stored={storedMatch} />
           {corr && (
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              With at least {minTweets} {minTweets === 1 ? topicLabel.replace("tweets", "tweet") : topicLabel} per SA2, income explains{" "}
-              <strong className="text-foreground">{(corr.r2 * 100).toFixed(1)}%</strong> of the variation in average
-              sentiment: {describeStrength(corr.pearsonR)} {corr.pearsonR >= 0 ? "positive" : "negative"} association.
-              {Math.abs(corr.pearsonR) < 0.3 && " Wealthier areas do not tweet noticeably happier, which matches the team's 2023 conclusion."}
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              With at least {minTweets} {minTweets === 1 ? topicLabel.replace("tweets", "tweet") : topicLabel}{" "}
+              per SA2, income explains{" "}
+              <strong className="text-foreground">{(corr.r2 * 100).toFixed(1)}%</strong> of the variation in
+              average sentiment: {describeStrength(corr.pearsonR)}{" "}
+              {corr.pearsonR >= 0 ? "positive" : "negative"} association.
+              {Math.abs(corr.pearsonR) < 0.3 &&
+                " Wealthier areas do not tweet noticeably happier, which matches the team's 2023 conclusion."}
             </p>
           )}
         </div>
       </div>
 
       {/* detail */}
-      <section aria-live="polite" className="rounded-lg border border-border bg-card p-5">
+      <section aria-live="polite" className="border-border bg-card rounded-lg border p-5">
         {sel ? (
           <div className="grid gap-6 md:grid-cols-[1.2fr_1fr_1fr]">
             <div>
               <p className="kicker">{sel.sa4}</p>
               <h3 className="mt-1 font-serif text-2xl font-semibold">{sel.name}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                SA2 {sel.code} · {sel.sa3} · pooled from {sel.salCount} suburb{sel.salCount === 1 ? "" : "s"} with tweets
+              <p className="text-muted-foreground mt-1 text-sm">
+                SA2 {sel.code} · {sel.sa3} · pooled from {sel.salCount} suburb{sel.salCount === 1 ? "" : "s"}{" "}
+                with tweets
               </p>
               {!sel.kept && (
-                <p className="mt-2 text-sm text-sent-neg">
+                <p className="text-sent-neg mt-2 text-sm">
                   Removed by the team&apos;s IQR outlier rule, so it is not in the chart or the fit.
                 </p>
               )}
@@ -231,7 +260,7 @@ export function IncomeExplorer({
               <div>
                 <dt className="text-muted-foreground">Median income</dt>
                 <dd className="num font-serif text-xl font-semibold">{fmtAud(sel.medianAud)}</dd>
-                <dd className="text-xs text-muted-foreground">
+                <dd className="text-muted-foreground text-xs">
                   {sel.kept
                     ? `#${rankByMedian.get(sel.code)} of ${kept.length}; ${sel.medianAud >= vicMedian ? "above" : "below"} the VIC median`
                     : "outlier"}
@@ -247,10 +276,14 @@ export function IncomeExplorer({
                 const v = yOf(sel, m);
                 return (
                   <div key={m}>
-                    <dt className="text-muted-foreground">{m === "income" ? "Income tweets" : "All tweets"}</dt>
+                    <dt className="text-muted-foreground">
+                      {m === "income" ? "Income tweets" : "All tweets"}
+                    </dt>
                     <dd className="num font-serif text-xl font-semibold">{fmtInt(wOf(sel, m))}</dd>
-                    <dd className="text-xs text-muted-foreground">
-                      {v === null ? "no tweets" : `avg ${fmtScore(v)} · nearest bucket: ${sentimentDescription(Math.round(v))}`}
+                    <dd className="text-muted-foreground text-xs">
+                      {v === null
+                        ? "no tweets"
+                        : `avg ${fmtScore(v)} · nearest bucket: ${sentimentDescription(Math.round(v))}`}
                     </dd>
                   </div>
                 );
@@ -258,8 +291,9 @@ export function IncomeExplorer({
             </dl>
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">
-            Select an area on the map or a dot in the chart (or search above) to see its income and tweet sentiment.
+          <p className="text-muted-foreground text-sm">
+            Select an area on the map or a dot in the chart (or search above) to see its income and tweet
+            sentiment.
           </p>
         )}
       </section>

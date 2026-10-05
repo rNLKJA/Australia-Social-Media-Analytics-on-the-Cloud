@@ -48,43 +48,54 @@ export default async function TablePage(props: PageProps<"/records/[table]">) {
     return `/records/${t.name}${s ? `?${s}` : ""}`;
   };
   const csvHref = `/records/${t.name}/csv${params.q ? `?q=${encodeURIComponent(params.q)}` : ""}`;
-  const isCode = (c: string) => /(code|_id|hour|period)$/.test(c) || c.endsWith("_code16") || c.endsWith("_code19");
+  const isCode = (c: string) =>
+    /(code|_id|hour|period)$/.test(c) || c.endsWith("_code16") || c.endsWith("_code19");
 
   return (
     <>
-      <PageHeader
-        kicker={doc?.group ?? "Records"}
-        title={doc?.title ?? t.name}
-        lede={doc?.description}
-      >
+      <PageHeader kicker={doc?.group ?? "Records"} title={doc?.title ?? t.name} lede={doc?.description}>
         <div className="flex flex-wrap items-center gap-3 text-sm">
-          <Link href="/records" className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground">
+          <Link
+            href="/records"
+            className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+          >
             <ArrowLeft className="size-4" aria-hidden /> All tables
           </Link>
-          <span className="font-mono text-xs text-muted-foreground">{t.name}</span>
-          <span className="num rounded-full bg-muted px-2 py-0.5 text-xs">{fmtInt(t.rows)} rows</span>
+          <span className="text-muted-foreground font-mono text-xs">{t.name}</span>
+          <span className="num bg-muted rounded-full px-2 py-0.5 text-xs">{fmtInt(t.rows)} rows</span>
         </div>
       </PageHeader>
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <form action={`/records/${t.name}`} method="get" role="search" className="flex w-full max-w-md gap-2">
+          <form
+            action={`/records/${t.name}`}
+            method="get"
+            role="search"
+            className="flex w-full max-w-md gap-2"
+          >
             {params.sort && <input type="hidden" name="sort" value={params.sort} />}
             {params.sort && params.dir === "desc" && <input type="hidden" name="dir" value="desc" />}
             <label htmlFor="q" className="sr-only">
               Search this table
             </label>
             <div className="relative flex-1">
-              <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+              <Search
+                className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2"
+                aria-hidden
+              />
               <input
                 id="q"
                 name="q"
                 defaultValue={params.q}
                 placeholder="Search any column"
-                className="h-9 w-full rounded-md border border-input bg-card pr-3 pl-8 text-sm focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:outline-none"
+                className="border-input bg-card focus-visible:ring-ring/40 h-9 w-full rounded-md border pr-3 pl-8 text-sm focus-visible:ring-2 focus-visible:outline-none"
               />
             </div>
-            <button type="submit" className="h-9 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+            <button
+              type="submit"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 h-9 rounded-md px-3 text-sm font-medium"
+            >
               Search
             </button>
           </form>
@@ -94,14 +105,14 @@ export default async function TablePage(props: PageProps<"/records/[table]">) {
             </span>
             <a
               href={csvHref}
-              className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-card px-3 font-medium hover:border-primary/60"
+              className="border-border bg-card hover:border-primary/60 inline-flex h-9 items-center gap-1.5 rounded-md border px-3 font-medium"
             >
               <Download className="size-4" aria-hidden /> CSV{params.q ? " (filtered)" : ""}
             </a>
           </div>
         </div>
 
-        <div className="relative mt-5 overflow-x-auto rounded-lg border border-border bg-card">
+        <div className="border-border bg-card relative mt-5 overflow-x-auto rounded-lg border">
           <table className="w-full text-sm">
             <caption className="sr-only">
               {doc?.title ?? t.name}, page {page} of {pages}
@@ -116,14 +127,23 @@ export default async function TablePage(props: PageProps<"/records/[table]">) {
                       key={c.name}
                       scope="col"
                       aria-sort={active ? (params.dir === "asc" ? "ascending" : "descending") : undefined}
-                      className="border-b border-border px-3 py-2 text-left font-mono text-xs font-medium whitespace-nowrap"
+                      className="border-border border-b px-3 py-2 text-left font-mono text-xs font-medium whitespace-nowrap"
                     >
-                      <Link href={href({ sort: c.name, dir: nextDir, page: 1 })} className="inline-flex items-center gap-1 hover:text-primary">
+                      <Link
+                        href={href({ sort: c.name, dir: nextDir, page: 1 })}
+                        className="hover:text-primary inline-flex items-center gap-1"
+                      >
                         {c.name}
                         {active &&
-                          (params.dir === "asc" ? <ArrowUp className="size-3" aria-hidden /> : <ArrowDown className="size-3" aria-hidden />)}
+                          (params.dir === "asc" ? (
+                            <ArrowUp className="size-3" aria-hidden />
+                          ) : (
+                            <ArrowDown className="size-3" aria-hidden />
+                          ))}
                       </Link>
-                      <span className="ml-1 text-[10px] font-normal text-muted-foreground lowercase">{c.type}</span>
+                      <span className="text-muted-foreground ml-1 text-[10px] font-normal lowercase">
+                        {c.type}
+                      </span>
                     </th>
                   );
                 })}
@@ -132,7 +152,7 @@ export default async function TablePage(props: PageProps<"/records/[table]">) {
             <tbody>
               {rows.length === 0 && (
                 <tr>
-                  <td colSpan={t.columns.length} className="px-3 py-10 text-center text-muted-foreground">
+                  <td colSpan={t.columns.length} className="text-muted-foreground px-3 py-10 text-center">
                     No rows match &quot;{params.q}&quot;.{" "}
                     <Link className="link" href={href({ q: "", page: 1 })}>
                       Clear the search
@@ -141,7 +161,7 @@ export default async function TablePage(props: PageProps<"/records/[table]">) {
                 </tr>
               )}
               {rows.map((r, i) => (
-                <tr key={i} className="border-b border-border/60 last:border-0 hover:bg-muted/40">
+                <tr key={i} className="border-border/60 hover:bg-muted/40 border-b last:border-0">
                   {t.columns.map((c) => {
                     const v = r[c.name];
                     return (
@@ -166,24 +186,37 @@ export default async function TablePage(props: PageProps<"/records/[table]">) {
 
         <nav aria-label="Pagination" className="mt-4 flex items-center justify-between text-sm">
           <span className="num text-muted-foreground">
-            Rows {fmtInt(total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1)}-{fmtInt(Math.min(page * PAGE_SIZE, total))} of {fmtInt(total)}
+            Rows {fmtInt(total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1)}-
+            {fmtInt(Math.min(page * PAGE_SIZE, total))} of {fmtInt(total)}
           </span>
           <div className="flex gap-2">
             {page > 1 ? (
-              <Link className="rounded-md border border-border bg-card px-3 py-1.5 hover:border-primary/60" href={href({ page: page - 1 })}>
+              <Link
+                className="border-border bg-card hover:border-primary/60 rounded-md border px-3 py-1.5"
+                href={href({ page: page - 1 })}
+              >
                 Previous
               </Link>
             ) : (
-              <span className="rounded-md border border-border px-3 py-1.5 text-muted-foreground/60" aria-disabled>
+              <span
+                className="border-border text-muted-foreground/60 rounded-md border px-3 py-1.5"
+                aria-disabled
+              >
                 Previous
               </span>
             )}
             {page < pages ? (
-              <Link className="rounded-md border border-border bg-card px-3 py-1.5 hover:border-primary/60" href={href({ page: page + 1 })}>
+              <Link
+                className="border-border bg-card hover:border-primary/60 rounded-md border px-3 py-1.5"
+                href={href({ page: page + 1 })}
+              >
                 Next
               </Link>
             ) : (
-              <span className="rounded-md border border-border px-3 py-1.5 text-muted-foreground/60" aria-disabled>
+              <span
+                className="border-border text-muted-foreground/60 rounded-md border px-3 py-1.5"
+                aria-disabled
+              >
                 Next
               </span>
             )}

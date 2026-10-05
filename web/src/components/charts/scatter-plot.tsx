@@ -88,7 +88,8 @@ export function ScatterPlot({
     const pts: string[] = [];
     for (let i = 0; i <= steps; i++) {
       const t = i / steps;
-      const xv = xType === "log" ? 10 ** (Math.log10(a) + (Math.log10(b) - Math.log10(a)) * t) : a + (b - a) * t;
+      const xv =
+        xType === "log" ? 10 ** (Math.log10(a) + (Math.log10(b) - Math.log10(a)) * t) : a + (b - a) * t;
       const yv = fit.intercept + fit.slope * (fit.logX ? Math.log10(xv) : xv);
       if (yv < y.domain[0] || yv > y.domain[1]) continue;
       pts.push(`${x(xv).toFixed(1)},${y(yv).toFixed(1)}`);
@@ -107,7 +108,12 @@ export function ScatterPlot({
         // flip labels to the left of the dot near the right edge
         const right = x(p.x) + r(p.n) + 4;
         const flip = right + p.label.length * 6.2 > W - 4;
-        return { p, lx: flip ? x(p.x) - r(p.n) - 4 : right, ly: y(p.y), anchor: (flip ? "end" : "start") as "end" | "start" };
+        return {
+          p,
+          lx: flip ? x(p.x) - r(p.n) - 4 : right,
+          ly: y(p.y),
+          anchor: (flip ? "end" : "start") as "end" | "start",
+        };
       })
       .sort((a, b) => a.ly - b.ly);
     for (let i = 1; i < items.length; i++) {
@@ -130,22 +136,52 @@ export function ScatterPlot({
         {/* grid */}
         {yTicks.map((t) => (
           <g key={`y${t}`}>
-            <line x1={M.left} x2={W - M.right} y1={y(t)} y2={y(t)} stroke="var(--border)" strokeDasharray="2 4" />
-            <text x={M.left - 8} y={y(t)} dy="0.32em" textAnchor="end" className="num fill-muted-foreground text-[11px]">
+            <line
+              x1={M.left}
+              x2={W - M.right}
+              y1={y(t)}
+              y2={y(t)}
+              stroke="var(--border)"
+              strokeDasharray="2 4"
+            />
+            <text
+              x={M.left - 8}
+              y={y(t)}
+              dy="0.32em"
+              textAnchor="end"
+              className="num fill-muted-foreground text-[11px]"
+            >
               {yFormat(t)}
             </text>
           </g>
         ))}
         {xTicks.map((t) => (
           <g key={`x${t}`}>
-            <line x1={x(t)} x2={x(t)} y1={M.top} y2={H - M.bottom} stroke="var(--border)" strokeDasharray="2 4" />
-            <text x={x(t)} y={H - M.bottom + 16} textAnchor="middle" className="num fill-muted-foreground text-[11px]">
+            <line
+              x1={x(t)}
+              x2={x(t)}
+              y1={M.top}
+              y2={H - M.bottom}
+              stroke="var(--border)"
+              strokeDasharray="2 4"
+            />
+            <text
+              x={x(t)}
+              y={H - M.bottom + 16}
+              textAnchor="middle"
+              className="num fill-muted-foreground text-[11px]"
+            >
               {xFormat(t)}
             </text>
           </g>
         ))}
         <line x1={M.left} x2={W - M.right} y1={H - M.bottom} y2={H - M.bottom} stroke="var(--rule)" />
-        <text x={(M.left + W - M.right) / 2} y={H - 8} textAnchor="middle" className="fill-muted-foreground text-[12px]">
+        <text
+          x={(M.left + W - M.right) / 2}
+          y={H - 8}
+          textAnchor="middle"
+          className="fill-muted-foreground text-[12px]"
+        >
           {xLabel}
         </text>
         <text
@@ -166,7 +202,12 @@ export function ScatterPlot({
               stroke="var(--muted-foreground)"
               strokeOpacity={0.6}
             />
-            <text x={W - M.right - 4} y={y(yReference.value) - 5} textAnchor="end" className="fill-muted-foreground text-[10px]">
+            <text
+              x={W - M.right - 4}
+              y={y(yReference.value) - 5}
+              textAnchor="end"
+              className="fill-muted-foreground text-[10px]"
+            >
               {yReference.label}
             </text>
           </g>
@@ -195,7 +236,14 @@ export function ScatterPlot({
         </g>
 
         {fitPath && (
-          <path d={fitPath} fill="none" stroke="var(--foreground)" strokeWidth={2} strokeDasharray="6 4" opacity={0.85} />
+          <path
+            d={fitPath}
+            fill="none"
+            stroke="var(--foreground)"
+            strokeWidth={2}
+            strokeDasharray="6 4"
+            opacity={0.85}
+          />
         )}
 
         {labelled.map(({ p, lx, ly, anchor }) => (
@@ -205,7 +253,7 @@ export function ScatterPlot({
             y={ly}
             textAnchor={anchor}
             dy="0.32em"
-            className="pointer-events-none fill-foreground text-[11px] font-medium"
+            className="fill-foreground pointer-events-none text-[11px] font-medium"
             style={{ paintOrder: "stroke", stroke: "var(--background)", strokeWidth: 3 }}
           >
             {p.label}
@@ -215,7 +263,7 @@ export function ScatterPlot({
 
       {focus && (
         <div
-          className="pointer-events-none absolute z-10 rounded-md border border-border bg-popover px-2.5 py-1.5 text-xs shadow-md"
+          className="border-border bg-popover pointer-events-none absolute z-10 rounded-md border px-2.5 py-1.5 text-xs shadow-md"
           style={{
             left: Math.min(x(focus.x) + 12, W - 190),
             top: Math.max(y(focus.y) - 44, 0),

@@ -16,7 +16,11 @@ export const metadata: Metadata = {
 const SERVERS = [
   { id: "mastodon.social", label: "mastodon.social", blurb: "One of the largest general-purpose instances." },
   { id: "mastodon.au", label: "mastodon.au", blurb: "A server for the Australian community." },
-  { id: "tictoc.social", label: "tictoc.social", blurb: "A general-purpose server (\"Mastodon TicToc\" in 2023)." },
+  {
+    id: "tictoc.social",
+    label: "tictoc.social",
+    blurb: 'A general-purpose server ("Mastodon TicToc" in 2023).',
+  },
 ] as const;
 
 const LANG_NAMES: Record<string, string> = {
@@ -62,19 +66,35 @@ export default async function MastodonPage() {
         title="Three servers, no locations"
         lede={
           <>
-            Twitter&apos;s corpus came ready-made; Mastodon had to be harvested. The team&apos;s scheduler asked three
-            servers for 40 new toots every ten minutes, cleaned the HTML, and scored each toot with the same pipeline as
-            the tweets. Toots carry no location, so Mastodon could only be compared by score distributions, not on a
-            map.
+            Twitter&apos;s corpus came ready-made; Mastodon had to be harvested. The team&apos;s scheduler
+            asked three servers for 40 new toots every ten minutes, cleaned the HTML, and scored each toot
+            with the same pipeline as the tweets. Toots carry no location, so Mastodon could only be compared
+            by score distributions, not on a map.
           </>
         }
       >
         <StatStrip
           stats={[
-            { value: fmtInt(facts.toots_harvested?.value ?? 1659690), label: "Toots harvested by May 2023", note: `${facts.toots_harvested_mb?.value ?? 757.9} MB across three servers` },
-            { value: fmtInt(sum(social2023)), label: "mastodon.social toots scored", note: "in the 2023 dashboard" },
-            { value: fmtPct(social2023[4] / sum(social2023)), label: "of them scored neutral", note: "versus 48% on Twitter" },
-            { value: fmtInt(reTotal), label: "Raw toots re-scored today", note: "one surviving week, 2-9 May 2023" },
+            {
+              value: fmtInt(facts.toots_harvested?.value ?? 1659690),
+              label: "Toots harvested by May 2023",
+              note: `${facts.toots_harvested_mb?.value ?? 757.9} MB across three servers`,
+            },
+            {
+              value: fmtInt(sum(social2023)),
+              label: "mastodon.social toots scored",
+              note: "in the 2023 dashboard",
+            },
+            {
+              value: fmtPct(social2023[4] / sum(social2023)),
+              label: "of them scored neutral",
+              note: "versus 48% on Twitter",
+            },
+            {
+              value: fmtInt(reTotal),
+              label: "Raw toots re-scored today",
+              note: "one surviving week, 2-9 May 2023",
+            },
           ]}
         />
       </PageHeader>
@@ -84,24 +104,32 @@ export default async function MastodonPage() {
         title="Each server has its own mood"
         intro={
           <p>
-            These are the histograms the original dashboard showed. mastodon.au and tictoc.social look like Twitter; on
-            mastodon.social almost everything lands on the neutral 5. For income-related toots the servers turn
-            two- or three-humped, which the team read as people either showing off or complaining.
+            These are the histograms the original dashboard showed. mastodon.au and tictoc.social look like
+            Twitter; on mastodon.social almost everything lands on the neutral 5. For income-related toots the
+            servers turn two- or three-humped, which the team read as people either showing off or
+            complaining.
           </p>
         }
       >
         <div className="grid gap-6 lg:grid-cols-3">
           {byServer.map((s) => (
-            <article key={s.id} className="rounded-lg border border-border bg-card p-5">
+            <article key={s.id} className="border-border bg-card rounded-lg border p-5">
               <h3 className="font-serif text-xl font-semibold">{s.label}</h3>
-              <p className="text-xs text-muted-foreground">{s.blurb}</p>
+              <p className="text-muted-foreground text-xs">{s.blurb}</p>
               <div className="mt-4 space-y-5">
                 <div>
                   <p className="num text-xs font-medium">All toots · {fmtInt(sum(s.all.counts))}</p>
-                  <SentimentHistogram counts={s.all.counts} label={`Sentiment of all toots on ${s.label}`} compact className="mt-1" />
+                  <SentimentHistogram
+                    counts={s.all.counts}
+                    label={`Sentiment of all toots on ${s.label}`}
+                    compact
+                    className="mt-1"
+                  />
                 </div>
                 <div>
-                  <p className="num text-xs font-medium">Income-related toots · {fmtInt(sum(s.income.counts))}</p>
+                  <p className="num text-xs font-medium">
+                    Income-related toots · {fmtInt(sum(s.income.counts))}
+                  </p>
                   <SentimentHistogram
                     counts={s.income.counts}
                     label={`Sentiment of income-related toots on ${s.label}`}
@@ -115,9 +143,9 @@ export default async function MastodonPage() {
         </div>
         <Finding className="mt-8" source="Team 57 report, sections 6.1, 6.2.3 and 6.3.3 (paraphrased)">
           <p>
-            mastodon.social&apos;s scores were packed tightly around 5 with very small variance, unlike the other two
-            servers. Income toots split towards the ends (≥ 7 or ≤ 3). Crime was left out of the Mastodon analysis
-            because the sampled servers had little crime-related discussion.
+            mastodon.social&apos;s scores were packed tightly around 5 with very small variance, unlike the
+            other two servers. Income toots split towards the ends (≥ 7 or ≤ 3). Crime was left out of the
+            Mastodon analysis because the sampled servers had little crime-related discussion.
           </p>
         </Finding>
       </Section>
@@ -128,18 +156,21 @@ export default async function MastodonPage() {
         intro={
           <>
             <p>
-              CouchDB is gone, but 595 thousand raw toots from 2-9 May 2023 survived on the author&apos;s drive.
-              Re-scoring them with the unchanged 2023 functions gives a broader spread than the dashboard showed:{" "}
-              {fmtPct(reAll.counts[4] / reTotal)} neutral instead of {fmtPct(social2023[4] / sum(social2023))}. The two
-              samples are different toots from different weeks, so this is a consistency check, not a correction.
+              CouchDB is gone, but 595 thousand raw toots from 2-9 May 2023 survived on the author&apos;s
+              drive. Re-scoring them with the unchanged 2023 functions gives a broader spread than the
+              dashboard showed: {fmtPct(reAll.counts[4] / reTotal)} neutral instead of{" "}
+              {fmtPct(social2023[4] / sum(social2023))}. The two samples are different toots from different
+              weeks, so this is a consistency check, not a correction.
             </p>
           </>
         }
       >
         <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-lg border border-border bg-card p-5 lg:col-span-1">
+          <div className="border-border bg-card rounded-lg border p-5 lg:col-span-1">
             <h3 className="text-sm font-semibold">All toots</h3>
-            <p className="num text-xs text-muted-foreground">{fmtInt(reTotal)} re-scored · outline: 2023 dashboard</p>
+            <p className="num text-muted-foreground text-xs">
+              {fmtInt(reTotal)} re-scored · outline: 2023 dashboard
+            </p>
             <SentimentHistogram
               counts={reAll.counts}
               compare={social2023}
@@ -148,26 +179,35 @@ export default async function MastodonPage() {
               className="mt-3"
             />
           </div>
-          <div className="rounded-lg border border-border bg-card p-5">
+          <div className="border-border bg-card rounded-lg border p-5">
             <h3 className="text-sm font-semibold">Income-related toots</h3>
-            <p className="num text-xs text-muted-foreground">
+            <p className="num text-muted-foreground text-xs">
               {fmtInt(sum(reIncome.counts))} toots ({fmtPct(sum(reIncome.counts) / reTotal, 1)} of all)
             </p>
-            <SentimentHistogram counts={reIncome.counts} label="Re-scored income-related toots" className="mt-3" />
+            <SentimentHistogram
+              counts={reIncome.counts}
+              label="Re-scored income-related toots"
+              className="mt-3"
+            />
           </div>
-          <div className="rounded-lg border border-border bg-card p-5">
+          <div className="border-border bg-card rounded-lg border p-5">
             <h3 className="text-sm font-semibold">Crime-related toots</h3>
-            <p className="num text-xs text-muted-foreground">
+            <p className="num text-muted-foreground text-xs">
               {fmtInt(sum(reCrime.counts))} toots ({fmtPct(sum(reCrime.counts) / reTotal, 1)} of all)
             </p>
-            <SentimentHistogram counts={reCrime.counts} label="Re-scored crime-related toots" className="mt-3" />
+            <SentimentHistogram
+              counts={reCrime.counts}
+              label="Re-scored crime-related toots"
+              className="mt-3"
+            />
           </div>
         </div>
 
-        <div className="mt-10 rounded-lg border border-border bg-card p-5">
+        <div className="border-border bg-card mt-10 rounded-lg border p-5">
           <h3 className="text-sm font-semibold">Toots per hour, and how they scored</h3>
-          <p className="text-xs text-muted-foreground">
-            UTC hours. Gaps are pauses in the harvest (most visibly 6-8 May), not quiet periods; the line skips hours with fewer than 50 toots.
+          <p className="text-muted-foreground text-xs">
+            UTC hours. Gaps are pauses in the harvest (most visibly 6-8 May), not quiet periods; the line
+            skips hours with fewer than 50 toots.
           </p>
           <div className="mt-4">
             <HourlyTimeline hours={hours} />
@@ -180,18 +220,20 @@ export default async function MastodonPage() {
         title="VADER only speaks English"
         intro={
           <p>
-            The lexicon behind every score is English. Japanese, Chinese and Korean toots match almost no words and
-            fall to neutral, which helps explain mastodon.social&apos;s big central spike. German looks gloomy for a
-            different reason: common words such as <em>die</em> (&quot;the&quot;), <em>war</em> (&quot;was&quot;) and{" "}
-            <em>hell</em> (&quot;bright&quot;) are strongly negative English entries. German toots average{" "}
-            {de ? (de.scoreSum / de.toots).toFixed(2) : "4.19"} against {en ? (en.scoreSum / en.toots).toFixed(2) : "5.39"}{" "}
-            for English.
+            The lexicon behind every score is English. Japanese, Chinese and Korean toots match almost no
+            words and fall to neutral, which helps explain mastodon.social&apos;s big central spike. German
+            looks gloomy for a different reason: common words such as <em>die</em> (&quot;the&quot;),{" "}
+            <em>war</em> (&quot;was&quot;) and <em>hell</em> (&quot;bright&quot;) are strongly negative
+            English entries. German toots average {de ? (de.scoreSum / de.toots).toFixed(2) : "4.19"} against{" "}
+            {en ? (en.scoreSum / en.toots).toFixed(2) : "5.39"} for English.
           </p>
         }
       >
         <div className="grid gap-10 md:grid-cols-2">
           <div>
-            <h3 className="mb-4 text-sm font-semibold">Share of toots scored neutral, by declared language</h3>
+            <h3 className="mb-4 text-sm font-semibold">
+              Share of toots scored neutral, by declared language
+            </h3>
             <BarList
               ariaLabel="Share of toots scored neutral by language"
               max={1}
@@ -223,8 +265,12 @@ export default async function MastodonPage() {
               })}
             />
             <Note className="mt-4">
-              The 2023 harvester stored each toot&apos;s declared language but scored every toot regardless. The same
-              applies to tweets. Try German text on the <Link className="link" href="/pipeline">pipeline page</Link>.
+              The 2023 harvester stored each toot&apos;s declared language but scored every toot regardless.
+              The same applies to tweets. Try German text on the{" "}
+              <Link className="link" href="/pipeline">
+                pipeline page
+              </Link>
+              .
             </Note>
           </div>
         </div>

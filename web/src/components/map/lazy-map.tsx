@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 export const LazyChoroplethMap = dynamic(() => import("./choropleth-map").then((m) => m.ChoroplethMap), {
   ssr: false,
   loading: () => (
-    <div className="grid h-[440px] place-items-center rounded-lg border border-border bg-muted text-sm text-muted-foreground md:h-[520px]">
+    <div className="border-border bg-muted text-muted-foreground grid h-[440px] place-items-center rounded-lg border text-sm md:h-[520px]">
       <span className="animate-pulse">Loading map…</span>
     </div>
   ),

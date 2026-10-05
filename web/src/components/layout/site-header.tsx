@@ -8,15 +8,19 @@ import { NAV, SITE } from "@/lib/site";
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-border/80 bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/70">
+    <header className="border-border/80 bg-background/85 supports-[backdrop-filter]:bg-background/70 sticky top-0 z-40 border-b backdrop-blur-md">
       <a
         href="#main"
-        className="sr-only z-50 rounded-md bg-primary px-3 py-2 text-primary-foreground focus:not-sr-only focus:absolute focus:top-2 focus:left-2"
+        className="bg-primary text-primary-foreground sr-only z-50 rounded-md px-3 py-2 focus:not-sr-only focus:absolute focus:top-2 focus:left-2"
       >
         Skip to content
       </a>
       <div className="mx-auto flex h-14 max-w-7xl items-center gap-4 px-4 sm:px-6">
-        <Link href="/" className="flex shrink-0 items-center gap-2 rounded-md" aria-label={`${SITE.name} home`}>
+        <Link
+          href="/"
+          className="flex shrink-0 items-center gap-2 rounded-md"
+          aria-label={`${SITE.name} home`}
+        >
           <LogoMark className="size-7" />
           <span className="font-serif text-xl leading-none font-semibold tracking-tight">{SITE.name}</span>
         </Link>
@@ -24,7 +28,7 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-1">
           <a
             href={SITE.repo}
-            className="hidden rounded-md p-2 text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
+            className="text-muted-foreground hover:text-foreground hidden rounded-md p-2 transition-colors sm:inline-flex"
             aria-label="Source code on GitHub"
             title="Source code on GitHub"
           >

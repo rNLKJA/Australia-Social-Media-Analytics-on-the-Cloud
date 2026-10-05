@@ -44,18 +44,34 @@ export default async function CrimePage() {
         title="Where crime is recorded, does the conversation turn darker?"
         lede={
           <>
-            The second question paired Victoria Police offence counts with tweets that mention crime, police, theft,
-            robbery, arrests, murder or violence. Crime talk is rare and overwhelmingly negative, but is it more negative where
-            more offences are recorded?
+            The second question paired Victoria Police offence counts with tweets that mention crime, police,
+            theft, robbery, arrests, murder or violence. Crime talk is rare and overwhelmingly negative, but
+            is it more negative where more offences are recorded?
           </>
         }
       >
         <StatStrip
           stats={[
-            { value: String(kept.length), label: "LGAs analysed", note: `${regions.length - kept.length} removed as outliers` },
-            { value: fmtInt(topKept.total), label: `Most offences (${topKept.name.replace(" (C)", "")})`, note: "among the 72, reference year 2019" },
-            { value: fmtInt(vicCrimeTweets), label: "Crime-related tweets in Victoria", note: `of ${fmtInt(crimeTotal)} Australia-wide` },
-            { value: meanScore(crimeHist.counts).toFixed(2), label: "Mean score of crime tweets", note: `vs ${meanScore(allHist.counts).toFixed(2)} for all tweets (1-9)` },
+            {
+              value: String(kept.length),
+              label: "LGAs analysed",
+              note: `${regions.length - kept.length} removed as outliers`,
+            },
+            {
+              value: fmtInt(topKept.total),
+              label: `Most offences (${topKept.name.replace(" (C)", "")})`,
+              note: "among the 72, reference year 2019",
+            },
+            {
+              value: fmtInt(vicCrimeTweets),
+              label: "Crime-related tweets in Victoria",
+              note: `of ${fmtInt(crimeTotal)} Australia-wide`,
+            },
+            {
+              value: meanScore(crimeHist.counts).toFixed(2),
+              label: "Mean score of crime tweets",
+              note: `vs ${meanScore(allHist.counts).toFixed(2)} for all tweets (1-9)`,
+            },
           ]}
         />
       </PageHeader>
@@ -65,9 +81,10 @@ export default async function CrimePage() {
         title="Offences on the map, sentiment on the chart"
         intro={
           <p>
-            The offence axis is logarithmic because counts span two orders of magnitude, from a few hundred in alpine
-            shires to tens of thousands in the inner city. Tick the box to bring back the seven LGAs the team&apos;s
-            outlier rule removed, including the City of Melbourne with its {fmtInt(melbourne?.n ?? 4026)} crime tweets.
+            The offence axis is logarithmic because counts span two orders of magnitude, from a few hundred in
+            alpine shires to tens of thousands in the inner city. Tick the box to bring back the seven LGAs
+            the team&apos;s outlier rule removed, including the City of Melbourne with its{" "}
+            {fmtInt(melbourne?.n ?? 4026)} crime tweets.
           </p>
         }
       >
@@ -78,15 +95,15 @@ export default async function CrimePage() {
         <div className="grid gap-8 lg:grid-cols-2">
           <Finding source="Team 57 report, sections 6.3.1-6.3.3 (paraphrased)">
             <p>
-              Brimbank recorded the most offences of the 72 LGAs. Growth-corridor councils such as Wyndham, Melton and
-              Whittlesea were high, likely because of population; Mildura, Ballarat, Greater Bendigo, Greater
-              Shepparton, Latrobe, Frankston and Mornington Peninsula also stood out.
+              Brimbank recorded the most offences of the 72 LGAs. Growth-corridor councils such as Wyndham,
+              Melton and Whittlesea were high, likely because of population; Mildura, Ballarat, Greater
+              Bendigo, Greater Shepparton, Latrobe, Frankston and Mornington Peninsula also stood out.
             </p>
             <p>
               Crime tweets were concentrated: about 79% of suburbs had ten or fewer. Melbourne led with{" "}
-              {fmtInt(melbourne?.n ?? 4026)}, then Ballarat with {fmtInt(ballarat?.n ?? 485)}, consistent with the
-              offence data. The team also observed that suburbs with more crime discussion tended to sound more
-              negative.
+              {fmtInt(melbourne?.n ?? 4026)}, then Ballarat with {fmtInt(ballarat?.n ?? 485)}, consistent with
+              the offence data. The team also observed that suburbs with more crime discussion tended to sound
+              more negative.
             </p>
           </Finding>
           <div className="space-y-4">
@@ -94,14 +111,14 @@ export default async function CrimePage() {
             <div className="prose-civic text-muted-foreground">
               <p>
                 Two things hold up. Crime tweets are strongly negative: the most common score is 1 (
-                {fmtPct(crimeHist.counts[0] / crimeTotal)} of them), against a neutral mode for tweets in general. And
-                the volume ranking matches.
+                {fmtPct(crimeHist.counts[0] / crimeTotal)} of them), against a neutral mode for tweets in
+                general. And the volume ranking matches.
               </p>
               <p>
                 The link between offences and tone is fragile. Across LGAs with any crime tweet, Pearson r is{" "}
                 {fmtR(lgaFit.pearsonR)} ({fmtP(lgaFit.pearsonP)}, {lgaFit.n} LGAs), but it vanishes (r ={" "}
-                {fmtR(lgaFit5.pearsonR)}) once each LGA needs five tweets. At suburb level, more crime talk does not
-                predict a more negative tone (r = {fmtR(salFit.pearsonR)}, {fmtP(salFit.pearsonP)}).
+                {fmtR(lgaFit5.pearsonR)}) once each LGA needs five tweets. At suburb level, more crime talk
+                does not predict a more negative tone (r = {fmtR(salFit.pearsonR)}, {fmtP(salFit.pearsonP)}).
               </p>
             </div>
           </div>
@@ -113,16 +130,17 @@ export default async function CrimePage() {
         title="Crime talk skews hard to the negative"
         intro={
           <p>
-            Bars show the share of crime-related tweets at each score; dashed outlines show all geotagged tweets for
-            comparison.
+            Bars show the share of crime-related tweets at each score; dashed outlines show all geotagged
+            tweets for comparison.
           </p>
         }
       >
         <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr]">
-          <div className="rounded-lg border border-border bg-card p-5">
+          <div className="border-border bg-card rounded-lg border p-5">
             <h3 className="text-sm font-semibold">Twitter, Feb-Jul 2022</h3>
-            <p className="num text-xs text-muted-foreground">
-              {fmtInt(crimeTotal)} crime tweets · {fmtInt(allHist.counts.reduce((a, b) => a + b, 0))} geotagged tweets
+            <p className="num text-muted-foreground text-xs">
+              {fmtInt(crimeTotal)} crime tweets · {fmtInt(allHist.counts.reduce((a, b) => a + b, 0))}{" "}
+              geotagged tweets
             </p>
             <SentimentHistogram
               counts={crimeHist.counts}
@@ -132,9 +150,9 @@ export default async function CrimePage() {
               className="mt-3"
             />
           </div>
-          <div className="rounded-lg border border-border bg-card p-4">
+          <div className="border-border bg-card rounded-lg border p-4">
             <h3 className="px-1 text-sm font-semibold">Does more crime talk mean a darker tone? (suburbs)</h3>
-            <p className="num px-1 text-xs text-muted-foreground">
+            <p className="num text-muted-foreground px-1 text-xs">
               {salFit.n} Victorian suburbs · slope {salFit.slope.toFixed(2)} points per tenfold increase · r ={" "}
               {fmtR(salFit.pearsonR)}
             </p>
@@ -160,16 +178,16 @@ export default async function CrimePage() {
                 note: r.kept ? undefined : "removed as outlier",
               }))}
           />
-          <div className="prose-civic text-sm text-muted-foreground">
+          <div className="prose-civic text-muted-foreground text-sm">
             <p>
-              Grey bars are LGAs the team&apos;s IQR rule removed (any of the six offence divisions outside 1.5 times
-              the interquartile range). That rule drops the very places with the most crime and the most crime
-              tweets, which is why the explorer lets you add them back.
+              Grey bars are LGAs the team&apos;s IQR rule removed (any of the six offence divisions outside
+              1.5 times the interquartile range). That rule drops the very places with the most crime and the
+              most crime tweets, which is why the explorer lets you add them back.
             </p>
             <Note className="mt-4">
-              Offence divisions follow the Crime Statistics Agency classification: against the person, property and
-              deception, drug, public order and security, justice procedures, and other offences. Missing divisions
-              were filled with zero, as in the original Flask code.
+              Offence divisions follow the Crime Statistics Agency classification: against the person,
+              property and deception, drug, public order and security, justice procedures, and other offences.
+              Missing divisions were filled with zero, as in the original Flask code.
             </Note>
             <p className="mt-4">
               See <Link href="/methods">data and methods</Link> for how suburbs were assigned to LGAs.

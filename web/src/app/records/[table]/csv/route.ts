@@ -6,7 +6,9 @@ export async function GET(request: NextRequest, ctx: RouteContext<"/records/[tab
   const { table } = await ctx.params;
   const t = await getTable(table);
   if (!t) return new Response("Unknown table", { status: 404 });
-  const parsed = tableParamsSchema.pick({ q: true }).safeParse({ q: request.nextUrl.searchParams.get("q") ?? undefined });
+  const parsed = tableParamsSchema
+    .pick({ q: true })
+    .safeParse({ q: request.nextUrl.searchParams.get("q") ?? undefined });
   const q = parsed.success ? parsed.data.q : "";
   const rows = await allRows(t, q);
   const csv = toCsv(

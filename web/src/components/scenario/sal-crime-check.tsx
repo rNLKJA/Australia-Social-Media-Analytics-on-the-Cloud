@@ -23,7 +23,10 @@ export function SalCrimeCheck({
 }) {
   const theme = useThemeName();
   const [hovered, setHovered] = useState<string | null>(null);
-  const top = [...points].sort((a, b) => b.n - a.n).slice(0, 3).map((p) => p.code);
+  const top = [...points]
+    .sort((a, b) => b.n - a.n)
+    .slice(0, 3)
+    .map((p) => p.code);
   return (
     <ScatterPlot
       points={points.map((p) => ({

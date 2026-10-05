@@ -49,7 +49,14 @@ export function SentimentHistogram({
           const h = H - bottom - y(s);
           return (
             <g key={i}>
-              <rect x={x} y={y(s)} width={bw - 6} height={Math.max(h, s > 0 ? 1 : 0)} rx={2} fill={`var(--sent-${i + 1})`}>
+              <rect
+                x={x}
+                y={y(s)}
+                width={bw - 6}
+                height={Math.max(h, s > 0 ? 1 : 0)}
+                rx={2}
+                fill={`var(--sent-${i + 1})`}
+              >
                 <title>{`${i + 1} · ${sentimentDescription(i + 1)}: ${fmtInt(counts[i])} (${fmtPct(s, 1)})`}</title>
               </rect>
               {cShares && (
@@ -70,12 +77,20 @@ export function SentimentHistogram({
                   x={x + (bw - 6) / 2}
                   y={y(s) - 5}
                   textAnchor="middle"
-                  className={cn("num fill-muted-foreground text-[9px]", i === mode && "fill-foreground font-semibold")}
+                  className={cn(
+                    "num fill-muted-foreground text-[9px]",
+                    i === mode && "fill-foreground font-semibold",
+                  )}
                 >
                   {fmtPct(s, s < 0.1 ? 1 : 0)}
                 </text>
               )}
-              <text x={x + (bw - 6) / 2} y={H - bottom + 13} textAnchor="middle" className="num fill-muted-foreground text-[10px]">
+              <text
+                x={x + (bw - 6) / 2}
+                y={H - bottom + 13}
+                textAnchor="middle"
+                className="num fill-muted-foreground text-[10px]"
+              >
                 {i + 1}
               </text>
             </g>
@@ -86,45 +101,58 @@ export function SentimentHistogram({
             <text x={2} y={H - 4} className="fill-sent-neg text-[9px] font-semibold tracking-wider uppercase">
               ← Negative
             </text>
-            <text x={W / 2} y={H - 4} textAnchor="middle" className="fill-muted-foreground text-[9px] tracking-wider uppercase">
+            <text
+              x={W / 2}
+              y={H - 4}
+              textAnchor="middle"
+              className="fill-muted-foreground text-[9px] tracking-wider uppercase"
+            >
               Neutral
             </text>
-            <text x={W - 2} y={H - 4} textAnchor="end" className="fill-sent-pos text-[9px] font-semibold tracking-wider uppercase">
+            <text
+              x={W - 2}
+              y={H - 4}
+              textAnchor="end"
+              className="fill-sent-pos text-[9px] font-semibold tracking-wider uppercase"
+            >
               Positive →
             </text>
           </>
         )}
       </svg>
       {compare && compareLabel && (
-        <figcaption className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
-          <span className="inline-block h-3 w-4 rounded-[2px] border border-dashed border-foreground/70" aria-hidden />
+        <figcaption className="text-muted-foreground mt-1 flex items-center gap-2 text-xs">
+          <span
+            className="border-foreground/70 inline-block h-3 w-4 rounded-[2px] border border-dashed"
+            aria-hidden
+          />
           {compareLabel}
         </figcaption>
       )}
       <div className="sr-only">
-      <table>
-        <caption>{label}</caption>
-        <thead>
-          <tr>
-            <th scope="col">Score</th>
-            <th scope="col">Count</th>
-            <th scope="col">Share</th>
-            {compare && <th scope="col">{compareLabel ?? "Comparison"} share</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {SENTIMENT_BUCKETS.map((b, i) => (
-            <tr key={b}>
-              <th scope="row">
-                {b} ({sentimentDescription(b)})
-              </th>
-              <td>{counts[i]}</td>
-              <td>{fmtPct(shares[i], 1)}</td>
-              {cShares && <td>{fmtPct(cShares[i], 1)}</td>}
+        <table>
+          <caption>{label}</caption>
+          <thead>
+            <tr>
+              <th scope="col">Score</th>
+              <th scope="col">Count</th>
+              <th scope="col">Share</th>
+              {compare && <th scope="col">{compareLabel ?? "Comparison"} share</th>}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {SENTIMENT_BUCKETS.map((b, i) => (
+              <tr key={b}>
+                <th scope="row">
+                  {b} ({sentimentDescription(b)})
+                </th>
+                <td>{counts[i]}</td>
+                <td>{fmtPct(shares[i], 1)}</td>
+                {cShares && <td>{fmtPct(cShares[i], 1)}</td>}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </figure>
   );

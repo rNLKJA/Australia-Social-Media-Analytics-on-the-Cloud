@@ -22,7 +22,6 @@ const BASEMAP: Record<ThemeName, string> = {
   dark: "https://tiles.openfreemap.org/styles/dark",
 };
 
-
 type RegionProps = { code: string; name: string };
 type Regions = FeatureCollection<Geometry, RegionProps>;
 
@@ -55,7 +54,13 @@ function fallbackStyle(theme: ThemeName): StyleSpecification {
   return {
     version: 8,
     sources: {},
-    layers: [{ id: "background", type: "background", paint: { "background-color": theme === "dark" ? "#15171a" : "#ece7dd" } }],
+    layers: [
+      {
+        id: "background",
+        type: "background",
+        paint: { "background-color": theme === "dark" ? "#15171a" : "#ece7dd" },
+      },
+    ],
   };
 }
 
@@ -98,7 +103,9 @@ export function ChoroplethMap({
   const dataRef = useRef<Regions | null>(null);
   const [ready, setReady] = useState(false);
   const [status, setStatus] = useState<"loading" | "ready" | "fallback" | "error">("loading");
-  const [tip, setTip] = useState<{ x: number; y: number; w: number; title: string; lines: string[] } | null>(null);
+  const [tip, setTip] = useState<{ x: number; y: number; w: number; title: string; lines: string[] } | null>(
+    null,
+  );
 
   // keep latest callbacks/values in refs for the imperative map handlers
   const latest = useRef({ fills, noDataColor, selected, onSelect, onHover, describe, theme });
@@ -138,7 +145,12 @@ export function ChoroplethMap({
           if (cancelled) return;
           map.addSource("states", { type: "geojson", data: states });
           const dark = latest.current.theme === "dark";
-          map.addLayer({ id: "states-fill", type: "fill", source: "states", paint: { "fill-color": dark ? "#1d2024" : "#f6f2ea" } });
+          map.addLayer({
+            id: "states-fill",
+            type: "fill",
+            source: "states",
+            paint: { "fill-color": dark ? "#1d2024" : "#f6f2ea" },
+          });
           map.addLayer({
             id: "states-line",
             type: "line",
@@ -205,7 +217,10 @@ export function ChoroplethMap({
     });
     map.on("error", (e) => {
       // style or tile failures before the basemap is up -> local fallback basemap
-      if (!map.getSource("regions") && /style|Failed to fetch|NetworkError|AJAXError/i.test(String(e.error?.message ?? ""))) {
+      if (
+        !map.getSource("regions") &&
+        /style|Failed to fetch|NetworkError|AJAXError/i.test(String(e.error?.message ?? ""))
+      ) {
         switchToFallback();
       }
     });
@@ -278,7 +293,10 @@ export function ChoroplethMap({
     const map = mapRef.current;
     if (!map || boundsKey === firstBounds.current) return;
     firstBounds.current = boundsKey;
-    map.fitBounds(JSON.parse(boundsKey) as LngLatBoundsLike, { padding: 16, duration: reducedMotion ? 0 : 800 });
+    map.fitBounds(JSON.parse(boundsKey) as LngLatBoundsLike, {
+      padding: 16,
+      duration: reducedMotion ? 0 : 800,
+    });
   }, [boundsKey, reducedMotion]);
 
   // ---- fills ---------------------------------------------------------------------
@@ -310,30 +328,30 @@ export function ChoroplethMap({
 
   return (
     <div
-      className={cn("relative overflow-hidden rounded-lg border border-border bg-muted", className)}
+      className={cn("border-border bg-muted relative overflow-hidden rounded-lg border", className)}
       role="region"
       aria-label={ariaLabel}
     >
       {/* inline style: maplibre's unlayered CSS sets position: relative on this node */}
       <div ref={container} style={{ position: "absolute", inset: 0 }} />
       {status === "loading" && (
-        <div className="pointer-events-none absolute inset-0 grid place-items-center text-sm text-muted-foreground">
+        <div className="text-muted-foreground pointer-events-none absolute inset-0 grid place-items-center text-sm">
           <span className="animate-pulse">Loading map…</span>
         </div>
       )}
       {status === "error" && (
-        <div className="absolute inset-0 grid place-items-center p-6 text-center text-sm text-muted-foreground">
+        <div className="text-muted-foreground absolute inset-0 grid place-items-center p-6 text-center text-sm">
           The boundary file could not be loaded. The chart and table on this page still work.
         </div>
       )}
       {status === "fallback" && (
-        <p className="absolute bottom-2 left-2 rounded bg-card/90 px-2 py-1 text-[11px] text-muted-foreground shadow-sm">
+        <p className="bg-card/90 text-muted-foreground absolute bottom-2 left-2 rounded px-2 py-1 text-[11px] shadow-sm">
           Basemap tiles unavailable: showing bundled state outlines.
         </p>
       )}
       {tip && (
         <div
-          className="pointer-events-none absolute z-10 max-w-60 rounded-md border border-border bg-popover px-3 py-2 text-xs text-popover-foreground shadow-lg"
+          className="border-border bg-popover text-popover-foreground pointer-events-none absolute z-10 max-w-60 rounded-md border px-3 py-2 text-xs shadow-lg"
           style={{
             left: Math.max(4, Math.min(tip.x + 14, tip.w - 250)),
             top: Math.max(tip.y - 10, 8),

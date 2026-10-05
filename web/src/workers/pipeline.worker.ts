@@ -4,7 +4,13 @@
  * post is well under a millisecond after that.
  */
 import { fetchEngine } from "@/lib/nlp/engine";
-import { geocodePlace, scorePost, type GeocodeResult, type NlpEngine, type PipelineTrace } from "@/lib/nlp/pipeline";
+import {
+  geocodePlace,
+  scorePost,
+  type GeocodeResult,
+  type NlpEngine,
+  type PipelineTrace,
+} from "@/lib/nlp/pipeline";
 
 export type PipelineRequest = { id: number; text: string; place: string };
 export type PipelineResponse =

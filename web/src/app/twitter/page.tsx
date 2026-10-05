@@ -18,13 +18,15 @@ function ExtremeList({ title, items, tone }: { title: string; items: SalRegion[]
   return (
     <div>
       <h3 className="text-sm font-semibold">{title}</h3>
-      <ul className="mt-2 divide-y divide-border/60 text-sm">
+      <ul className="divide-border/60 mt-2 divide-y text-sm">
         {items.map((r) => (
           <li key={r.code} className="flex items-baseline justify-between gap-3 py-1.5">
             <span className="truncate">{r.name}</span>
-            <span className="num shrink-0 text-xs text-muted-foreground">
+            <span className="num text-muted-foreground shrink-0 text-xs">
               {fmtInt(r.all!.n)} tweets ·{" "}
-              <span className={tone === "neg" ? "font-semibold text-sent-neg" : "font-semibold text-sent-pos"}>
+              <span
+                className={tone === "neg" ? "text-sent-neg font-semibold" : "text-sent-pos font-semibold"}
+              >
                 {fmtScore(r.all!.avg)}
               </span>
             </span>
@@ -36,7 +38,11 @@ function ExtremeList({ title, items, tone }: { title: string; items: SalRegion[]
 }
 
 export default async function TwitterPage() {
-  const [regions, all, facts] = await Promise.all([getSalRegions(), getHistogram("twitter", "all"), getFacts()]);
+  const [regions, all, facts] = await Promise.all([
+    getSalRegions(),
+    getHistogram("twitter", "all"),
+    getFacts(),
+  ]);
   const withAll = regions.filter((r) => r.all);
   const vicTweets = withAll.reduce((a, r) => a + r.all!.n, 0);
   const total = all.counts.reduce((a, b) => a + b, 0);
@@ -57,19 +63,31 @@ export default async function TwitterPage() {
         title="How each suburb sounded on Twitter"
         lede={
           <>
-            The team&apos;s MPI processors read the University&apos;s Twitter corpus line by line, scored every tweet
-            from 1 (extremely negative) to 9 (extremely positive) and matched its place name to a 2021 ABS suburb.
-            CouchDB MapReduce views then summed the scores per suburb. This is that map, rebuilt from the saved view
-            results.
+            The team&apos;s MPI processors read the University&apos;s Twitter corpus line by line, scored
+            every tweet from 1 (extremely negative) to 9 (extremely positive) and matched its place name to a
+            2021 ABS suburb. CouchDB MapReduce views then summed the scores per suburb. This is that map,
+            rebuilt from the saved view results.
           </>
         }
       >
         <StatStrip
           stats={[
-            { value: fmtInt(vicTweets), label: "Geotagged tweets in Victoria", note: `of ${fmtInt(total)} Australia-wide` },
+            {
+              value: fmtInt(vicTweets),
+              label: "Geotagged tweets in Victoria",
+              note: `of ${fmtInt(total)} Australia-wide`,
+            },
             { value: fmtInt(withAll.length), label: "Victorian suburbs with tweets", note: "ABS SAL 2021" },
-            { value: fmtPct(all.counts[4] / total), label: "Scored neutral (5)", note: "the single most common score" },
-            { value: fmtInt(facts.tweets_processed?.value ?? 37823414), label: "Tweets processed in 2023", note: `${facts.twitter_processed_gb?.value ?? 15.9} GB of the 57 GB corpus` },
+            {
+              value: fmtPct(all.counts[4] / total),
+              label: "Scored neutral (5)",
+              note: "the single most common score",
+            },
+            {
+              value: fmtInt(facts.tweets_processed?.value ?? 37823414),
+              label: "Tweets processed in 2023",
+              note: `${facts.twitter_processed_gb?.value ?? 15.9} GB of the 57 GB corpus`,
+            },
           ]}
         />
       </PageHeader>
@@ -83,9 +101,9 @@ export default async function TwitterPage() {
         title="Mostly neutral, leaning positive"
         intro={
           <p>
-            Across the whole corpus the scores pile up at 5 and the positive side is heavier than the negative, the
-            same &quot;slightly right-skewed&quot; shape the team described. Scores come from NLTK&apos;s VADER
-            compound score in fixed 0.2-wide bands; you can try the exact pipeline on the{" "}
+            Across the whole corpus the scores pile up at 5 and the positive side is heavier than the
+            negative, the same &quot;slightly right-skewed&quot; shape the team described. Scores come from
+            NLTK&apos;s VADER compound score in fixed 0.2-wide bands; you can try the exact pipeline on the{" "}
             <Link className="link" href="/pipeline">
               pipeline page
             </Link>
@@ -94,20 +112,24 @@ export default async function TwitterPage() {
         }
       >
         <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr]">
-          <div className="rounded-lg border border-border bg-card p-5">
+          <div className="border-border bg-card rounded-lg border p-5">
             <h3 className="text-sm font-semibold">All geotagged tweets</h3>
-            <p className="num text-xs text-muted-foreground">{fmtInt(total)} tweets with a matched suburb</p>
-            <SentimentHistogram counts={all.counts} label="Sentiment score distribution of all geotagged tweets" className="mt-3" />
+            <p className="num text-muted-foreground text-xs">{fmtInt(total)} tweets with a matched suburb</p>
+            <SentimentHistogram
+              counts={all.counts}
+              label="Sentiment score distribution of all geotagged tweets"
+              className="mt-3"
+            />
           </div>
           <Finding className="self-start" source="Team 57 report, section 6.1 (paraphrased)">
             <p>
-              Most suburbs average between 4 and 7. The few with very low (≤ 4) or very high (&gt; 7) averages are
-              scattered with no visible clusters, so the team found no geographic pattern at this level.
+              Most suburbs average between 4 and 7. The few with very low (≤ 4) or very high (&gt; 7) averages
+              are scattered with no visible clusters, so the team found no geographic pattern at this level.
             </p>
             <p>
-              The saved data explains why: the {low.length + high.length} suburbs at the extremes have a median of just{" "}
-              {plural(extremesMedianN, "tweet")} each, against {fmtInt(midMedianN)} for the rest. Extreme averages are
-              mostly small samples.
+              The saved data explains why: the {low.length + high.length} suburbs at the extremes have a
+              median of just {plural(extremesMedianN, "tweet")} each, against {fmtInt(midMedianN)} for the
+              rest. Extreme averages are mostly small samples.
             </p>
           </Finding>
         </div>
@@ -117,14 +139,14 @@ export default async function TwitterPage() {
         <div className="grid gap-10 md:grid-cols-3">
           <div>
             <h3 className="text-sm font-semibold">Most tweets</h3>
-            <ol className="mt-2 divide-y divide-border/60 text-sm">
+            <ol className="divide-border/60 mt-2 divide-y text-sm">
               {busiest.map((r, i) => (
                 <li key={r.code} className="flex items-baseline justify-between gap-3 py-1.5">
                   <span className="truncate">
-                    <span className="num mr-2 text-xs text-muted-foreground">{i + 1}</span>
+                    <span className="num text-muted-foreground mr-2 text-xs">{i + 1}</span>
                     {r.name}
                   </span>
-                  <span className="num shrink-0 text-xs text-muted-foreground">
+                  <span className="num text-muted-foreground shrink-0 text-xs">
                     {fmtInt(r.all!.n)} · avg {fmtScore(r.all!.avg)}
                   </span>
                 </li>
@@ -135,9 +157,9 @@ export default async function TwitterPage() {
           <ExtremeList title="Most negative (≥ 100 tweets)" items={gloomiest} tone="neg" />
         </div>
         <Note className="mt-6">
-          Place names come from Twitter&apos;s self-reported place field, matched to suburbs by the team&apos;s n-gram
-          lookup; a tweet tagged &quot;Melbourne, Victoria&quot; lands in the Melbourne CBD suburb, which is why it
-          dominates every ranking.
+          Place names come from Twitter&apos;s self-reported place field, matched to suburbs by the
+          team&apos;s n-gram lookup; a tweet tagged &quot;Melbourne, Victoria&quot; lands in the Melbourne CBD
+          suburb, which is why it dominates every ranking.
         </Note>
       </Section>
     </>

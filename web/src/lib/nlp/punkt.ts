@@ -63,10 +63,7 @@ const PERIOD_CONTEXT = new RegExp(
 );
 
 // re_boundary_realignment (MULTILINE): `$` matches before any "\n" or at end.
-const RE_BOUNDARY_REALIGNMENT = new RegExp(
-  String.raw`^["')\]}]+?(?:${S}+|(?=--)|(?=\n|$))`,
-  "u",
-);
+const RE_BOUNDARY_REALIGNMENT = new RegExp(String.raw`^["')\]}]+?(?:${S}+|(?=--)|(?=\n|$))`, "u");
 
 const RE_ELLIPSIS = /^\.\.+$/u;
 const RE_NUMERIC = new RegExp(String.raw`^-?[\.,]?${D}[${D},\.-]*\.?${END}`, "u");

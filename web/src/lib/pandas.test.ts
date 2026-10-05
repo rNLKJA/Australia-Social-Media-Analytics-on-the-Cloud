@@ -43,7 +43,12 @@ describe("drop_outliers parity (app.py visualize_income_data)", () => {
     expect([sorted.at(-1)![0], sorted.at(-1)![2]]).toEqual(income.expected.max);
   });
   it("has a median of ~45.9k AUD after filtering (report: 'above the 45.8k 50th quantile')", () => {
-    expect(quantile(kept.map((r) => r[2]), 0.5)).toBe(income.expected.median);
+    expect(
+      quantile(
+        kept.map((r) => r[2]),
+        0.5,
+      ),
+    ).toBe(income.expected.median);
   });
 });
 

@@ -16,7 +16,7 @@ export function CorrelationReadout({
 }) {
   if (!c) {
     return (
-      <p className={cn("text-sm text-muted-foreground", className)}>
+      <p className={cn("text-muted-foreground text-sm", className)}>
         Too few regions at this threshold to estimate a correlation.
       </p>
     );
@@ -35,16 +35,16 @@ export function CorrelationReadout({
           ["R²", c.r2.toFixed(3), "of variance"],
           ["Regions", String(c.n), "in the fit"],
         ].map(([k, v, sub]) => (
-          <div key={k} className="rounded-md border border-border bg-card px-1.5 py-2">
-            <dt className="text-[11px] text-muted-foreground">{k}</dt>
+          <div key={k} className="border-border bg-card rounded-md border px-1.5 py-2">
+            <dt className="text-muted-foreground text-[11px]">{k}</dt>
             <dd className="num font-serif text-xl font-semibold">{v}</dd>
-            <dd className="num text-[10px] text-muted-foreground">{sub}</dd>
+            <dd className="num text-muted-foreground text-[10px]">{sub}</dd>
           </div>
         ))}
       </dl>
       {agrees && (
-        <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-          <BadgeCheck className="size-3.5 text-sent-pos" aria-hidden />
+        <p className="text-muted-foreground flex items-center gap-1.5 text-[11px]">
+          <BadgeCheck className="text-sent-pos size-3.5" aria-hidden />
           Computed in your browser; identical to the scipy values stored by the build script.
         </p>
       )}

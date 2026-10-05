@@ -15,7 +15,12 @@ function subset(rows: Row[], yIdx: number, wIdx: number, k: number) {
   return { x: r.map((row) => row[1] as number), y: r.map((row) => row[yIdx] as number) };
 }
 
-const cases: { scenario: string; unit: string; y: string; pick: (k: number) => { x: number[]; y: number[] } }[] = [
+const cases: {
+  scenario: string;
+  unit: string;
+  y: string;
+  pick: (k: number) => { x: number[]; y: number[] };
+}[] = [
   { scenario: "income", unit: "sa2", y: "avg_income", pick: (k) => subset(fx.income as Row[], 2, 3, k) },
   { scenario: "income", unit: "sa2", y: "avg_all", pick: (k) => subset(fx.income as Row[], 4, 5, k) },
   { scenario: "crime", unit: "lga", y: "avg_crime", pick: (k) => subset(fx.crime as Row[], 2, 3, k) },
@@ -33,7 +38,9 @@ const cases: { scenario: string; unit: string; y: string; pick: (k: number) => {
 
 describe("scipy parity (pearsonr / spearmanr / linregress)", () => {
   for (const exp of fx.expected) {
-    const c = cases.find((cc) => cc.scenario === exp.scenario && cc.unit === exp.unit && cc.y === exp.y_metric)!;
+    const c = cases.find(
+      (cc) => cc.scenario === exp.scenario && cc.unit === exp.unit && cc.y === exp.y_metric,
+    )!;
     it(`${exp.scenario}/${exp.unit} ${exp.y_metric} min_tweets>=${exp.min_tweets}`, () => {
       const { x, y } = c.pick(exp.min_tweets);
       const got = correlate(x, y)!;

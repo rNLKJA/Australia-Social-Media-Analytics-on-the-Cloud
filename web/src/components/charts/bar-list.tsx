@@ -27,16 +27,24 @@ export function BarList({
     <ul className={cn("space-y-2", className)} aria-label={ariaLabel}>
       {items.map((it) => (
         <li key={it.key} className="grid grid-cols-[minmax(7rem,11rem)_1fr_auto] items-center gap-3 text-sm">
-          <span className={cn("truncate text-muted-foreground", it.highlight && "font-medium text-foreground")} title={it.label}>
+          <span
+            className={cn("text-muted-foreground truncate", it.highlight && "text-foreground font-medium")}
+            title={it.label}
+          >
             {it.label}
           </span>
-          <span className="relative h-2.5 rounded-full bg-muted" aria-hidden>
+          <span className="bg-muted relative h-2.5 rounded-full" aria-hidden>
             <span
               className="absolute inset-y-0 left-0 rounded-full"
-              style={{ width: `${Math.max(0.5, (it.value / m) * 100)}%`, background: it.color ?? "var(--chart-1)" }}
+              style={{
+                width: `${Math.max(0.5, (it.value / m) * 100)}%`,
+                background: it.color ?? "var(--chart-1)",
+              }}
             />
           </span>
-          <span className={cn("num text-right text-xs text-muted-foreground", it.highlight && "text-foreground")}>
+          <span
+            className={cn("num text-muted-foreground text-right text-xs", it.highlight && "text-foreground")}
+          >
             {it.display ?? it.value}
             {it.note && <span className="sr-only"> ({it.note})</span>}
           </span>

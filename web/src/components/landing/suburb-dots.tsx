@@ -77,10 +77,18 @@ export function SuburbDots({
               stroke="var(--foreground)"
               strokeOpacity={0.5}
             />
-            <text x={x(melb.lon) + 64} y={y(melb.lat) - 74} className="fill-foreground font-sans text-[13px] font-semibold">
+            <text
+              x={x(melb.lon) + 64}
+              y={y(melb.lat) - 74}
+              className="fill-foreground font-sans text-[13px] font-semibold"
+            >
               Melbourne
             </text>
-            <text x={x(melb.lon) + 64} y={y(melb.lat) - 58} className="num fill-muted-foreground font-sans text-[11px]">
+            <text
+              x={x(melb.lon) + 64}
+              y={y(melb.lat) - 58}
+              className="num fill-muted-foreground font-sans text-[11px]"
+            >
               {melb.all!.n.toLocaleString("en-AU")} tweets
             </text>
           </g>

@@ -30,7 +30,9 @@ export function RegionSearch({
     const s = q.trim().toLowerCase();
     if (!s) return [];
     const starts = items.filter((i) => i.name.toLowerCase().startsWith(s));
-    const contains = items.filter((i) => !i.name.toLowerCase().startsWith(s) && i.name.toLowerCase().includes(s));
+    const contains = items.filter(
+      (i) => !i.name.toLowerCase().startsWith(s) && i.name.toLowerCase().includes(s),
+    );
     return [...starts, ...contains].slice(0, 8);
   }, [q, items]);
 
@@ -45,7 +47,10 @@ export function RegionSearch({
       <label htmlFor={`${id}-input`} className="sr-only">
         {placeholder}
       </label>
-      <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+      <Search
+        className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2"
+        aria-hidden
+      />
       <input
         id={`${id}-input`}
         role="combobox"
@@ -78,14 +83,14 @@ export function RegionSearch({
             setOpen(false);
           }
         }}
-        className="h-9 w-full rounded-md border border-input bg-card pr-8 pl-8 text-sm placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:outline-none"
+        className="border-input bg-card placeholder:text-muted-foreground focus-visible:ring-ring/40 h-9 w-full rounded-md border pr-8 pl-8 text-sm focus-visible:ring-2 focus-visible:outline-none"
       />
       {q && (
         <button
           type="button"
           aria-label="Clear search"
           onClick={() => setQ("")}
-          className="absolute top-1/2 right-2 -translate-y-1/2 rounded p-0.5 text-muted-foreground hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2 rounded p-0.5"
         >
           <X className="size-3.5" aria-hidden />
         </button>
@@ -94,7 +99,7 @@ export function RegionSearch({
         <ul
           id={`${id}-list`}
           role="listbox"
-          className="absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded-md border border-border bg-popover p-1 shadow-lg"
+          className="border-border bg-popover absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded-md border p-1 shadow-lg"
         >
           {matches.map((m, i) => (
             <li
@@ -113,7 +118,7 @@ export function RegionSearch({
               )}
             >
               <span>{m.name}</span>
-              {m.hint && <span className="num text-xs text-muted-foreground">{m.hint}</span>}
+              {m.hint && <span className="num text-muted-foreground text-xs">{m.hint}</span>}
             </li>
           ))}
         </ul>

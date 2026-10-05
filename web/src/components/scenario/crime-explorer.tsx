@@ -32,8 +32,18 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
   const [hovered, setHovered] = useState<string | null>(null);
 
   const byCode = useMemo(() => new Map(regions.map((r) => [r.code, r])), [regions]);
-  const pool = useMemo(() => (withOutliers ? regions : regions.filter((r) => r.kept)), [regions, withOutliers]);
-  const breaks = useMemo(() => quantileBreaks(pool.map((r) => r.total), 7), [pool]);
+  const pool = useMemo(
+    () => (withOutliers ? regions : regions.filter((r) => r.kept)),
+    [regions, withOutliers],
+  );
+  const breaks = useMemo(
+    () =>
+      quantileBreaks(
+        pool.map((r) => r.total),
+        7,
+      ),
+    [pool],
+  );
   const rank = useMemo(() => {
     const sorted = [...regions].sort((a, b) => b.total - a.total);
     return new Map(sorted.map((r, i) => [r.code, i + 1]));
@@ -59,13 +69,20 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
     [pool, yMetric, minTweets],
   );
   const corr = useMemo(
-    () => correlate(fitRegions.map((r) => r.total), fitRegions.map((r) => yOf(r, yMetric) as number)),
+    () =>
+      correlate(
+        fitRegions.map((r) => r.total),
+        fitRegions.map((r) => yOf(r, yMetric) as number),
+      ),
     [fitRegions, yMetric],
   );
   const storedMatch = withOutliers
     ? undefined
     : stored.find(
-        (s) => s.unit === "lga" && s.yMetric === (yMetric === "crime" ? "avg_crime" : "avg_all") && s.minTweets === minTweets,
+        (s) =>
+          s.unit === "lga" &&
+          s.yMetric === (yMetric === "crime" ? "avg_crime" : "avg_all") &&
+          s.minTweets === minTweets,
       );
 
   const points: ScatterPoint[] = useMemo(
@@ -84,7 +101,11 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
     [fitRegions, yMetric, theme],
   );
   const annotate = useMemo(
-    () => [...fitRegions].sort((a, b) => wOf(b, yMetric) - wOf(a, yMetric)).slice(0, 4).map((r) => r.code),
+    () =>
+      [...fitRegions]
+        .sort((a, b) => wOf(b, yMetric) - wOf(a, yMetric))
+        .slice(0, 4)
+        .map((r) => r.code),
     [fitRegions, yMetric],
   );
 
@@ -93,7 +114,7 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-x-6 gap-y-4 rounded-lg border border-border bg-card p-4 sm:grid-cols-2 xl:grid-cols-[auto_auto_minmax(11rem,1fr)_minmax(13rem,1fr)] xl:items-start">
+      <div className="border-border bg-card grid gap-x-6 gap-y-4 rounded-lg border p-4 sm:grid-cols-2 xl:grid-cols-[auto_auto_minmax(11rem,1fr)_minmax(13rem,1fr)] xl:items-start">
         <div className="space-y-1.5">
           <span className="block text-xs font-medium">Map shows</span>
           <Segmented
@@ -190,7 +211,7 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
         </div>
 
         <div className="space-y-4">
-          <div className="rounded-lg border border-border bg-card p-3">
+          <div className="border-border bg-card rounded-lg border p-3">
             <ScatterPlot
               points={points}
               xType="log"
@@ -215,10 +236,11 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
           </div>
           <CorrelationReadout c={corr} stored={storedMatch} />
           {corr && (
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              {corr.n} LGAs with at least {minTweets} {minTweets === 1 ? topic.replace("tweets", "tweet") : topic}:{" "}
-              {describeStrength(corr.pearsonR)} {corr.pearsonR >= 0 ? "positive" : "negative"} association (the fit line is
-              linear in offences, drawn on a log axis).{" "}
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              {corr.n} LGAs with at least {minTweets}{" "}
+              {minTweets === 1 ? topic.replace("tweets", "tweet") : topic}: {describeStrength(corr.pearsonR)}{" "}
+              {corr.pearsonR >= 0 ? "positive" : "negative"} association (the fit line is linear in offences,
+              drawn on a log axis).{" "}
               {yMetric === "crime" &&
                 minTweets < 5 &&
                 "Most LGAs have only a handful of crime tweets, so their averages swing between extremes; raise the threshold and the association disappears."}
@@ -227,30 +249,30 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
         </div>
       </div>
 
-      <section aria-live="polite" className="rounded-lg border border-border bg-card p-5">
+      <section aria-live="polite" className="border-border bg-card rounded-lg border p-5">
         {sel ? (
           <div className="grid gap-6 md:grid-cols-[1fr_1.4fr_1fr]">
             <div>
               <p className="kicker">Local government area</p>
               <h3 className="mt-1 font-serif text-2xl font-semibold">{sel.name}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="text-muted-foreground mt-1 text-sm">
                 LGA {sel.code} · {fmtInt(Math.round(sel.areaKm2))} km² · {sel.salCount} suburbs with tweets
               </p>
               <p className="num mt-3 font-serif text-3xl font-semibold">{fmtInt(sel.total)}</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 recorded offences · #{rank.get(sel.code)} of {regions.length} LGAs
                 {!sel.kept && " · removed by the IQR rule"}
               </p>
             </div>
             <div>
-              <h4 className="mb-2 text-xs font-medium text-muted-foreground">Offence divisions</h4>
+              <h4 className="text-muted-foreground mb-2 text-xs font-medium">Offence divisions</h4>
               <ul className="space-y-1.5">
                 {CRIME_CATEGORIES.map((c, i) => {
                   const v = sel.categories[c.key];
                   return (
                     <li key={c.key} className="grid grid-cols-[10rem_1fr_3.5rem] items-center gap-2 text-xs">
-                      <span className="truncate text-muted-foreground">{c.label}</span>
-                      <span className="h-2 rounded-full bg-muted" aria-hidden>
+                      <span className="text-muted-foreground truncate">{c.label}</span>
+                      <span className="bg-muted h-2 rounded-full" aria-hidden>
                         <span
                           className="block h-full rounded-full"
                           style={{ width: `${(v / sel.total) * 100}%`, background: `var(--seq-${6 - i})` }}
@@ -269,8 +291,10 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
                   <div key={m}>
                     <dt className="text-muted-foreground">{m === "crime" ? "Crime tweets" : "All tweets"}</dt>
                     <dd className="num font-serif text-xl font-semibold">{fmtInt(wOf(sel, m))}</dd>
-                    <dd className={cn("text-xs text-muted-foreground")}>
-                      {v === null ? "no tweets" : `avg ${fmtScore(v)} · ${sentimentDescription(Math.round(v))}`}
+                    <dd className={cn("text-muted-foreground text-xs")}>
+                      {v === null
+                        ? "no tweets"
+                        : `avg ${fmtScore(v)} · ${sentimentDescription(Math.round(v))}`}
                     </dd>
                   </div>
                 );
@@ -278,8 +302,9 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
             </dl>
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">
-            Select an LGA on the map or a dot in the chart (or search above) to see its offence mix and tweet sentiment.
+          <p className="text-muted-foreground text-sm">
+            Select an LGA on the map or a dot in the chart (or search above) to see its offence mix and tweet
+            sentiment.
           </p>
         )}
       </section>

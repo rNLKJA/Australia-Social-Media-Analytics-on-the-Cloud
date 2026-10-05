@@ -68,10 +68,30 @@ describe("Punkt + NLTKWordTokenizer", () => {
     });
   }
   it("matches the NLTKWordTokenizer docstring example", () => {
-    const s = "Good muffins cost $3.88 (roughly 3,36 euros)\nin New York.  Please buy me\ntwo of them.\nThanks.";
+    const s =
+      "Good muffins cost $3.88 (roughly 3,36 euros)\nin New York.  Please buy me\ntwo of them.\nThanks.";
     expect(nltkWordTokenizer(s)).toEqual([
-      "Good", "muffins", "cost", "$", "3.88", "(", "roughly", "3,36", "euros", ")", "in",
-      "New", "York.", "Please", "buy", "me", "two", "of", "them.", "Thanks", ".",
+      "Good",
+      "muffins",
+      "cost",
+      "$",
+      "3.88",
+      "(",
+      "roughly",
+      "3,36",
+      "euros",
+      ")",
+      "in",
+      "New",
+      "York.",
+      "Please",
+      "buy",
+      "me",
+      "two",
+      "of",
+      "them.",
+      "Thanks",
+      ".",
     ]);
   });
 });
@@ -99,9 +119,9 @@ describe("SAL geocoding (twitter/utils.py)", () => {
 
 describe("clean_content", () => {
   it("drops mentions, hashtags and links (whitespace around links is kept)", () => {
-    expect(cleanContent("@someone check this out https://example.com/abc #melbourne #coffee best brunch ever")).toBe(
-      "check this out  best brunch ever",
-    );
+    expect(
+      cleanContent("@someone check this out https://example.com/abc #melbourne #coffee best brunch ever"),
+    ).toBe("check this out  best brunch ever");
   });
 });
 
@@ -124,12 +144,15 @@ describe.runIf(existsSync(SAMPLE))("local cross-check on real toots", () => {
       const compound = engine.sia.polarityScores(normalized).compound;
       if (normalized !== r.normalized) {
         normMismatch++;
-        if (examples.length < 3) examples.push(`${JSON.stringify(r.normalized)}\n${JSON.stringify(normalized)}`);
+        if (examples.length < 3)
+          examples.push(`${JSON.stringify(r.normalized)}\n${JSON.stringify(normalized)}`);
       }
       if (sentimentBucket(compound) !== r.bucket) bucketMismatch++;
     }
     if (examples.length) console.log(examples.join("\n---\n"));
-    console.log(`sample=${rows.length} normalised mismatches=${normMismatch} bucket mismatches=${bucketMismatch}`);
+    console.log(
+      `sample=${rows.length} normalised mismatches=${normMismatch} bucket mismatches=${bucketMismatch}`,
+    );
     // 44,156 real toots: 0 mismatches at the time of writing
     expect(normMismatch).toBe(0);
     expect(bucketMismatch).toBe(0);

@@ -15,15 +15,17 @@ export function DivergingLegend({
   const stops = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   return (
     <div className={cn("w-full max-w-xs", className)}>
-      <div className="mb-1 flex justify-between text-[11px] text-muted-foreground">
+      <div className="text-muted-foreground mb-1 flex justify-between text-[11px]">
         <span>{label}</span>
       </div>
       <div
         className="h-2.5 rounded-full"
-        style={{ background: `linear-gradient(to right, ${stops.map((s) => `var(--sent-${s})`).join(", ")})` }}
+        style={{
+          background: `linear-gradient(to right, ${stops.map((s) => `var(--sent-${s})`).join(", ")})`,
+        }}
         aria-hidden
       />
-      <div className="num mt-1 flex justify-between text-[11px] text-muted-foreground">
+      <div className="num text-muted-foreground mt-1 flex justify-between text-[11px]">
         <span>≤ {(mid - spread).toFixed(1)} more negative</span>
         <span>{mid.toFixed(1)}</span>
         <span>more positive ≥ {(mid + spread).toFixed(1)}</span>
@@ -48,13 +50,13 @@ export function SequentialLegend({
 }) {
   return (
     <div className={cn("w-full max-w-sm", className)}>
-      <div className="mb-1 text-[11px] text-muted-foreground">{label}</div>
+      <div className="text-muted-foreground mb-1 text-[11px]">{label}</div>
       <div className="flex h-2.5 overflow-hidden rounded-full" aria-hidden>
         {colors.map((c, i) => (
           <span key={i} className="flex-1" style={{ background: c }} />
         ))}
       </div>
-      <div className="num relative mt-1 h-4 text-[11px] text-muted-foreground">
+      <div className="num text-muted-foreground relative mt-1 h-4 text-[11px]">
         {breaks.map((b, i) => (
           <span
             key={i}
@@ -69,10 +71,20 @@ export function SequentialLegend({
   );
 }
 
-export function NoDataSwatch({ color, label = "No tweets / filtered out" }: { color: string; label?: string }) {
+export function NoDataSwatch({
+  color,
+  label = "No tweets / filtered out",
+}: {
+  color: string;
+  label?: string;
+}) {
   return (
-    <span className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">
-      <span className="inline-block size-2.5 rounded-sm border border-border" style={{ background: color }} aria-hidden />
+    <span className="text-muted-foreground inline-flex items-center gap-1.5 text-[11px]">
+      <span
+        className="border-border inline-block size-2.5 rounded-sm border"
+        style={{ background: color }}
+        aria-hidden
+      />
       {label}
     </span>
   );

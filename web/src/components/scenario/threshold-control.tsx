@@ -25,7 +25,7 @@ export function ThresholdControl({
         <span id="threshold-label" className="text-xs font-medium">
           {label}
         </span>
-        <span className="num text-xs text-muted-foreground">≥ {value}</span>
+        <span className="num text-muted-foreground text-xs">≥ {value}</span>
       </div>
       <Slider
         aria-labelledby="threshold-label"
@@ -43,8 +43,9 @@ export function ThresholdControl({
             onClick={() => onChange(p)}
             aria-pressed={value === p}
             className={cn(
-              "num rounded border border-border px-2 py-0.5 text-[11px] text-muted-foreground transition-colors hover:text-foreground",
-              value === p && "border-primary bg-primary text-primary-foreground hover:text-primary-foreground",
+              "num border-border text-muted-foreground hover:text-foreground rounded border px-2 py-0.5 text-[11px] transition-colors",
+              value === p &&
+                "border-primary bg-primary text-primary-foreground hover:text-primary-foreground",
             )}
           >
             {p}

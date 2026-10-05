@@ -70,7 +70,13 @@ export const getSalRegions = cache(async (): Promise<SalRegion[]> => {
        LEFT JOIN regions_lga l ON l.lga_code = r.lga_code19
       WHERE r.on_original_map = 1 ORDER BY r.name`,
   );
-  const aggs = await query<{ sal_code: string; topic: Topic; tweet_count: number; score_sum: number; avg_score: number }>(
+  const aggs = await query<{
+    sal_code: string;
+    topic: Topic;
+    tweet_count: number;
+    score_sum: number;
+    avg_score: number;
+  }>(
     `SELECT t.sal_code, t.topic, t.tweet_count, t.score_sum, t.avg_score
        FROM twitter_sal_sentiment t JOIN regions_sal r USING (sal_code)
       WHERE r.on_original_map = 1`,
@@ -254,7 +260,13 @@ export const getJobsIndicators = cache(async (): Promise<JobsIndicator[]> =>
 
 export const getMastodonHourly = cache(async (): Promise<MastodonHour[]> => {
   const rows = await query<
-    { hour_utc: string; toots: number; score_sum: number; income_toots: number; crime_toots: number } & BucketRow
+    {
+      hour_utc: string;
+      toots: number;
+      score_sum: number;
+      income_toots: number;
+      crime_toots: number;
+    } & BucketRow
   >(
     `SELECT hour_utc, toots, score_sum, income_toots, crime_toots, ${BUCKETS}
        FROM mastodon_hourly WHERE server = 'mastodon.social' ORDER BY hour_utc`,
@@ -270,7 +282,9 @@ export const getMastodonHourly = cache(async (): Promise<MastodonHour[]> => {
 });
 
 export const getMastodonLanguages = cache(async (): Promise<MastodonLanguage[]> => {
-  const rows = await query<{ lang: string; toots: number; score_sum: number; income_toots: number } & BucketRow>(
+  const rows = await query<
+    { lang: string; toots: number; score_sum: number; income_toots: number } & BucketRow
+  >(
     `SELECT lang, toots, score_sum, income_toots, ${BUCKETS}
        FROM mastodon_language WHERE server = 'mastodon.social' ORDER BY toots DESC`,
   );

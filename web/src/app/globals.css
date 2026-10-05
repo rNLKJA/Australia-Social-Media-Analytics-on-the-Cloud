@@ -242,28 +242,31 @@
 
 @layer components {
   .kicker {
-    @apply font-sans text-[0.72rem] font-semibold tracking-[0.14em] text-primary uppercase;
+    @apply text-primary font-sans text-[0.72rem] font-semibold tracking-[0.14em] uppercase;
   }
   .prose-civic {
-    @apply max-w-[65ch] text-[1.0625rem] leading-[1.7] text-foreground/90;
+    @apply text-foreground/90 max-w-[65ch] text-[1.0625rem] leading-[1.7];
   }
   .prose-civic p + p {
     @apply mt-4;
   }
   .prose-civic a,
   .link {
-    @apply font-medium text-primary underline decoration-primary/35 decoration-1 underline-offset-[3px] transition-colors hover:decoration-primary;
+    @apply text-primary decoration-primary/35 hover:decoration-primary font-medium underline decoration-1 underline-offset-[3px] transition-colors;
   }
   .num {
     font-variant-numeric: tabular-nums;
   }
   .hairline {
-    @apply border-t border-rule;
+    @apply border-rule border-t;
   }
   /* paper grain for hero areas */
   .grain {
-    background-image:
-      radial-gradient(circle at 1px 1px, color-mix(in oklab, var(--foreground) 7%, transparent) 1px, transparent 0);
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      color-mix(in oklab, var(--foreground) 7%, transparent) 1px,
+      transparent 0
+    );
     background-size: 18px 18px;
   }
 }
@@ -293,7 +296,7 @@
 
 /* MapLibre control theming */
 .maplibregl-ctrl-group {
-  @apply !rounded-md !border !border-border !bg-card !shadow-none;
+  @apply !border-border !bg-card !rounded-md !border !shadow-none;
 }
 .dark .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
   filter: invert(0.9);

@@ -11,7 +11,11 @@ export const TABLE_DOCS: Record<string, { title: string; description: string; gr
     title: "Facts",
     description: "Headline numbers quoted in the team report, each with its source section.",
   },
-  meta: { group: "Context", title: "Build metadata", description: "Editions of the boundaries and how the database was built." },
+  meta: {
+    group: "Context",
+    title: "Build metadata",
+    description: "Editions of the boundaries and how the database was built.",
+  },
   summary_text: {
     group: "Context",
     title: "Original summaries",
@@ -20,7 +24,8 @@ export const TABLE_DOCS: Record<string, { title: string; description: string; gr
   sentiment_histogram: {
     group: "Sentiment",
     title: "Sentiment histograms (2023 dashboard)",
-    description: "Counts of 1-9 sentiment scores for Twitter and the three Mastodon servers, as plotted in 2023.",
+    description:
+      "Counts of 1-9 sentiment scores for Twitter and the three Mastodon servers, as plotted in 2023.",
   },
   twitter_sal_sentiment: {
     group: "Sentiment",
@@ -28,7 +33,11 @@ export const TABLE_DOCS: Record<string, { title: string; description: string; gr
     description:
       "CouchDB MapReduce _stats per suburb and topic (all tweets, income keywords, crime keywords), Feb-Jul 2022.",
   },
-  mastodon_servers: { group: "Sentiment", title: "Mastodon servers", description: "The three servers the harvesters followed." },
+  mastodon_servers: {
+    group: "Sentiment",
+    title: "Mastodon servers",
+    description: "The three servers the harvesters followed.",
+  },
   mastodon_rescored_histogram: {
     group: "Sentiment",
     title: "mastodon.social re-scored histogram",
@@ -49,12 +58,21 @@ export const TABLE_DOCS: Record<string, { title: string; description: string; gr
     title: "Suburbs and localities (SAL 2021)",
     description: "ABS SAL regions with tweets, a representative point and the SA2/LGA they fall in.",
   },
-  regions_sa2: { group: "Geography", title: "Victorian SA2s (2016)", description: "ABS Statistical Area Level 2 regions in Victoria." },
-  regions_lga: { group: "Geography", title: "Victorian LGAs (2019)", description: "ABS Local Government Areas in Victoria." },
+  regions_sa2: {
+    group: "Geography",
+    title: "Victorian SA2s (2016)",
+    description: "ABS Statistical Area Level 2 regions in Victoria.",
+  },
+  regions_lga: {
+    group: "Geography",
+    title: "Victorian LGAs (2019)",
+    description: "ABS Local Government Areas in Victoria.",
+  },
   income_sa2: {
     group: "SUDO",
     title: "Personal income by SA2",
-    description: "SUDO / ABS personal income 2015-16 (mean, median, sum, median age of earners) for every SA2.",
+    description:
+      "SUDO / ABS personal income 2015-16 (mean, median, sum, median age of earners) for every SA2.",
   },
   income_gcc: {
     group: "SUDO",
@@ -64,7 +82,8 @@ export const TABLE_DOCS: Record<string, { title: string; description: string; gr
   jobs_income_indicators: {
     group: "SUDO",
     title: "Jobs and income by industry",
-    description: "ABS Jobs in Australia indicators (mean, sd and median across SA2s) from the original bar chart.",
+    description:
+      "ABS Jobs in Australia indicators (mean, sd and median across SA2s) from the original bar chart.",
   },
   crime_lga: {
     group: "SUDO",
@@ -133,8 +152,13 @@ function whereClause(t: TableInfo, q: string): { sql: string; args: string[] } {
 export async function queryTable(t: TableInfo, params: TableParams) {
   const where = whereClause(t, params.q);
   const sortCol = t.columns.find((c) => c.name === params.sort)?.name;
-  const order = sortCol ? `ORDER BY "${sortCol}" ${params.dir === "desc" ? "DESC" : "ASC"}` : "ORDER BY rowid";
-  const [{ n }] = await query<{ n: number }>(`SELECT COUNT(*) AS n FROM "${t.name}" ${where.sql}`, where.args);
+  const order = sortCol
+    ? `ORDER BY "${sortCol}" ${params.dir === "desc" ? "DESC" : "ASC"}`
+    : "ORDER BY rowid";
+  const [{ n }] = await query<{ n: number }>(
+    `SELECT COUNT(*) AS n FROM "${t.name}" ${where.sql}`,
+    where.args,
+  );
   const pages = Math.max(1, Math.ceil(n / PAGE_SIZE));
   const page = Math.min(params.page, pages);
   const rows = await query<Record<string, string | number | null>>(
@@ -147,5 +171,8 @@ export async function queryTable(t: TableInfo, params: TableParams) {
 /** Every row of a table, optionally filtered, for CSV export. */
 export async function allRows(t: TableInfo, q = "") {
   const where = whereClause(t, q);
-  return query<Record<string, string | number | null>>(`SELECT * FROM "${t.name}" ${where.sql} ORDER BY rowid`, where.args);
+  return query<Record<string, string | number | null>>(
+    `SELECT * FROM "${t.name}" ${where.sql} ORDER BY rowid`,
+    where.args,
+  );
 }

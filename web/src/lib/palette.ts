@@ -44,7 +44,12 @@ export function sentimentColor(value: number, theme: ThemeName = "light"): strin
  * Diverging colour centred on `mid` that saturates at mid +/- spread. Useful
  * for regional averages, which mostly sit between 4 and 7.
  */
-export function divergingColor(value: number, mid: number, spread: number, theme: ThemeName = "light"): string {
+export function divergingColor(
+  value: number,
+  mid: number,
+  spread: number,
+  theme: ThemeName = "light",
+): string {
   const t = Math.max(-1, Math.min(1, (value - mid) / spread));
   return sentimentColor(5 + t * 4, theme);
 }

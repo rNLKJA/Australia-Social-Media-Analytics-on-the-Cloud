@@ -5,7 +5,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { SITE } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -33,7 +40,7 @@ export function MobileNav({ items }: { items: readonly { href: string; label: st
                   onClick={() => setOpen(false)}
                   aria-current={pathname === item.href ? "page" : undefined}
                   className={cn(
-                    "block rounded-md px-3 py-2.5 text-base transition-colors hover:bg-muted",
+                    "hover:bg-muted block rounded-md px-3 py-2.5 text-base transition-colors",
                     pathname === item.href && "bg-muted font-medium",
                   )}
                 >
@@ -42,7 +49,10 @@ export function MobileNav({ items }: { items: readonly { href: string; label: st
               </li>
             ))}
             <li>
-              <a href={SITE.repo} className="block rounded-md px-3 py-2.5 text-base text-muted-foreground hover:bg-muted">
+              <a
+                href={SITE.repo}
+                className="text-muted-foreground hover:bg-muted block rounded-md px-3 py-2.5 text-base"
+              >
                 Source on GitHub
               </a>
             </li>
