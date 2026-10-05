@@ -1,0 +1,131 @@
+# Synthetic, hand-written example posts used for TypeScript <-> Python parity tests.
+# One example per line. Lines starting with '#' are ignored. No real user content.
+Hello ~ What a good weather! hahahhah, lmao!!!!!!!!!!!
+The trams are running late again. Absolutely furious with the service today.
+I love Melbourne coffee :) but the rent here is killing me
+Police arrested two men after a robbery on Sydney Rd last night
+Can't afford a house in this city. The housing market is so unfair!!
+Not bad at all, the new job is actually pretty great
+NOT happy with the train delays. Never again.
+Got my first salary today 🎉🎉 feeling blessed
+Dr. Smith said the clinic will open at 9 a.m. tomorrow. Great news.
+Wait... what? The footy was cancelled?? Ugh.
+@someone check this out https://example.com/abc #melbourne #coffee best brunch ever
+The children's playground near the library was vandalised. So sad.
+Mortgage rates went up AGAIN. Kind of expected but still painful.
+Thanks heaps mate, you're a legend!
+It is not the worst idea, but it isn't good either.
+The cats and dogs at the shelter need homes; please adopt!
+Crime rates in our suburb are dropping, which is good news for families.
+"Best day ever," she said. "Truly wonderful."
+The strike at the port means shipping costs will rise. Wages are stuck.
+I'm sooo tired of this weather.
+Sort of okay, I guess... not great.
+The U.S. economy and the A.U. dollar both moved today.
+Yeah right, like that's going to happen
+He has 3.5 kids and $2,000 in the bank (approx.) - lol
+They kidnapped the plot halfway through the movie. Terrible writing!
+Financial stress is real: debt, rent, bills. Help!
+Wow wow wow!!! Amazing fireworks over the Yarra tonight
+The government announced a new fairness review for wages
+Smiling faces everywhere at the market. Feeling grateful :D
+Homicide squad investigating the incident in the CBD; no arrests yet.
+I don't hate it. I don't love it either.
+Luxury apartments everywhere but nobody can afford them
+Volunteers helped clean the beach. What a lovely community effort.
+This is the shit, honestly the best burger in town
+The kiss of death for the project was the budget cut.
+Women and men queued for hours; the geese at the lake were calmer.
+Absolutely NOT okay. Terrible, horrible, no good, very bad day.
+Ok. Fine. Whatever.
+Back from Ballarat. Lovely weekend, very relaxing.
+The quick brown fox jumps over the lazy dog.
+# --- extended cases (tokeniser, Punkt, VADER rules) ---
+"Don't you dare," he said. 'Seriously.'
+She said “this is wonderful” and left ‘quietly’.
+«Bonjour» means hello – and it’s lovely.
+I can not believe it. We cannot go. You gonna come? I wanna see.
+'Tis the season to be jolly, 'twas the night before.
+Gimme a break, lemme think, gotta go.
+He's here, she'd left, we'll see, they've gone, I'm done, you're late.
+It costs $3.88 (roughly 3,36 euros) in New York.  Please buy me two of them. Thanks.
+The meeting is at 10:30, not 11:00, ok?
+Prices rose 5.5% this year -- unbelievable -- and wages didn't.
+Visit www.example.com or email someone at example dot com.
+J. R. R. Tolkien wrote books. They are good.
+The 3rd. of May was a Wednesday. It rained.
+Mr. and Mrs. Smith arrived at 5 p.m. on Jan. 5. The party started.
+We met in the U.K. last year. It was fun.
+etc. etc. and so on... the end.
+Is this real?! Are you sure?!? No way!!!
+What??? Why???? How?
+Hmm... I guess... maybe?
+LOL that was HILARIOUS
+I am VERY happy today
+I am very HAPPY today
+the movie was not bad at all
+the movie was not good at all
+It was the least helpful answer
+At least it was not terrible
+very least of my worries is the cost
+Never so happy in my life
+never this good before
+The food was kind of good but the service was terrible
+The plan is sort of okay
+Yeah right, that will cut the mustard for sure
+We live hand to mouth these days
+That bad ass bike is the bomb
+I barely passed the exam
+The service was extremely slow and incredibly rude
+Hardly a great result, but better than nothing
+Nothing is wrong, nothing at all
+without doubt the best
+despite the rain we had a great time
+He seldom smiles
+Uh-uh, not happy, nope
+She ain't happy and he isn't either
+The kids can't stop laughing :-) :P <3
+I feel :( today and :'( yesterday
+Great job!! :) :) :)
+Bad bad bad bad bad
+Good good good good good
+BIG NEWS: WE WON THE GRAND FINAL
+small win but still a win
+The rent is too damn high!
+Housing affordability is a real crisis in Melbourne.
+Mortgage stress and debt are rising; financial counselling demand is up.
+Strike action continues as workers demand fairer pay.
+My job is great, my salary is not.
+Police say the robbery suspect was arrested near Flinders St Station.
+Violence in the city centre has residents worried about safety.
+The thief stole my bike!! Again!!!
+Murder mystery night was so much fun
+Smuggling ring busted at the port, police confirm.
+Money laundering charges laid against three men.
+The offence carries a maximum penalty of five years.
+Criminal behaviour should never be tolLerated
+crime crime crime everywhere
+Children's books, teachers' pay, the boss's office
+The cats' toys and the dogs' bowls were everywhere.
+analyses of the crises show the series of species
+Wolves, knives, leaves, lives, wives, halves, calves
+buses, boxes, quizzes, churches, dishes, babies, ladies
+data, criteria, phenomena, alumni, cacti, fungi
+geese mice teeth feet people oxen
+Ballarat's footy club won; Bendigo's lost.
+#melbourne @user hello world https://t.co/xyz #love
+@a @b @c
+https://only.a.link/here
+	Tabs	and   multiple   spaces	everywhere  
+Line one
+Ends with a colon:
+Starts with a comma, then continues
+(Parenthetical remark.) Next sentence here.
+[Bracketed] {braced} <angled> text
+"Quoted sentence." Another one.
+He said "wow". She said 'ok'.
+It's 5 o'clock somewhere... cheers!
+The end. 
+Line one\nLine two is great\n\nLine four. Done
+Good muffins cost $3.88\nin New York.  Please buy me\ntwo of them.\nThanks.
+I love it.\nI hate it.
