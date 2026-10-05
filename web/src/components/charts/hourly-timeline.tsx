@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useElementSize } from "@/hooks/use-element-size";
 import { fmtInt } from "@/lib/format";
-import { linearScale, niceTicks } from "@/lib/scales";
+import { labelEvery, linearScale, niceTicks } from "@/lib/scales";
 import type { MastodonHour } from "@/lib/types";
 
 const M = { top: 18, right: 46, bottom: 34, left: 48 };
@@ -16,7 +16,7 @@ const HOUR = 3600_000;
 export function HourlyTimeline({ hours, height = 300 }: { hours: MastodonHour[]; height?: number }) {
   const [ref, { width }] = useElementSize<HTMLDivElement>({ width: 900, height });
   const [hover, setHover] = useState<number | null>(null);
-  const W = Math.max(320, width);
+  const W = Math.max(280, width);
   const H = height;
 
   const data = useMemo(
@@ -51,6 +51,8 @@ export function HourlyTimeline({ hours, height = 300 }: { hours: MastodonHour[];
   if (cur.length) segments.push(cur.join("L"));
 
   const days = Array.from({ length: 8 }, (_, i) => t0 + i * 24 * HOUR);
+  // a "9 May" label needs ~44 px; on phones label every other day (gridlines stay daily)
+  const dayStep = labelEvery(x(t0 + 24 * HOUR) - x(t0), 44);
   const h = hover !== null ? visible[hover] : null;
 
   return (
@@ -103,12 +105,14 @@ export function HourlyTimeline({ hours, height = 300 }: { hours: MastodonHour[];
             {s.toFixed(1)}
           </text>
         ))}
-        {days.map((d) => (
+        {days.map((d, i) => (
           <g key={d}>
             <line x1={x(d)} x2={x(d)} y1={M.top} y2={H - M.bottom} stroke="var(--rule)" strokeOpacity={0.5} />
-            <text x={x(d) + 4} y={H - M.bottom + 16} className="fill-muted-foreground text-[11px]">
-              {new Date(d).toLocaleDateString("en-AU", { day: "numeric", month: "short", timeZone: "UTC" })}
-            </text>
+            {i % dayStep === 0 && (
+              <text x={x(d) + 4} y={H - M.bottom + 16} className="fill-muted-foreground text-[11px]">
+                {new Date(d).toLocaleDateString("en-AU", { day: "numeric", month: "short", timeZone: "UTC" })}
+              </text>
+            )}
           </g>
         ))}
         {visible.map((d, i) => (

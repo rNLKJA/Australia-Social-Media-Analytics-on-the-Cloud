@@ -49,6 +49,15 @@ export function logTicks(min: number, max: number, mantissas: readonly number[] 
   return out;
 }
 
+/**
+ * Label every n-th of a set of evenly spaced ticks so that labels at least
+ * `minGap` px apart never collide (1 = label every tick).
+ */
+export function labelEvery(spacing: number, minGap: number): number {
+  if (!(spacing > 0)) return 1;
+  return Math.max(1, Math.ceil(minGap / spacing - 1e-9));
+}
+
 export function extent(values: number[]): [number, number] {
   let lo = Infinity;
   let hi = -Infinity;

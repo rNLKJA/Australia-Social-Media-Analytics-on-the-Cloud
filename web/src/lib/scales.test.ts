@@ -10,7 +10,7 @@ import {
   sequentialClassColors,
   sequentialColor,
 } from "./palette";
-import { extent, linearScale, logTicks, niceTicks } from "./scales";
+import { extent, labelEvery, linearScale, logTicks, niceTicks } from "./scales";
 
 describe("scales", () => {
   it("maps linearly", () => {
@@ -25,6 +25,13 @@ describe("scales", () => {
     expect(logTicks(1, 100)).toEqual([1, 2, 5, 10, 20, 50, 100]);
     expect(logTicks(30, 3000, [1, 3])).toEqual([30, 100, 300, 1000, 3000]);
     expect(logTicks(30, 3000, [1])).toEqual([100, 1000]);
+  });
+  it("thins evenly spaced labels so they do not collide", () => {
+    expect(labelEvery(150, 44)).toBe(1);
+    expect(labelEvery(44, 44)).toBe(1);
+    expect(labelEvery(30, 44)).toBe(2);
+    expect(labelEvery(14, 44)).toBe(4);
+    expect(labelEvery(0, 44)).toBe(1);
   });
   it("ignores non-finite values in extent", () => {
     expect(extent([3, NaN, 1, Infinity, 2])).toEqual([1, 3]);
