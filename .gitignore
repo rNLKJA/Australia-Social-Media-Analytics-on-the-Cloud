@@ -35,6 +35,7 @@ pnpm-debug.log*
 .pnpm-store/
 playwright-report/
 test-results/
+.vitest/
 
 # ---------------------------------------------------------------------------
 # Python (scripts/ and coursework/)
@@ -57,7 +58,8 @@ dist/
 # Data pipeline scratch space (raw inputs are never committed)
 # ---------------------------------------------------------------------------
 scripts/.cache/
-scripts/raw/
+# symlink or folder pointing at the raw coursework data (licensed / personal; never commit)
+scripts/raw
 *.log
 
 # ---------------------------------------------------------------------------
