@@ -61,7 +61,15 @@ export function pyRstrip(s: string): string {
 /** `len(s)`: Python counts code points, not UTF-16 units. */
 export function pyLen(s: string): number {
   let n = 0;
-  for (const _ of s) n++;
+  for (let i = 0; i < s.length; i++) {
+    const c = s.charCodeAt(i);
+    // count a surrogate pair once
+    if (c >= 0xd800 && c <= 0xdbff && i + 1 < s.length) {
+      const d = s.charCodeAt(i + 1);
+      if (d >= 0xdc00 && d <= 0xdfff) i++;
+    }
+    n++;
+  }
   return n;
 }
 

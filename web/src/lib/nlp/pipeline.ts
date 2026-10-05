@@ -45,17 +45,9 @@ export function tokensAndLemmas(
   return { sentences, tokens, lemmas };
 }
 
-// CouchDB MapReduce keyword views (verbatim lists)
-export const INCOME_WORDS = [
-  "salary", "income", "housing", "mortgage", "liability", "debt", "expensive", "afford",
-  "job", "work", "strike", "compensation", "luxur", "finance", "financial", "equality",
-  "fairness", "inequal", "unfair",
-] as const;
+import { CRIME_WORDS, INCOME_WORDS } from "./keywords";
 
-export const CRIME_WORDS = [
-  "crime", "criminal", "police", "theft", "robbery", "smuggl", "arrest", "kidnap",
-  "homicide", "murder", "offence", "violence", "money laund",
-] as const;
+export { CRIME_WORDS, INCOME_WORDS };
 
 /** `content.toLowerCase().includes(word)`; returns the first matching keyword. */
 export function keywordHit(content: string, words: readonly string[]): string | null {
