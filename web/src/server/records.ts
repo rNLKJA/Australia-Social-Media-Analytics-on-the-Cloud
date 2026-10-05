@@ -31,7 +31,7 @@ export const TABLE_DOCS: Record<string, { title: string; description: string; gr
     group: "Sentiment",
     title: "Twitter sentiment by suburb (SAL)",
     description:
-      "CouchDB MapReduce _stats per suburb and topic (all tweets, income keywords, crime keywords), Feb-Jul 2022.",
+      "CouchDB MapReduce _stats per suburb and topic (all tweets, income keywords, crime keywords), Feb-Jul 2022. Rows are keyed by SAL code: search a code (e.g. 21640 for Melbourne) or look names up in the suburbs table.",
   },
   mastodon_servers: {
     group: "Sentiment",
@@ -133,11 +133,20 @@ export async function getTable(name: string): Promise<TableInfo | null> {
 
 export const PAGE_SIZE = 25;
 
+/**
+ * Query-string parameters. Each field falls back on its own (`.catch`), so one
+ * bad value (e.g. `dir=up`) never discards the others; an over-long search is
+ * truncated rather than dropped.
+ */
 export const tableParamsSchema = z.object({
-  q: z.string().trim().max(80).optional().default(""),
-  page: z.coerce.number().int().min(1).max(100000).optional().default(1),
-  sort: z.string().max(64).optional(),
-  dir: z.enum(["asc", "desc"]).optional().default("asc"),
+  q: z
+    .string()
+    .trim()
+    .transform((v) => v.slice(0, 80))
+    .catch(""),
+  page: z.coerce.number().int().min(1).max(100000).catch(1),
+  sort: z.string().max(64).optional().catch(undefined),
+  dir: z.enum(["asc", "desc"]).catch("asc"),
 });
 
 export type TableParams = z.infer<typeof tableParamsSchema>;

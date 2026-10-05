@@ -56,6 +56,18 @@ const SOURCES = [
   },
 ];
 
+function Status({ exact }: { exact: boolean }) {
+  return exact ? (
+    <span className="text-sent-pos inline-flex shrink-0 items-center gap-1 text-xs font-medium">
+      <Check className="size-4" aria-hidden /> exact
+    </span>
+  ) : (
+    <span className="text-muted-foreground inline-flex shrink-0 items-center gap-1 text-xs font-medium">
+      <Equal className="size-4" aria-hidden /> close
+    </span>
+  );
+}
+
 export default async function MethodsPage() {
   const [facts, twAll] = await Promise.all([getFacts(), getHistogram("twitter", "all")]);
   const viewTotal = twAll.counts.reduce((a, b) => a + b, 0);
@@ -63,9 +75,10 @@ export default async function MethodsPage() {
   const checks: { claim: string; source: string; result: string; exact: boolean }[] = [
     {
       claim:
-        'Notebook example normalises to "Hello ~ What a good weather ! hahahhah , lmao ! ! …" and scores 8',
+        'Notebook example normalises to "Hello ~ What a good weather ! hahahhah , lmao ! ! …" and the raw string scores 8',
       source: "Sentimental Analysis.ipynb",
-      result: "Identical string and score in the TypeScript port",
+      result:
+        "Identical string and score in the TypeScript port (the processor scored the normalised text, which gives 9)",
       exact: true,
     },
     {
@@ -140,8 +153,27 @@ export default async function MethodsPage() {
       />
 
       <Section kicker="Sources" title="Data">
-        <div className="border-border bg-card relative overflow-x-auto rounded-lg border">
-          <table className="w-full min-w-[44rem] text-sm">
+        {/* phones: one card per source; wider screens: a table */}
+        <ul className="space-y-3 sm:hidden">
+          {SOURCES.map((s) => (
+            <li key={s.name} className="border-border bg-card rounded-lg border p-4 text-sm">
+              <p className="font-medium">{s.name}</p>
+              <p className="text-muted-foreground mt-1">{s.detail}</p>
+              <dl className="mt-3 space-y-2">
+                <div>
+                  <dt className="text-muted-foreground text-xs font-medium">How it is used here</dt>
+                  <dd>{s.used}</dd>
+                </div>
+                <div>
+                  <dt className="text-muted-foreground text-xs font-medium">Terms</dt>
+                  <dd className="text-xs">{s.licence}</dd>
+                </div>
+              </dl>
+            </li>
+          ))}
+        </ul>
+        <div className="border-border bg-card relative hidden overflow-x-auto rounded-lg border sm:block">
+          <table className="w-full text-sm">
             <caption className="sr-only">Data sources</caption>
             <thead className="bg-muted/60 text-muted-foreground text-left text-xs">
               <tr>
@@ -162,7 +194,7 @@ export default async function MethodsPage() {
             <tbody>
               {SOURCES.map((s) => (
                 <tr key={s.name} className="border-border/70 border-t align-top">
-                  <th scope="row" className="px-4 py-3 text-left font-medium whitespace-nowrap">
+                  <th scope="row" className="px-4 py-3 text-left font-medium lg:whitespace-nowrap">
                     {s.name}
                   </th>
                   <td className="text-muted-foreground px-4 py-3">{s.detail}</td>
@@ -260,8 +292,9 @@ export default async function MethodsPage() {
           </p>
           <p>
             <strong className="text-foreground">The NLP pipeline in the browser.</strong> NLTK 3.8.1&apos;s
-            Punkt sentence splitter, word tokeniser, WordNet noun lemmatiser and VADER, ported to TypeScript
-            and verified to reproduce the original Python on every test post and on 44,156 real toots.
+            Punkt sentence splitter, word tokeniser, WordNet noun lemmatiser and VADER, plus the BeautifulSoup
+            HTML-to-text step the Mastodon harvester used, ported to TypeScript and verified to reproduce the
+            original Python on every test post and on 44,156 real toots.
           </p>
         </div>
       </Section>
@@ -276,8 +309,23 @@ export default async function MethodsPage() {
           </p>
         }
       >
-        <div className="border-border bg-card relative overflow-x-auto rounded-lg border">
-          <table className="w-full min-w-[44rem] text-sm">
+        <ul className="space-y-3 sm:hidden">
+          {checks.map((c) => (
+            <li key={c.claim} className="border-border bg-card rounded-lg border p-4 text-sm">
+              <div className="flex items-start justify-between gap-3">
+                <p>{c.claim}</p>
+                <Status exact={c.exact} />
+              </div>
+              <p className="text-muted-foreground mt-2">
+                <span className="text-foreground text-xs font-medium">Reproduced: </span>
+                {c.result}
+              </p>
+              <p className="text-muted-foreground mt-1 text-xs">{c.source}</p>
+            </li>
+          ))}
+        </ul>
+        <div className="border-border bg-card relative hidden overflow-x-auto rounded-lg border sm:block">
+          <table className="w-full text-sm">
             <caption className="sr-only">Reproduction checks</caption>
             <thead className="bg-muted/60 text-muted-foreground text-left text-xs">
               <tr>
@@ -302,15 +350,7 @@ export default async function MethodsPage() {
                   <td className="text-muted-foreground px-4 py-3 text-xs">{c.source}</td>
                   <td className="text-muted-foreground px-4 py-3">{c.result}</td>
                   <td className="px-4 py-3">
-                    {c.exact ? (
-                      <span className="text-sent-pos inline-flex items-center gap-1 text-xs font-medium">
-                        <Check className="size-4" aria-hidden /> exact
-                      </span>
-                    ) : (
-                      <span className="text-muted-foreground inline-flex items-center gap-1 text-xs font-medium">
-                        <Equal className="size-4" aria-hidden /> close
-                      </span>
-                    )}
+                    <Status exact={c.exact} />
                   </td>
                 </tr>
               ))}
@@ -329,6 +369,10 @@ export default async function MethodsPage() {
             [
               "Self-reported places",
               'Twitter\'s place field is often a city, not a suburb: "Melbourne, Victoria" lands in the CBD suburb, inflating its counts.',
+            ],
+            [
+              "The shortest match wins",
+              'The geocoder tries word combinations shortest first and keeps the first known place, so "Albert Park, Victoria" lands in Albert (NSW), "St Kilda, Victoria" in St Kilda (SA), and Port, North and South Melbourne in Melbourne. 579 of the 3,118 Victorian place keys are shadowed this way and 432 of 2,921 Victorian suburbs can never be matched, which is why St Kilda and Albert Park are missing from the map and why Port Phillip loses tweets to the City of Melbourne. The port keeps this behaviour.',
             ],
             [
               "Small samples",

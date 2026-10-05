@@ -123,12 +123,14 @@ export default async function IncomePage() {
               holds.
             </p>
             <div className="relative overflow-x-auto">
-              <table className="w-full min-w-[26rem] text-sm">
+              <table className="w-full text-xs sm:text-sm">
                 <caption className="sr-only">Stored correlations for scenario 1</caption>
                 <thead>
                   <tr className="border-border text-muted-foreground border-b text-left text-xs">
                     <th className="py-1.5 font-medium">Sentiment of</th>
-                    <th className="py-1.5 font-medium">Min tweets</th>
+                    <th className="py-1.5 font-medium">
+                      Min<span className="hidden sm:inline"> tweets</span>
+                    </th>
                     <th className="py-1.5 text-right font-medium">SA2s</th>
                     <th className="py-1.5 text-right font-medium">r</th>
                     <th className="py-1.5 text-right font-medium">ρ</th>
@@ -139,7 +141,8 @@ export default async function IncomePage() {
                   {stored.map((s) => (
                     <tr key={`${s.yMetric}${s.minTweets}`} className="border-border/60 border-b">
                       <td className="py-1.5">
-                        {s.yMetric === "avg_income" ? "income tweets" : "all tweets"}
+                        {s.yMetric === "avg_income" ? "income" : "all"}
+                        <span className="hidden sm:inline"> tweets</span>
                       </td>
                       <td className="py-1.5">≥ {s.minTweets}</td>
                       <td className="py-1.5 text-right">{s.n}</td>

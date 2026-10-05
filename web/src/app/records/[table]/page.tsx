@@ -17,13 +17,14 @@ export async function generateStaticParams() {
 export async function generateMetadata(props: PageProps<"/records/[table]">): Promise<Metadata> {
   const { table } = await props.params;
   const doc = TABLE_DOCS[table];
-  return { title: doc ? `${doc.title} (records)` : `Records: ${table}` };
+  return { title: `${doc?.title ?? table} · Records` };
 }
 
+/** Every integer gets separators (codes are printed raw by the caller); floats keep 8 significant digits. */
 function fmtCell(v: string | number | null): string {
   if (v === null) return "";
   if (typeof v === "number") {
-    if (Number.isInteger(v)) return Math.abs(v) >= 10000 ? v.toLocaleString("en-AU") : String(v);
+    if (Number.isInteger(v)) return v.toLocaleString("en-AU");
     return Number(v.toPrecision(8)).toString();
   }
   return v;
@@ -34,13 +35,12 @@ export default async function TablePage(props: PageProps<"/records/[table]">) {
   const t = await getTable(table);
   if (!t) notFound();
   const raw = await props.searchParams;
-  const parsed = tableParamsSchema.safeParse({
+  const params = tableParamsSchema.parse({
     q: typeof raw.q === "string" ? raw.q : undefined,
     page: typeof raw.page === "string" ? raw.page : undefined,
     sort: typeof raw.sort === "string" ? raw.sort : undefined,
     dir: typeof raw.dir === "string" ? raw.dir : undefined,
   });
-  const params = parsed.success ? parsed.data : tableParamsSchema.parse({});
   const { rows, total, page, pages } = await queryTable(t, params);
   const doc = TABLE_DOCS[t.name];
 
