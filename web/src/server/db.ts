@@ -13,7 +13,8 @@ const SOURCE = path.join(process.cwd(), "data", "analytics.db");
 
 let client: Client | null = null;
 
-function resolveFile(): string {
+/** Path of the database file this process reads (a /tmp copy on Vercel). */
+export function analyticsDbPath(): string {
   // Serverless file systems are read-only outside /tmp; SQLite only needs
   // read access, but copying once per cold start avoids any journal or lock
   // surprises and costs ~2 ms for a 1.7 MB file.
@@ -26,7 +27,7 @@ function resolveFile(): string {
 }
 
 export function db(): Client {
-  client ??= createClient({ url: `file:${resolveFile()}` });
+  client ??= createClient({ url: `file:${analyticsDbPath()}` });
   return client;
 }
 

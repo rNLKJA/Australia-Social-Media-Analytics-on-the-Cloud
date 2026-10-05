@@ -2,110 +2,14 @@ import "server-only";
 
 import { cache } from "react";
 import { z } from "zod";
+import { SCHEMA } from "@/lib/sql/schema";
 import { query } from "./db";
 
-/** Human descriptions of each analytics.db table (shown on /records). */
-export const TABLE_DOCS: Record<string, { title: string; description: string; group: string }> = {
-  facts: {
-    group: "Context",
-    title: "Facts",
-    description: "Headline numbers quoted in the team report, each with its source section.",
-  },
-  meta: {
-    group: "Context",
-    title: "Build metadata",
-    description: "Editions of the boundaries and how the database was built.",
-  },
-  summary_text: {
-    group: "Context",
-    title: "Original summaries",
-    description: "The paragraphs the 2023 dashboard showed beside each chart (written by the team).",
-  },
-  sentiment_histogram: {
-    group: "Sentiment",
-    title: "Sentiment histograms (2023 dashboard)",
-    description:
-      "Counts of 1-9 sentiment scores for Twitter and the three Mastodon servers, as plotted in 2023.",
-  },
-  twitter_sal_sentiment: {
-    group: "Sentiment",
-    title: "Twitter sentiment by suburb (SAL)",
-    description:
-      "CouchDB MapReduce _stats per suburb and topic (all tweets, income keywords, crime keywords), Feb-Jul 2022. Rows are keyed by SAL code: search a code (e.g. 21640 for Melbourne) or look names up in the suburbs table.",
-  },
-  mastodon_servers: {
-    group: "Sentiment",
-    title: "Mastodon servers",
-    description: "The three servers the harvesters followed.",
-  },
-  mastodon_rescored_histogram: {
-    group: "Sentiment",
-    title: "mastodon.social re-scored histogram",
-    description: "The surviving May 2023 raw harvest re-scored with the original pipeline (aggregates only).",
-  },
-  mastodon_hourly: {
-    group: "Sentiment",
-    title: "mastodon.social by hour",
-    description: "Toots per UTC hour with score sums and 1-9 bucket counts.",
-  },
-  mastodon_language: {
-    group: "Sentiment",
-    title: "mastodon.social by language",
-    description: "Toots per declared language with score sums and bucket counts.",
-  },
-  regions_sal: {
-    group: "Geography",
-    title: "Suburbs and localities (SAL 2021)",
-    description: "ABS SAL regions with tweets, a representative point and the SA2/LGA they fall in.",
-  },
-  regions_sa2: {
-    group: "Geography",
-    title: "Victorian SA2s (2016)",
-    description: "ABS Statistical Area Level 2 regions in Victoria.",
-  },
-  regions_lga: {
-    group: "Geography",
-    title: "Victorian LGAs (2019)",
-    description: "ABS Local Government Areas in Victoria.",
-  },
-  income_sa2: {
-    group: "SUDO",
-    title: "Personal income by SA2",
-    description:
-      "SUDO / ABS personal income 2015-16 (mean, median, sum, median age of earners) for every SA2.",
-  },
-  income_gcc: {
-    group: "SUDO",
-    title: "Personal income by capital city area",
-    description: "The SA2 rows grouped by Greater Capital City Statistical Area, as in the original summary.",
-  },
-  jobs_income_indicators: {
-    group: "SUDO",
-    title: "Jobs and income by industry",
-    description:
-      "ABS Jobs in Australia indicators (mean, sd and median across SA2s) from the original bar chart.",
-  },
-  crime_lga: {
-    group: "SUDO",
-    title: "Recorded offences by LGA",
-    description: "Victorian Crime Statistics Agency offence divisions per LGA (reference year 2019).",
-  },
-  scenario_income_sa2: {
-    group: "Scenarios",
-    title: "Scenario 1: income vs sentiment",
-    description: "Median income joined with suburb tweet sentiment pooled to SA2 (revival analysis).",
-  },
-  scenario_crime_lga: {
-    group: "Scenarios",
-    title: "Scenario 2: crime vs sentiment",
-    description: "Offence totals joined with suburb tweet sentiment pooled to LGA (revival analysis).",
-  },
-  scenario_correlations: {
-    group: "Scenarios",
-    title: "Scenario correlations",
-    description: "Pearson, Spearman and least-squares fits at several minimum-tweet thresholds (scipy).",
-  },
-};
+/** Human descriptions of each analytics.db table (shown on /records), from the shared schema docs. */
+export const TABLE_DOCS: Record<string, { title: string; description: string; group: string }> =
+  Object.fromEntries(
+    SCHEMA.map((t) => [t.name, { title: t.title, description: t.description, group: t.group }]),
+  );
 
 export interface TableInfo {
   name: string;
