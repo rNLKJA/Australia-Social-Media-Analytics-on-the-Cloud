@@ -3,7 +3,7 @@ import Link from "next/link";
 import { SentimentHistogram } from "@/components/charts/sentiment-histogram";
 import { Finding, Note, PageHeader, Section, StatStrip } from "@/components/editorial/page-header";
 import { TwitterExplorer } from "@/components/scenario/twitter-explorer";
-import { fmtInt, fmtPct, fmtScore } from "@/lib/format";
+import { fmtInt, fmtPct, fmtScore, plural } from "@/lib/format";
 import { median } from "@/lib/pandas";
 import type { SalRegion } from "@/lib/types";
 import { getFacts, getHistogram, getSalRegions } from "@/server/analytics";
@@ -99,14 +99,14 @@ export default async function TwitterPage() {
             <p className="num text-xs text-muted-foreground">{fmtInt(total)} tweets with a matched suburb</p>
             <SentimentHistogram counts={all.counts} label="Sentiment score distribution of all geotagged tweets" className="mt-3" />
           </div>
-          <Finding source="Team 57 report, section 6.1 (paraphrased)">
+          <Finding className="self-start" source="Team 57 report, section 6.1 (paraphrased)">
             <p>
               Most suburbs average between 4 and 7. The few with very low (≤ 4) or very high (&gt; 7) averages are
               scattered with no visible clusters, so the team found no geographic pattern at this level.
             </p>
             <p>
               The saved data explains why: the {low.length + high.length} suburbs at the extremes have a median of just{" "}
-              {fmtInt(extremesMedianN)} tweets each, against {fmtInt(midMedianN)} for the rest. Extreme averages are
+              {plural(extremesMedianN, "tweet")} each, against {fmtInt(midMedianN)} for the rest. Extreme averages are
               mostly small samples.
             </p>
           </Finding>

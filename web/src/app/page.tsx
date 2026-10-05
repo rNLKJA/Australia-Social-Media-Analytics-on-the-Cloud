@@ -245,7 +245,7 @@ export default async function Home() {
             </a>
           </div>
           <div className="space-y-6">
-            <div className="overflow-x-auto rounded-lg border border-border bg-card">
+            <div className="relative overflow-x-auto rounded-lg border border-border bg-card">
               <table className="w-full text-sm">
                 <caption className="sr-only">Original stack compared with the revived stack</caption>
                 <thead className="bg-muted/60 text-left text-xs text-muted-foreground">

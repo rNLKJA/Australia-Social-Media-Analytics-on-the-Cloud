@@ -23,7 +23,8 @@ export function fmtP(p: number): string {
 }
 
 export function fmtR(r: number): string {
-  return (r < 0 ? "−" : "") + Math.abs(r).toFixed(2);
+  const a = Math.abs(r).toFixed(2);
+  return (r < 0 && a !== "0.00" ? "−" : "") + a;
 }
 
 export function plural(n: number, one: string, many = `${one}s`) {

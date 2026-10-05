@@ -167,7 +167,7 @@ export default async function MastodonPage() {
         <div className="mt-10 rounded-lg border border-border bg-card p-5">
           <h3 className="text-sm font-semibold">Toots per hour, and how they scored</h3>
           <p className="text-xs text-muted-foreground">
-            UTC hours. The gap on 6-8 May is a pause in the harvest, not a quiet weekend.
+            UTC hours. Gaps are pauses in the harvest (most visibly 6-8 May), not quiet periods; the line skips hours with fewer than 50 toots.
           </p>
           <div className="mt-4">
             <HourlyTimeline hours={hours} />

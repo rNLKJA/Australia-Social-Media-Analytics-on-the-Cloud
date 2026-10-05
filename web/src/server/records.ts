@@ -26,7 +26,7 @@ export const TABLE_DOCS: Record<string, { title: string; description: string; gr
     group: "Sentiment",
     title: "Twitter sentiment by suburb (SAL)",
     description:
-      "CouchDB MapReduce `_stats` per suburb and topic (all tweets, income keywords, crime keywords), Feb-Jul 2022.",
+      "CouchDB MapReduce _stats per suburb and topic (all tweets, income keywords, crime keywords), Feb-Jul 2022.",
   },
   mastodon_servers: { group: "Sentiment", title: "Mastodon servers", description: "The three servers the harvesters followed." },
   mastodon_rescored_histogram: {

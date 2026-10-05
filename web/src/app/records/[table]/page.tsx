@@ -101,7 +101,7 @@ export default async function TablePage(props: PageProps<"/records/[table]">) {
           </div>
         </div>
 
-        <div className="mt-5 overflow-x-auto rounded-lg border border-border bg-card">
+        <div className="relative mt-5 overflow-x-auto rounded-lg border border-border bg-card">
           <table className="w-full text-sm">
             <caption className="sr-only">
               {doc?.title ?? t.name}, page {page} of {pages}

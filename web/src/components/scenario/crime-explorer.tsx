@@ -93,7 +93,7 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 rounded-lg border border-border bg-card p-4 xl:flex-row xl:items-end xl:justify-between">
+      <div className="grid gap-x-6 gap-y-4 rounded-lg border border-border bg-card p-4 sm:grid-cols-2 xl:grid-cols-[auto_auto_minmax(11rem,1fr)_minmax(13rem,1fr)] xl:items-start">
         <div className="space-y-1.5">
           <span className="block text-xs font-medium">Map shows</span>
           <Segmented
@@ -101,14 +101,14 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
             value={mapMetric}
             onChange={setMapMetric}
             options={[
-              { value: "total", label: "Recorded offences" },
-              { value: "crime", label: "Crime-tweet sentiment" },
-              { value: "all", label: "All-tweet sentiment" },
+              { value: "total", label: "Offences" },
+              { value: "crime", label: "Crime-tweet mood" },
+              { value: "all", label: "All-tweet mood" },
             ]}
           />
         </div>
         <div className="space-y-1.5">
-          <span className="block text-xs font-medium">Chart compares offences with</span>
+          <span className="block text-xs font-medium">Chart: offences vs</span>
           <Segmented
             label="Sentiment measure"
             value={yMetric}
@@ -119,8 +119,8 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
             ]}
           />
         </div>
-        <ThresholdControl value={minTweets} onChange={setMinTweets} max={40} className="xl:w-56" />
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+        <div className="space-y-3">
+          <ThresholdControl value={minTweets} onChange={setMinTweets} max={40} />
           <label className="flex cursor-pointer items-center gap-2 text-xs">
             <input
               type="checkbox"
@@ -130,9 +130,11 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
             />
             Include the 7 IQR outliers (e.g. Melbourne)
           </label>
+        </div>
+        <div className="space-y-1.5">
+          <span className="block text-xs font-medium">Find</span>
           <RegionSearch
-            className="sm:w-56"
-            placeholder="Find an LGA (e.g. Ballarat)"
+            placeholder="An LGA, e.g. Ballarat"
             items={regions.map((r) => ({ code: r.code, name: r.name, hint: fmtCompact(r.total) }))}
             onPick={setSelected}
           />
@@ -171,7 +173,7 @@ export function CrimeExplorer({ regions, stored }: { regions: CrimeRegion[]; sto
                 label="Recorded offences, 2019 (quantile classes)"
                 breaks={breaks}
                 colors={SEQUENTIAL[theme]}
-                format={fmtCompact}
+                format={(v) => fmtCompact(Math.round(v))}
               />
             ) : (
               <DivergingLegend

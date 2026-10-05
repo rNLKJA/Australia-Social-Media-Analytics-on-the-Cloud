@@ -262,7 +262,7 @@ export function PipelineLab({ sals }: { sals: Record<string, SalInfo> }) {
                 <p>
                   Matched <code className="rounded bg-highlight/60 px-1 font-mono text-xs">{geo.matched}</code> → SAL{" "}
                   <strong className="num">{geo.sal}</strong>
-                  {sal && (
+                  {sal ? (
                     <>
                       {" "}
                       ({sal.name}). In 2022 this suburb had{" "}
@@ -272,6 +272,11 @@ export function PipelineLab({ sals }: { sals: Record<string, SalInfo> }) {
                         See the map
                       </Link>
                     </>
+                  ) : (
+                    <span className="text-muted-foreground">
+                      {" "}
+                      (not one of the 1,085 Victorian suburbs with tweets in the saved views)
+                    </span>
                   )}
                 </p>
               ) : (

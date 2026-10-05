@@ -33,3 +33,11 @@ describe("palette", () => {
     expect(classify(8, b)).toBe(3);
   });
 });
+
+describe("format", () => {
+  it("never prints a negative zero correlation", async () => {
+    const { fmtR } = await import("./format");
+    expect(fmtR(-0.0015)).toBe("0.00");
+    expect(fmtR(-0.31)).toBe("−0.31");
+  });
+});

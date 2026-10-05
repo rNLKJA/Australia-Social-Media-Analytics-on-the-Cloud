@@ -52,7 +52,7 @@ export function TwitterExplorer({ regions }: { regions: SalRegion[] }) {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col gap-4 rounded-lg border border-border bg-card p-4 lg:flex-row lg:items-end lg:justify-between">
+      <div className="grid gap-x-6 gap-y-4 rounded-lg border border-border bg-card p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-[auto_auto_minmax(11rem,1fr)_auto_minmax(13rem,1fr)] xl:items-start">
         <div className="space-y-1.5">
           <span className="block text-xs font-medium">Tweets</span>
           <Segmented
@@ -73,12 +73,12 @@ export function TwitterExplorer({ regions }: { regions: SalRegion[] }) {
             value={measure}
             onChange={setMeasure}
             options={[
-              { value: "avg", label: "Average sentiment" },
-              { value: "count", label: "Number of tweets" },
+              { value: "avg", label: "Average mood" },
+              { value: "count", label: "Tweet volume" },
             ]}
           />
         </div>
-        <ThresholdControl value={minTweets} onChange={setMinTweets} max={100} label="Minimum tweets per suburb" className="lg:w-56" />
+        <ThresholdControl value={minTweets} onChange={setMinTweets} max={100} label="Minimum tweets per suburb" />
         <div className="space-y-1.5">
           <span className="block text-xs font-medium">Zoom to</span>
           <Segmented
@@ -91,12 +91,14 @@ export function TwitterExplorer({ regions }: { regions: SalRegion[] }) {
             ]}
           />
         </div>
-        <RegionSearch
-          className="lg:w-60"
-          placeholder="Find a suburb (e.g. Carlton)"
-          items={regions.map((r) => ({ code: r.code, name: r.name, hint: r.all ? fmtCompact(r.all.n) : undefined }))}
-          onPick={setSelected}
-        />
+        <div className="space-y-1.5">
+          <span className="block text-xs font-medium">Find</span>
+          <RegionSearch
+            placeholder="A suburb, e.g. Carlton"
+            items={regions.map((r) => ({ code: r.code, name: r.name, hint: r.all ? fmtCompact(r.all.n) : undefined }))}
+            onPick={setSelected}
+          />
+        </div>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[1fr_20rem]">

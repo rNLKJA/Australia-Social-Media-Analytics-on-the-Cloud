@@ -127,14 +127,14 @@ export default async function MethodsPage() {
         title="Where the numbers come from, and how far to trust them"
         lede={
           <>
-            Social Sense was a five-person, six-week cloud computing project. This page documents the data, the original
+            Social Sense was a five-person cloud computing project. This page documents the data, the original
             processing, what the revival recomputed and the checks that tie every chart back to the 2023 outputs.
           </>
         }
       />
 
       <Section kicker="Sources" title="Data">
-        <div className="overflow-x-auto rounded-lg border border-border bg-card">
+        <div className="relative overflow-x-auto rounded-lg border border-border bg-card">
           <table className="w-full min-w-[44rem] text-sm">
             <caption className="sr-only">Data sources</caption>
             <thead className="bg-muted/60 text-left text-xs text-muted-foreground">
@@ -230,9 +230,9 @@ export default async function MethodsPage() {
       <Section
         kicker="Reproduction"
         title="Checks against the 2023 outputs"
-        intro={<p>Each row is asserted by the build script or the test suite (CI runs the latter on every push).</p>}
+        intro={<p>Rows marked exact are asserted by the build script or by the test suite, which CI runs on every push. Rows marked close are reported for transparency.</p>}
       >
-        <div className="overflow-x-auto rounded-lg border border-border bg-card">
+        <div className="relative overflow-x-auto rounded-lg border border-border bg-card">
           <table className="w-full min-w-[44rem] text-sm">
             <caption className="sr-only">Reproduction checks</caption>
             <thead className="bg-muted/60 text-left text-xs text-muted-foreground">
@@ -284,7 +284,7 @@ export default async function MethodsPage() {
           ))}
         </ul>
         <Note className="mt-6">
-          {SITE.subject} · {SITE.university} · {SITE.term}. Built facts: {fmtInt(facts.tweets_processed?.value ?? 0)} tweets
+          {SITE.subject} · {SITE.university} · {SITE.term}. Key figures: {fmtInt(facts.tweets_processed?.value ?? 0)} tweets
           processed, {fmtInt(facts.toots_harvested?.value ?? 0)} toots harvested.{" "}
           <a className="link" href={SITE.repo}>
             Source code and original submission on GitHub

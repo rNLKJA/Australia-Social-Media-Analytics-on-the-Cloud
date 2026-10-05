@@ -96,7 +96,7 @@ export default async function IncomePage() {
               geographic pattern and no clear link with income.
             </p>
           </Finding>
-          <div className="space-y-3">
+          <div className="min-w-0 space-y-3">
             <h3 className="font-serif text-xl font-semibold">Revisited with the same data</h3>
             <p className="prose-civic text-muted-foreground">
               Pooling suburbs into SA2s makes the claim testable. Across all thresholds the relationship stays weak:
@@ -104,7 +104,8 @@ export default async function IncomePage() {
               {fmtR(Math.max(...stored.map((s) => s.pearsonR)))}, never explaining more than{" "}
               {(Math.max(...stored.map((s) => s.r2)) * 100).toFixed(0)}% of the variation. The 2023 reading holds.
             </p>
-            <table className="w-full text-sm">
+            <div className="relative overflow-x-auto">
+            <table className="w-full min-w-[26rem] text-sm">
               <caption className="sr-only">Stored correlations for scenario 1</caption>
               <thead>
                 <tr className="border-b border-border text-left text-xs text-muted-foreground">
@@ -129,6 +130,7 @@ export default async function IncomePage() {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         </div>
       </Section>

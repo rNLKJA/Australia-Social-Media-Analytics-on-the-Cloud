@@ -68,7 +68,7 @@ export function SentimentHistogram({
               {showValues && s >= 0.005 && (
                 <text
                   x={x + (bw - 6) / 2}
-                  y={y(Math.max(s, cShares?.[i] ?? 0)) - 5}
+                  y={y(s) - 5}
                   textAnchor="middle"
                   className={cn("num fill-muted-foreground text-[9px]", i === mode && "fill-foreground font-semibold")}
                 >
@@ -101,7 +101,8 @@ export function SentimentHistogram({
           {compareLabel}
         </figcaption>
       )}
-      <table className="sr-only">
+      <div className="sr-only">
+      <table>
         <caption>{label}</caption>
         <thead>
           <tr>
@@ -124,6 +125,7 @@ export function SentimentHistogram({
           ))}
         </tbody>
       </table>
+      </div>
     </figure>
   );
 }

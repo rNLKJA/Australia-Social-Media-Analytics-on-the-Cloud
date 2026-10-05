@@ -178,6 +178,37 @@ function Diagram({ step }: { step: Step }) {
   );
 }
 
+const FLOW: NodeId[][] = [["twitter", "mastodon"], ["mpi", "harvester"], ["couch"], ["views"], ["sudo", "flask"], ["react"]];
+
+/** Small screens: the same highlighting as a readable chain of chips. */
+function MobileFlow({ step }: { step: Step }) {
+  return (
+    <ol className="flex flex-wrap items-center gap-1.5 sm:hidden" aria-label={`System components, highlighting: ${step.title}`}>
+      {FLOW.map((group, gi) => (
+        <li key={gi} className="flex items-center gap-1.5">
+          {group.map((id) => (
+            <span
+              key={id}
+              className={cn(
+                "rounded-md border px-2 py-1 text-[11px] font-medium transition-colors duration-300",
+                step.nodes.includes(id)
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border bg-muted text-muted-foreground",
+              )}
+            >
+              {NODES[id].label}
+            </span>
+          ))}
+          {gi < FLOW.length - 1 && <span className="text-muted-foreground" aria-hidden>→</span>}
+        </li>
+      ))}
+      <li className={cn("w-full text-[11px]", step.cloud ? "font-semibold text-primary" : "text-muted-foreground")}>
+        All inside the Melbourne Research Cloud, deployed with Ansible and Docker Swarm
+      </li>
+    </ol>
+  );
+}
+
 export function ArchitectureStory() {
   const [active, setActive] = useState(0);
   const refs = useRef<(HTMLLIElement | null)[]>([]);
@@ -198,7 +229,10 @@ export function ArchitectureStory() {
   return (
     <div className="grid gap-8 lg:grid-cols-[1.25fr_1fr] lg:gap-14">
       <div className="sticky top-14 z-10 -mx-4 self-start border-b border-border bg-background/95 px-4 py-3 backdrop-blur sm:mx-0 sm:rounded-lg sm:border sm:px-3 lg:top-24 lg:border-0 lg:bg-transparent lg:p-0">
-        <Diagram step={STEPS[active]} />
+        <div className="hidden sm:block">
+          <Diagram step={STEPS[active]} />
+        </div>
+        <MobileFlow step={STEPS[active]} />
         <p className="mt-1 hidden text-center text-xs text-muted-foreground lg:block">
           Step {active + 1} of {STEPS.length}: {STEPS[active].title}
         </p>

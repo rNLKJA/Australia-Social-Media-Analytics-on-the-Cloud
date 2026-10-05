@@ -39,6 +39,7 @@ interface Props {
 }
 
 const M = { top: 16, right: 18, bottom: 46, left: 52 };
+const px = (v: number) => Math.round(v * 10) / 10;
 
 export function ScatterPlot({
   points,
@@ -69,10 +70,13 @@ export function ScatterPlot({
     const xd: [number, number] =
       xType === "log" ? [Math.max(1, x0 * 0.85), x1 * 1.15] : [x0 - (x1 - x0) * 0.04, x1 + (x1 - x0) * 0.04];
     const yd: [number, number] = yDomain ?? [y0 - 0.3, y1 + 0.3];
-    const xs = (xType === "log" ? logScale : linearScale)(xd, [M.left, W - M.right]);
-    const ys = linearScale(yd, [H - M.bottom, M.top]);
+    const rawX = (xType === "log" ? logScale : linearScale)(xd, [M.left, W - M.right]);
+    const rawY = linearScale(yd, [H - M.bottom, M.top]);
+    // round to 0.1 px so server and browser Math (e.g. log10) produce identical markup
+    const xs = Object.assign((v: number) => px(rawX(v)), { domain: rawX.domain, range: rawX.range });
+    const ys = Object.assign((v: number) => px(rawY(v)), { domain: rawY.domain, range: rawY.range });
     const nMax = Math.max(1, ...points.map((p) => p.n));
-    const rs = (n: number) => 2.5 + Math.sqrt(n / nMax) * 11;
+    const rs = (n: number) => px(2.5 + Math.sqrt(n / nMax) * 11);
     const xt = xType === "log" ? logTicks(xd[0], xd[1]) : niceTicks(xd[0], xd[1], W < 480 ? 3 : 5);
     return { x: xs, y: ys, r: rs, xTicks: xt, yTicks: niceTicks(yd[0], yd[1], 5) };
   }, [points, W, H, xType, yDomain]);
@@ -99,14 +103,19 @@ export function ScatterPlot({
     // naive collision avoidance: stack labels that would overlap vertically
     const items = points
       .filter((p) => annotate.includes(p.id) && p.id !== focus?.id)
-      .map((p) => ({ p, lx: x(p.x) + r(p.n) + 4, ly: y(p.y) }))
+      .map((p) => {
+        // flip labels to the left of the dot near the right edge
+        const right = x(p.x) + r(p.n) + 4;
+        const flip = right + p.label.length * 6.2 > W - 4;
+        return { p, lx: flip ? x(p.x) - r(p.n) - 4 : right, ly: y(p.y), anchor: (flip ? "end" : "start") as "end" | "start" };
+      })
       .sort((a, b) => a.ly - b.ly);
     for (let i = 1; i < items.length; i++) {
       const prev = items[i - 1];
       if (Math.abs(items[i].lx - prev.lx) < 90 && items[i].ly - prev.ly < 13) items[i].ly = prev.ly + 13;
     }
     return items;
-  }, [points, annotate, focus, x, y, r]);
+  }, [points, annotate, focus, x, y, r, W]);
 
   return (
     <div ref={ref} className={cn("relative w-full select-none", className)}>
@@ -189,11 +198,12 @@ export function ScatterPlot({
           <path d={fitPath} fill="none" stroke="var(--foreground)" strokeWidth={2} strokeDasharray="6 4" opacity={0.85} />
         )}
 
-        {labelled.map(({ p, lx, ly }) => (
+        {labelled.map(({ p, lx, ly, anchor }) => (
           <text
             key={`l${p.id}`}
             x={lx}
             y={ly}
+            textAnchor={anchor}
             dy="0.32em"
             className="pointer-events-none fill-foreground text-[11px] font-medium"
             style={{ paintOrder: "stroke", stroke: "var(--background)", strokeWidth: 3 }}

@@ -11,13 +11,17 @@ export const metadata: Metadata = {
 };
 
 const GROUP_ORDER = ["Scenarios", "Sentiment", "SUDO", "Geography", "Context", "Other"];
+const DOC_KEYS = Object.keys(TABLE_DOCS);
+const order = (name: string) => (DOC_KEYS.includes(name) ? DOC_KEYS.indexOf(name) : 999);
 
 export default async function RecordsPage() {
   const tables = await listTables();
   const total = tables.reduce((a, t) => a + t.rows, 0);
   const groups = GROUP_ORDER.map((g) => ({
     group: g,
-    tables: tables.filter((t) => (TABLE_DOCS[t.name]?.group ?? "Other") === g),
+    tables: tables
+      .filter((t) => (TABLE_DOCS[t.name]?.group ?? "Other") === g)
+      .sort((a, b) => order(a.name) - order(b.name)),
   })).filter((g) => g.tables.length);
 
   return (

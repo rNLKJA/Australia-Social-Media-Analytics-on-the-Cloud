@@ -96,7 +96,7 @@ export function IncomeExplorer({
   return (
     <div className="space-y-6">
       {/* controls */}
-      <div className="flex flex-col gap-4 rounded-lg border border-border bg-card p-4 md:flex-row md:items-end md:justify-between">
+      <div className="grid gap-x-6 gap-y-4 rounded-lg border border-border bg-card p-4 sm:grid-cols-2 xl:grid-cols-[auto_auto_minmax(11rem,1fr)_minmax(13rem,1fr)] xl:items-start">
         <div className="space-y-1.5">
           <span className="block text-xs font-medium">Map shows</span>
           <Segmented
@@ -105,13 +105,13 @@ export function IncomeExplorer({
             onChange={setMapMetric}
             options={[
               { value: "median", label: "Median income" },
-              { value: "income", label: "Income-tweet sentiment" },
-              { value: "all", label: "All-tweet sentiment" },
+              { value: "income", label: "Income-tweet mood" },
+              { value: "all", label: "All-tweet mood" },
             ]}
           />
         </div>
         <div className="space-y-1.5">
-          <span className="block text-xs font-medium">Chart compares income with</span>
+          <span className="block text-xs font-medium">Chart: income vs</span>
           <Segmented
             label="Sentiment measure"
             value={yMetric}
@@ -122,13 +122,15 @@ export function IncomeExplorer({
             ]}
           />
         </div>
-        <ThresholdControl value={minTweets} onChange={setMinTweets} className="md:w-64" />
-        <RegionSearch
-          className="md:w-64"
-          placeholder="Find an SA2 (e.g. Sydenham)"
-          items={kept.map((r) => ({ code: r.code, name: r.name, hint: fmtAudK(r.medianAud) }))}
-          onPick={setSelected}
-        />
+        <ThresholdControl value={minTweets} onChange={setMinTweets} />
+        <div className="space-y-1.5">
+          <span className="block text-xs font-medium">Find</span>
+          <RegionSearch
+            placeholder="An SA2, e.g. Sydenham"
+            items={kept.map((r) => ({ code: r.code, name: r.name, hint: fmtAudK(r.medianAud) }))}
+            onPick={setSelected}
+          />
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1.15fr_1fr]">
