@@ -1,13 +1,15 @@
 # /// script
 # requires-python = ">=3.11"
 # dependencies = [
-#   "pandas>=2.2",
-#   "numpy>=1.26",
-#   "scipy>=1.13",
-#   "geopandas>=1.0",
-#   "pyogrio>=0.9",
-#   "shapely>=2.0",
+#   "pandas==3.0.6",
+#   "numpy==2.5.3",
+#   "scipy==1.18.1",
+#   "geopandas==1.2.0",
+#   "pyogrio==0.13.0",
+#   "shapely==2.1.2",
 # ]
+# [tool.uv]
+# exclude-newer = "2026-10-05T00:00:00Z"
 # ///
 """Build the read-only analytics database and boundary files for the web app.
 
@@ -836,7 +838,7 @@ def run_mapshaper(src: Path, dst: Path, simplify: list[str], extra: list[str] | 
     cmd = [
         "npx",
         "--yes",
-        "mapshaper@0.6",
+        "mapshaper@0.6.121",  # pinned: simplification output must stay byte-identical
         "-i",
         str(src),
         "-simplify",

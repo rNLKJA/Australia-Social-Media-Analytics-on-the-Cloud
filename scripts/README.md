@@ -4,7 +4,7 @@ Reproducible Python scripts that turn the **original** Team 57 code and data int
 
 | Script | Reads | Writes | Runtime |
 | --- | --- | --- | --- |
-| `build_nlp_assets.py` | NLTK 3.8.1 data (downloaded to `scripts/.cache/`), `coursework/.../sal.processed.dict.pkl`, `fixtures/nlp_parity_corpus.txt` | `web/public/data/nlp/*` (VADER lexicon, WordNet noun lemmas, Punkt English parameters, SAL lookup), `web/src/lib/__fixtures__/nlp-parity.json` | ~5 s |
+| `build_nlp_assets.py` | NLTK 3.8.1 data (downloaded to `scripts/.cache/`), `coursework/.../sal.processed.dict.pkl`, `fixtures/nlp_parity_corpus.txt` (tweets), `fixtures/toot_parity_corpus.txt` (toots) | `web/public/data/nlp/*` (VADER lexicon, WordNet noun lemmas, Punkt English parameters, SAL lookup, BeautifulSoup's HTML entity table), `web/src/lib/__fixtures__/nlp-parity.json` | ~5 s |
 | `build_mastodon.py` | raw mastodon.social harvest (`raw/Mastodon_social/*.json`, 595k toots) | `derived/mastodon-social-2023-05.json` (hourly, language and histogram aggregates) | ~1 min on 9 cores |
 | `build_analytics.py` | Plotly JSON shipped by the 2023 dashboard (`coursework/2_ReactJS_frontend/frontend/public`), CouchDB view exports, SUDO CSVs, ABS boundaries, `derived/*.json` | `web/data/analytics.db`, `web/public/geo/*.topo.json`, `web/src/lib/__fixtures__/*-parity.json` | ~30 s |
 
@@ -16,7 +16,7 @@ uv run scripts/build_mastodon.py             # optional: needs the raw toots; ou
 uv run scripts/build_analytics.py            # needs Node (npx mapshaper) for the boundary files
 ```
 
-All outputs are deterministic: re-running a script on the same inputs produces byte-identical files.
+All outputs are deterministic: re-running a script on the same inputs produces byte-identical files. To keep it that way, every Python dependency is pinned to an exact version in the script's inline metadata (plus a `[tool.uv] exclude-newer` cut-off for transitive packages), and `build_analytics.py` calls a pinned `mapshaper@0.6.121`.
 
 ## Parity checks
 
@@ -28,7 +28,14 @@ The scripts call the original functions from `coursework/` (imported unchanged) 
 - 79 LGAs with crime data, exactly the 72 drawn on the original crime map after filtering, and every category total of the original grouped bar chart;
 - the SUDO summary quotes (8ACTE median 60.2k, 5RWAU mean 71.5k).
 
-`build_nlp_assets.py` records the outputs of the original `normalize_string` / `sentiment_analysis` / SAL geocoder on a synthetic corpus so the TypeScript port can be tested in CI (`web/src/lib/nlp/nlp.test.ts`). With `--sample N` it also scores N real toots into `/tmp` for a local-only cross-check (never committed, because it contains public toot text). At the time of writing the port reproduced all 44,156 toots of one harvest file exactly.
+`build_nlp_assets.py` records the outputs of the original `normalize_string` / `sentiment_analysis` / SAL geocoder on a synthetic tweet corpus, and of the Mastodon harvester's own `extract_mastodon_info()` (`coursework/1_Flask_Backend/harvester/mastodon/toot.py`, imported unchanged) on synthetic toot HTML, so the TypeScript port of both paths can be tested in CI (`web/src/lib/nlp/nlp.test.ts`). The two paths differ: tweets had mentions, hashtags and links stripped before scoring; toots were only converted from HTML to text with BeautifulSoup and were never geocoded.
+
+With `--sample N` the script also scores N real toots into `/tmp` for a local-only cross-check (never committed, because it contains public toot text). The test then compares every field: BeautifulSoup's text, tokens, normalised text, all four VADER scores and the bucket. At the time of writing the port reproduced all 44,156 toots of one harvest file exactly in every field:
+
+```bash
+uv run scripts/build_nlp_assets.py --sample 44156
+cd web && pnpm test     # the "local cross-check on real toots" block runs when /tmp/social-sense-nlp-sample.json exists
+```
 
 ## Raw inputs (not in the repository)
 

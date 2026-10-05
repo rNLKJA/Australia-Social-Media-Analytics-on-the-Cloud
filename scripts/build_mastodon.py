@@ -5,6 +5,8 @@
 #   "langdetect==1.0.9",
 #   "beautifulsoup4==4.11.2",
 # ]
+# [tool.uv]
+# exclude-newer = "2026-10-05T00:00:00Z"
 # ///
 """Re-score the raw mastodon.social harvest with the ORIGINAL pipeline and keep aggregates.
 

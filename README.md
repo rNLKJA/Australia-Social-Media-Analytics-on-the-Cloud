@@ -31,7 +31,7 @@ The two research scenarios were: (1) do people in higher- and lower-income areas
 The MRC project, CouchDB cluster and Twitter corpus are gone, and the original dashboard downloaded 37-46 MB of Plotly JSON per map. The revival keeps the methods and conclusions and rebuilds the presentation:
 
 - **Reproducible data pipeline.** `scripts/` re-runs the team's own Python on the surviving inputs (CouchDB view exports, SUDO extracts, ABS boundaries, one week of raw toots), asserts 18 parity checks against the figures the 2023 dashboard shipped, and writes a 1.7 MB read-only SQLite database plus 1.2 MB of simplified TopoJSON.
-- **The NLP pipeline in the browser.** NLTK 3.8.1's Punkt sentence splitter, word tokeniser, WordNet noun lemmatiser and VADER are ported to TypeScript and reproduce the original Python **exactly**: on a 127-post synthetic corpus in CI and on 44,156 real toots locally (0 mismatches).
+- **The NLP pipeline in the browser.** NLTK 3.8.1's Punkt sentence splitter, word tokeniser, WordNet noun lemmatiser and VADER, plus the BeautifulSoup HTML-to-text step of the Mastodon harvester, are ported to TypeScript and reproduce the original Python **exactly**: on 127 synthetic tweets and 23 synthetic toots in CI, and on 44,156 real toots locally (0 mismatches in text, tokens, normalised text, VADER scores and buckets). The lab scores a post either the tweet way (mentions, hashtags and links stripped, then geocoded) or the toot way (HTML to text only), as the 2023 code did.
 - **Testable claims.** Suburb tweets are pooled into SA2s and LGAs so the scenarios can be measured, with Pearson, Spearman and least-squares fits recomputed in the browser and unit-tested against scipy.
 
 ### Key results (recomputed)
@@ -55,7 +55,7 @@ The MRC project, CouchDB cluster and Twitter corpus are gone, and the original d
 | `/income` | Scenario 1: SA2 income choropleth linked to a scatter, regression and live correlations |
 | `/crime` | Scenario 2: LGA offences vs crime-tweet sentiment, with the outliers toggle and the suburb-level check |
 | `/mastodon` | The three servers' 2023 histograms, a re-scored week (hourly, by language) and the English-only caveat |
-| `/pipeline` | Type a post and watch the ported 2023 pipeline score it, step by step (Web Worker) |
+| `/pipeline` | Type a tweet or a toot and watch the ported 2023 code path score it, step by step (Web Worker) |
 | `/methods` | Sources, original and revival processing, reproduction checks, limitations |
 | `/records` | Every table of `analytics.db` with search, sorting, pagination and CSV export |
 
@@ -70,7 +70,7 @@ The MRC project, CouchDB cluster and Twitter corpus are gone, and the original d
 | Frontend | React 18, MUI, Plotly, Tailwind | Next.js App Router, React 19, Tailwind CSS v4, shadcn/ui, hand-rolled SVG charts |
 | Maps | Plotly Mapbox | MapLibre GL JS + OpenFreeMap tiles (no key), bundled state outlines as fallback |
 | NLP | NLTK 3.8.1 (Python 3.11) | The same algorithms in TypeScript, run in a Web Worker |
-| Tests | – | Vitest (235 tests incl. parity), ESLint, TypeScript strict, GitHub Actions |
+| Tests | – | Vitest (289 tests incl. parity), ESLint, TypeScript strict, GitHub Actions |
 | Deployment | Ansible + Docker Swarm | `git push` |
 
 ## Repository structure
@@ -93,12 +93,14 @@ The MRC project, CouchDB cluster and Twitter corpus are gone, and the original d
 │   ├── build_mastodon.py        re-score the surviving raw toots (aggregates only)
 │   ├── build_analytics.py       analytics.db, TopoJSON, parity fixtures, 18 assertions
 │   ├── derived/                 committed intermediate aggregates
-│   └── fixtures/                synthetic NLP test corpus
+│   └── fixtures/                synthetic NLP test corpora (tweets and toot HTML)
 └── web/                         the deployable Next.js app (Vercel root)
     ├── data/analytics.db        read-only SQLite (aggregates only)
     ├── public/geo/              simplified ABS boundaries (TopoJSON)
-    ├── public/data/nlp/         VADER lexicon, WordNet nouns, Punkt parameters, SAL lookup
+    ├── public/data/nlp/         VADER lexicon, WordNet nouns, Punkt parameters, SAL lookup, HTML entities
+    ├── assets/fonts/            Newsreader + Public Sans subsets for the Open Graph image (SIL OFL)
     ├── tools/                   build helpers (MapLibre worker copy)
+    ├── .env.example             optional variables (none required)
     └── src/
         ├── app/                 routes (/, /twitter, /income, /crime, /mastodon, /pipeline, /methods, /records)
         ├── components/          ui/ (shadcn), layout/, charts/, map/, scenario/, landing/, pipeline/, editorial/
@@ -121,7 +123,7 @@ pnpm lint && pnpm typecheck && pnpm test && pnpm build
 pnpm start               # serve the production build
 ```
 
-No environment variables are required. Optionally set `NEXT_PUBLIC_SITE_URL` to the deployed origin so Open Graph URLs are absolute.
+No environment variables are required (see [`web/.env.example`](web/.env.example)). Open Graph image URLs are made absolute from `NEXT_PUBLIC_SITE_URL` if set, otherwise from Vercel's `VERCEL_PROJECT_PRODUCTION_URL` / `VERCEL_URL`, which Vercel provides at build time, and only fall back to `http://localhost:3000` for local builds.
 
 ## How the data artefacts are generated
 
