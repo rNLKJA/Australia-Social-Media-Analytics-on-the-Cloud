@@ -95,10 +95,14 @@ export function PipelineLab({ sals }: { sals: Record<string, SalInfo> }) {
 
   const switchSource = (s: PostSource) => {
     if (s === source) return;
-    const ex = EXAMPLES[s][DEFAULT_EXAMPLE[s]];
     setSource(s);
-    setText(ex.text);
-    setPlace(ex.place ?? "");
+    // An untouched example (or an empty box) becomes the other path's default
+    // example; text the visitor typed is kept so both paths can score it.
+    if (!text.trim() || EXAMPLES[source].some((ex) => ex.text === text)) {
+      const ex = EXAMPLES[s][DEFAULT_EXAMPLE[s]];
+      setText(ex.text);
+      setPlace(ex.place ?? "");
+    }
   };
 
   // only show a result for the source it was computed for
