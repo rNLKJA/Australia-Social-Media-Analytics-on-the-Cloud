@@ -4,7 +4,7 @@
 
 **Does the mood online match life on the ground?** A University of Melbourne cloud computing project (COMP90024, 2023) that scored 2.4 million geotagged tweets and 1.7 million Mastodon toots for sentiment and set them against official income and crime statistics, revived in 2026 as an interactive, read-only website.
 
-**Live demo:** _coming soon (Vercel deployment pending)_
+**Live demo:** [comp90024-social-sense.vercel.app](https://comp90024-social-sense.vercel.app)
 
 [![CI](https://github.com/rNLKJA/Australia-Social-Media-Analytics-on-the-Cloud/actions/workflows/ci.yml/badge.svg)](https://github.com/rNLKJA/Australia-Social-Media-Analytics-on-the-Cloud/actions/workflows/ci.yml)
 [![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs)](https://nextjs.org/)
@@ -124,6 +124,16 @@ pnpm start               # serve the production build
 ```
 
 No environment variables are required (see [`web/.env.example`](web/.env.example)). Open Graph image URLs are made absolute from `NEXT_PUBLIC_SITE_URL` if set, otherwise from Vercel's `VERCEL_PROJECT_PRODUCTION_URL` / `VERCEL_URL`, which Vercel provides at build time, and only fall back to `http://localhost:3000` for local builds.
+
+## Viewing the records
+
+The site is read-only: there are no accounts, no forms and no writes, so it needs no hosted database. Every number it shows comes from one bundled SQLite file, `web/data/analytics.db` (aggregates only), which you can inspect three ways:
+
+- **On the site:** [/records](https://comp90024-social-sense.vercel.app/records) lists every table with row counts; each table page has search, sorting, pagination and a CSV export (no login needed, nothing personal is stored).
+- **Locally:** open `web/data/analytics.db` in any SQLite browser (DB Browser for SQLite, TablePlus, `sqlite3 web/data/analytics.db ".tables"`).
+- **From source:** rebuild it with `scripts/build_analytics.py` (below); the build asserts parity with the 2023 outputs before writing.
+
+On Vercel the file ships with the serverless functions (`outputFileTracingIncludes`) and is copied to `/tmp` on a cold start; it is never written to.
 
 ## How the data artefacts are generated
 
