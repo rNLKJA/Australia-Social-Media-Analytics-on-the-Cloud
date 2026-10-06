@@ -1,0 +1,329 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Social Sense design tokens
+ * - paper/ink neutrals with a warm cast (civic data-journalism)
+ * - oxford blue as the interface accent
+ * - diverging coral -> sand -> teal for sentiment (1-9)
+ * - sequential violet for official statistics (income, offences)
+ */
+:root {
+  --radius: 0.5rem;
+
+  --background: #f7f4ee;
+  --foreground: #1c1a17;
+  --card: #fffdf9;
+  --card-foreground: #1c1a17;
+  --popover: #fffdf9;
+  --popover-foreground: #1c1a17;
+  --primary: #1d3a5f;
+  --primary-foreground: #f7f4ee;
+  --secondary: #ebe5da;
+  --secondary-foreground: #1c1a17;
+  --muted: #eee9e0;
+  --muted-foreground: #5d574e;
+  --accent: #e6dfd2;
+  --accent-foreground: #1c1a17;
+  --destructive: #b42318;
+  --border: #ddd5c7;
+  --input: #d3c9b9;
+  --ring: #1d3a5f;
+  --rule: #cfc5b4;
+  --highlight: #fde9a8;
+
+  --chart-1: #1d3a5f;
+  --chart-2: #2e8c82;
+  --chart-3: #c8553d;
+  --chart-4: #715ea7;
+  --chart-5: #b08a2e;
+
+  /* sentiment 1..9 */
+  --sent-1: #a63a24;
+  --sent-2: #c8553d;
+  --sent-3: #e07a5f;
+  --sent-4: #efb09a;
+  --sent-5: #e4dccd;
+  --sent-6: #a7d3cb;
+  --sent-7: #6bb3a8;
+  --sent-8: #2e8c82;
+  --sent-9: #0f625c;
+  --sent-neg: #c8553d;
+  --sent-pos: #2e8c82;
+  /* darker text-only variants: >= 4.6:1 on card, paper and muted in light mode */
+  --sent-neg-ink: #b0432c;
+  --sent-pos-ink: #1f6f67;
+
+  /* sequential 0..6 */
+  --seq-0: #f0edf6;
+  --seq-1: #d9d2ea;
+  --seq-2: #b8abd6;
+  --seq-3: #9483c0;
+  --seq-4: #715ea7;
+  --seq-5: #503f8a;
+  --seq-6: #33276a;
+
+  --sidebar: #f2eee6;
+  --sidebar-foreground: #1c1a17;
+  --sidebar-primary: #1d3a5f;
+  --sidebar-primary-foreground: #f7f4ee;
+  --sidebar-accent: #e6dfd2;
+  --sidebar-accent-foreground: #1c1a17;
+  --sidebar-border: #ddd5c7;
+  --sidebar-ring: #1d3a5f;
+}
+
+.dark {
+  --background: #111214;
+  --foreground: #ebe6dc;
+  --card: #17191c;
+  --card-foreground: #ebe6dc;
+  --popover: #1b1d21;
+  --popover-foreground: #ebe6dc;
+  --primary: #a9c1e6;
+  --primary-foreground: #0f1115;
+  --secondary: #23262b;
+  --secondary-foreground: #ebe6dc;
+  --muted: #1e2125;
+  --muted-foreground: #a39c91;
+  --accent: #262a30;
+  --accent-foreground: #ebe6dc;
+  --destructive: #f2785c;
+  --border: #2b2f35;
+  --input: #363a41;
+  --ring: #a9c1e6;
+  --rule: #3a3e45;
+  --highlight: #5b4a14;
+
+  --chart-1: #a9c1e6;
+  --chart-2: #5cc7bb;
+  --chart-3: #f07a5c;
+  --chart-4: #a196d3;
+  --chart-5: #d9b45a;
+
+  --sent-1: #f2876b;
+  --sent-2: #dc6c53;
+  --sent-3: #bf5f4b;
+  --sent-4: #a0675a;
+  --sent-5: #6f6a62;
+  --sent-6: #4e8078;
+  --sent-7: #3f998d;
+  --sent-8: #4fb7a8;
+  --sent-9: #6fd3c4;
+  --sent-neg: #f07a5c;
+  --sent-pos: #5cc7bb;
+  --sent-neg-ink: #f07a5c;
+  --sent-pos-ink: #5cc7bb;
+
+  --seq-0: #222033;
+  --seq-1: #332e55;
+  --seq-2: #463f78;
+  --seq-3: #5b5398;
+  --seq-4: #7a70b6;
+  --seq-5: #a196d3;
+  --seq-6: #d0c7f0;
+
+  --sidebar: #17191c;
+  --sidebar-foreground: #ebe6dc;
+  --sidebar-primary: #a9c1e6;
+  --sidebar-primary-foreground: #0f1115;
+  --sidebar-accent: #262a30;
+  --sidebar-accent-foreground: #ebe6dc;
+  --sidebar-border: #2b2f35;
+  --sidebar-ring: #a9c1e6;
+}
+
+@theme inline {
+  --font-sans: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, monospace;
+  --font-heading: var(--font-newsreader), ui-serif, Georgia, serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-rule: var(--rule);
+  --color-highlight: var(--highlight);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sent-1: var(--sent-1);
+  --color-sent-2: var(--sent-2);
+  --color-sent-3: var(--sent-3);
+  --color-sent-4: var(--sent-4);
+  --color-sent-5: var(--sent-5);
+  --color-sent-6: var(--sent-6);
+  --color-sent-7: var(--sent-7);
+  --color-sent-8: var(--sent-8);
+  --color-sent-9: var(--sent-9);
+  --color-sent-neg: var(--sent-neg);
+  --color-sent-pos: var(--sent-pos);
+  --color-sent-neg-ink: var(--sent-neg-ink);
+  --color-sent-pos-ink: var(--sent-pos-ink);
+  --color-seq-0: var(--seq-0);
+  --color-seq-1: var(--seq-1);
+  --color-seq-2: var(--seq-2);
+  --color-seq-3: var(--seq-3);
+  --color-seq-4: var(--seq-4);
+  --color-seq-5: var(--seq-5);
+  --color-seq-6: var(--seq-6);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+
+  /* type scale (fluid display sizes) */
+  --text-display: clamp(2.6rem, 1.6rem + 4.2vw, 5rem);
+  --text-display--line-height: 1.02;
+  --text-title: clamp(2rem, 1.5rem + 2vw, 3rem);
+  --text-title--line-height: 1.08;
+  --text-lede: clamp(1.125rem, 1.05rem + 0.35vw, 1.3rem);
+  --text-lede--line-height: 1.55;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "kern", "liga";
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--highlight);
+    color: var(--foreground);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .kicker {
+    @apply text-primary font-sans text-[0.72rem] font-semibold tracking-[0.14em] uppercase;
+  }
+  .prose-civic {
+    @apply text-foreground/90 max-w-[65ch] text-[1.0625rem] leading-[1.7];
+  }
+  .prose-civic p + p {
+    @apply mt-4;
+  }
+  .prose-civic a,
+  .link {
+    @apply text-primary decoration-primary/35 hover:decoration-primary font-medium underline decoration-1 underline-offset-[3px] transition-colors;
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+  .hairline {
+    @apply border-rule border-t;
+  }
+  /* paper grain for hero areas */
+  .grain {
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      color-mix(in oklab, var(--foreground) 7%, transparent) 1px,
+      transparent 0
+    );
+    background-size: 18px 18px;
+  }
+}
+
+/* landing diagram motion (disabled by the reduced-motion rule above) */
+@keyframes flow {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+.flow {
+  stroke-dasharray: 8 4;
+  animation: flow 0.9s linear infinite;
+}
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+.pulse {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+
+/* MapLibre control theming */
+.maplibregl-ctrl-group {
+  @apply !border-border !bg-card !rounded-md !border !shadow-none;
+}
+.dark .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
+  filter: invert(0.9);
+}
+.maplibregl-ctrl-attrib {
+  @apply !bg-card/80 text-[10px];
+}
+.dark .maplibregl-ctrl-attrib,
+.dark .maplibregl-ctrl-attrib a,
+.dark .maplibregl-ctrl-attrib-inner {
+  @apply !text-muted-foreground;
+}
+.dark .maplibregl-ctrl-attrib-button {
+  filter: invert(0.9);
+}
+/* "no data" swatch: the same diagonal hatch the maps draw */
+.hatch {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--hatch-color, currentColor) 0 1.5px,
+    transparent 1.5px 4px
+  );
+}

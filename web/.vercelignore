@@ -1,0 +1,12 @@
+# Never uploaded by `vercel deploy` (mirrors .gitignore for local-only files).
+# Raw showcase recordings and Playwright output (pnpm showcase); the encoded
+# media the site serves live in public/showcase/.
+.showcase
+.playwright
+test-results
+playwright-report
+# Local tooling output and secrets
+.vitest
+coverage
+.env*
+!.env.example

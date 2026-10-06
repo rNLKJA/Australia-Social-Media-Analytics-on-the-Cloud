@@ -1,0 +1,5321 @@
+{
+ "nltkVersion": "3.8.1",
+ "examples": [
+  {
+   "text": "Hello ~ What a good weather! hahahhah, lmao!!!!!!!!!!!",
+   "cleaned": "Hello ~ What a good weather! hahahhah, lmao!!!!!!!!!!!",
+   "sentences": [
+    "Hello ~ What a good weather!",
+    "hahahhah, lmao!!!!!!!!!!",
+    "!"
+   ],
+   "tokens": [
+    "Hello",
+    "~",
+    "What",
+    "a",
+    "good",
+    "weather",
+    "!",
+    "hahahhah",
+    ",",
+    "lmao",
+    "!",
+    "!",
+    "!",
+    "!",
+    "!",
+    "!",
+    "!",
+    "!",
+    "!",
+    "!",
+    "!"
+   ],
+   "normalized": "Hello ~ What a good weather ! hahahhah , lmao ! ! ! ! ! ! ! ! ! ! !",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.334,
+    "pos": 0.666,
+    "compound": 0.8388
+   },
+   "bucket": 9,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.551,
+    "pos": 0.449,
+    "compound": 0.6209
+   },
+   "description": "Extremely Positive"
+  },
+  {
+   "text": "The trams are running late again. Absolutely furious with the service today.",
+   "cleaned": "The trams are running late again. Absolutely furious with the service today.",
+   "sentences": [
+    "The trams are running late again.",
+    "Absolutely furious with the service today."
+   ],
+   "tokens": [
+    "The",
+    "trams",
+    "are",
+    "running",
+    "late",
+    "again",
+    ".",
+    "Absolutely",
+    "furious",
+    "with",
+    "the",
+    "service",
+    "today",
+    "."
+   ],
+   "normalized": "The tram are running late again . Absolutely furious with the service today .",
+   "scores": {
+    "neg": 0.266,
+    "neu": 0.734,
+    "pos": 0.0,
+    "compound": -0.6115
+   },
+   "bucket": 2,
+   "rawScores": {
+    "neg": 0.266,
+    "neu": 0.734,
+    "pos": 0.0,
+    "compound": -0.6115
+   },
+   "description": "Very Strongly Negative"
+  },
+  {
+   "text": "I love Melbourne coffee :) but the rent here is killing me",
+   "cleaned": "I love Melbourne coffee :) but the rent here is killing me",
+   "sentences": [
+    "I love Melbourne coffee :) but the rent here is killing me"
+   ],
+   "tokens": [
+    "I",
+    "love",
+    "Melbourne",
+    "coffee",
+    ":",
+    ")",
+    "but",
+    "the",
+    "rent",
+    "here",
+    "is",
+    "killing",
+    "me"
+   ],
+   "normalized": "I love Melbourne coffee : ) but the rent here is killing me",
+   "scores": {
+    "neg": 0.365,
+    "neu": 0.479,
+    "pos": 0.156,
+    "compound": -0.6705
+   },
+   "bucket": 2,
+   "rawScores": {
+    "neg": 0.326,
+    "neu": 0.428,
+    "pos": 0.246,
+    "compound": -0.5423
+   },
+   "description": "Very Strongly Negative"
+  },
+  {
+   "text": "Police arrested two men after a robbery on Sydney Rd last night",
+   "cleaned": "Police arrested two men after a robbery on Sydney Rd last night",
+   "sentences": [
+    "Police arrested two men after a robbery on Sydney Rd last night"
+   ],
+   "tokens": [
+    "Police",
+    "arrested",
+    "two",
+    "men",
+    "after",
+    "a",
+    "robbery",
+    "on",
+    "Sydney",
+    "Rd",
+    "last",
+    "night"
+   ],
+   "normalized": "Police arrested two men after a robbery on Sydney Rd last night",
+   "scores": {
+    "neg": 0.237,
+    "neu": 0.763,
+    "pos": 0.0,
+    "compound": -0.4767
+   },
+   "bucket": 3,
+   "rawScores": {
+    "neg": 0.237,
+    "neu": 0.763,
+    "pos": 0.0,
+    "compound": -0.4767
+   },
+   "description": "Strongly Negative"
+  },
+  {
+   "text": "Can't afford a house in this city. The housing market is so unfair!!",
+   "cleaned": "Can't afford a house in this city. The housing market is so unfair!!",
+   "sentences": [
+    "Can't afford a house in this city.",
+    "The housing market is so unfair!",
+    "!"
+   ],
+   "tokens": [
+    "Ca",
+    "n't",
+    "afford",
+    "a",
+    "house",
+    "in",
+    "this",
+    "city",
+    ".",
+    "The",
+    "housing",
+    "market",
+    "is",
+    "so",
+    "unfair",
+    "!",
+    "!"
+   ],
+   "normalized": "Ca n't afford a house in this city . The housing market is so unfair ! !",
+   "scores": {
+    "neg": 0.276,
+    "neu": 0.724,
+    "pos": 0.0,
+    "compound": -0.6783
+   },
+   "bucket": 2,
+   "rawScores": {
+    "neg": 0.294,
+    "neu": 0.706,
+    "pos": 0.0,
+    "compound": -0.6783
+   },
+   "description": "Very Strongly Negative"
+  },
+  {
+   "text": "Not bad at all, the new job is actually pretty great",
+   "cleaned": "Not bad at all, the new job is actually pretty great",
+   "sentences": [
+    "Not bad at all, the new job is actually pretty great"
+   ],
+   "tokens": [
+    "Not",
+    "bad",
+    "at",
+    "all",
+    ",",
+    "the",
+    "new",
+    "job",
+    "is",
+    "actually",
+    "pretty",
+    "great"
+   ],
+   "normalized": "Not bad at all , the new job is actually pretty great",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.441,
+    "pos": 0.559,
+    "compound": 0.8793
+   },
+   "bucket": 9,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.441,
+    "pos": 0.559,
+    "compound": 0.8793
+   },
+   "description": "Extremely Positive"
+  },
+  {
+   "text": "NOT happy with the train delays. Never again.",
+   "cleaned": "NOT happy with the train delays. Never again.",
+   "sentences": [
+    "NOT happy with the train delays.",
+    "Never again."
+   ],
+   "tokens": [
+    "NOT",
+    "happy",
+    "with",
+    "the",
+    "train",
+    "delays",
+    ".",
+    "Never",
+    "again",
+    "."
+   ],
+   "normalized": "NOT happy with the train delay . Never again .",
+   "scores": {
+    "neg": 0.469,
+    "neu": 0.531,
+    "pos": 0.0,
+    "compound": -0.6483
+   },
+   "bucket": 2,
+   "rawScores": {
+    "neg": 0.3,
+    "neu": 0.7,
+    "pos": 0.0,
+    "compound": -0.4585
+   },
+   "description": "Very Strongly Negative"
+  },
+  {
+   "text": "Got my first salary today 🎉🎉 feeling blessed",
+   "cleaned": "Got my first salary today 🎉🎉 feeling blessed",
+   "sentences": [
+    "Got my first salary today 🎉🎉 feeling blessed"
+   ],
+   "tokens": [
+    "Got",
+    "my",
+    "first",
+    "salary",
+    "today",
+    "🎉🎉",
+    "feeling",
+    "blessed"
+   ],
+   "normalized": "Got my first salary today 🎉🎉 feeling blessed",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.526,
+    "pos": 0.474,
+    "compound": 0.6597
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.526,
+    "pos": 0.474,
+    "compound": 0.6597
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "Dr. Smith said the clinic will open at 9 a.m. tomorrow. Great news.",
+   "cleaned": "Dr. Smith said the clinic will open at 9 a.m. tomorrow. Great news.",
+   "sentences": [
+    "Dr. Smith said the clinic will open at 9 a.m. tomorrow.",
+    "Great news."
+   ],
+   "tokens": [
+    "Dr.",
+    "Smith",
+    "said",
+    "the",
+    "clinic",
+    "will",
+    "open",
+    "at",
+    "9",
+    "a.m.",
+    "tomorrow",
+    ".",
+    "Great",
+    "news",
+    "."
+   ],
+   "normalized": "Dr. Smith said the clinic will open at 9 a.m. tomorrow . Great news .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.728,
+    "pos": 0.272,
+    "compound": 0.6249
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.728,
+    "pos": 0.272,
+    "compound": 0.6249
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "Wait... what? The footy was cancelled?? Ugh.",
+   "cleaned": "Wait... what? The footy was cancelled?? Ugh.",
+   "sentences": [
+    "Wait... what?",
+    "The footy was cancelled??",
+    "Ugh."
+   ],
+   "tokens": [
+    "Wait",
+    "...",
+    "what",
+    "?",
+    "The",
+    "footy",
+    "was",
+    "cancelled",
+    "?",
+    "?",
+    "Ugh",
+    "."
+   ],
+   "normalized": "Wait ... what ? The footy wa cancelled ? ? Ugh .",
+   "scores": {
+    "neg": 0.471,
+    "neu": 0.529,
+    "pos": 0.0,
+    "compound": -0.6531
+   },
+   "bucket": 2,
+   "rawScores": {
+    "neg": 0.516,
+    "neu": 0.484,
+    "pos": 0.0,
+    "compound": -0.6531
+   },
+   "description": "Very Strongly Negative"
+  },
+  {
+   "text": "@someone check this out https://example.com/abc #melbourne #coffee best brunch ever",
+   "cleaned": "check this out  best brunch ever",
+   "sentences": [
+    "check this out  best brunch ever"
+   ],
+   "tokens": [
+    "check",
+    "this",
+    "out",
+    "best",
+    "brunch",
+    "ever"
+   ],
+   "normalized": "check this out best brunch ever",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.543,
+    "pos": 0.457,
+    "compound": 0.6369
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.682,
+    "pos": 0.318,
+    "compound": 0.6369
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "The children's playground near the library was vandalised. So sad.",
+   "cleaned": "The children's playground near the library was vandalised. So sad.",
+   "sentences": [
+    "The children's playground near the library was vandalised.",
+    "So sad."
+   ],
+   "tokens": [
+    "The",
+    "children",
+    "'s",
+    "playground",
+    "near",
+    "the",
+    "library",
+    "was",
+    "vandalised",
+    ".",
+    "So",
+    "sad",
+    "."
+   ],
+   "normalized": "The child 's playground near the library wa vandalised . So sad .",
+   "scores": {
+    "neg": 0.253,
+    "neu": 0.747,
+    "pos": 0.0,
+    "compound": -0.5256
+   },
+   "bucket": 3,
+   "rawScores": {
+    "neg": 0.274,
+    "neu": 0.726,
+    "pos": 0.0,
+    "compound": -0.5256
+   },
+   "description": "Strongly Negative"
+  },
+  {
+   "text": "Mortgage rates went up AGAIN. Kind of expected but still painful.",
+   "cleaned": "Mortgage rates went up AGAIN. Kind of expected but still painful.",
+   "sentences": [
+    "Mortgage rates went up AGAIN.",
+    "Kind of expected but still painful."
+   ],
+   "tokens": [
+    "Mortgage",
+    "rates",
+    "went",
+    "up",
+    "AGAIN",
+    ".",
+    "Kind",
+    "of",
+    "expected",
+    "but",
+    "still",
+    "painful",
+    "."
+   ],
+   "normalized": "Mortgage rate went up AGAIN . Kind of expected but still painful .",
+   "scores": {
+    "neg": 0.278,
+    "neu": 0.722,
+    "pos": 0.0,
+    "compound": -0.5927
+   },
+   "bucket": 3,
+   "rawScores": {
+    "neg": 0.278,
+    "neu": 0.722,
+    "pos": 0.0,
+    "compound": -0.5927
+   },
+   "description": "Strongly Negative"
+  },
+  {
+   "text": "Thanks heaps mate, you're a legend!",
+   "cleaned": "Thanks heaps mate, you're a legend!",
+   "sentences": [
+    "Thanks heaps mate, you're a legend!"
+   ],
+   "tokens": [
+    "Thanks",
+    "heaps",
+    "mate",
+    ",",
+    "you",
+    "'re",
+    "a",
+    "legend",
+    "!"
+   ],
+   "normalized": "Thanks heap mate , you 're a legend !",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.61,
+    "pos": 0.39,
+    "compound": 0.4926
+   },
+   "bucket": 7,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.556,
+    "pos": 0.444,
+    "compound": 0.4926
+   },
+   "description": "Strongly Positive"
+  },
+  {
+   "text": "It is not the worst idea, but it isn't good either.",
+   "cleaned": "It is not the worst idea, but it isn't good either.",
+   "sentences": [
+    "It is not the worst idea, but it isn't good either."
+   ],
+   "tokens": [
+    "It",
+    "is",
+    "not",
+    "the",
+    "worst",
+    "idea",
+    ",",
+    "but",
+    "it",
+    "is",
+    "n't",
+    "good",
+    "either",
+    "."
+   ],
+   "normalized": "It is not the worst idea , but it is n't good either .",
+   "scores": {
+    "neg": 0.204,
+    "neu": 0.655,
+    "pos": 0.141,
+    "compound": -0.2411
+   },
+   "bucket": 4,
+   "rawScores": {
+    "neg": 0.218,
+    "neu": 0.631,
+    "pos": 0.151,
+    "compound": -0.2411
+   },
+   "description": "Negative"
+  },
+  {
+   "text": "The cats and dogs at the shelter need homes; please adopt!",
+   "cleaned": "The cats and dogs at the shelter need homes; please adopt!",
+   "sentences": [
+    "The cats and dogs at the shelter need homes; please adopt!"
+   ],
+   "tokens": [
+    "The",
+    "cats",
+    "and",
+    "dogs",
+    "at",
+    "the",
+    "shelter",
+    "need",
+    "homes",
+    ";",
+    "please",
+    "adopt",
+    "!"
+   ],
+   "normalized": "The cat and dog at the shelter need home ; please adopt !",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.677,
+    "pos": 0.323,
+    "compound": 0.5093
+   },
+   "bucket": 7,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.677,
+    "pos": 0.323,
+    "compound": 0.5093
+   },
+   "description": "Strongly Positive"
+  },
+  {
+   "text": "Crime rates in our suburb are dropping, which is good news for families.",
+   "cleaned": "Crime rates in our suburb are dropping, which is good news for families.",
+   "sentences": [
+    "Crime rates in our suburb are dropping, which is good news for families."
+   ],
+   "tokens": [
+    "Crime",
+    "rates",
+    "in",
+    "our",
+    "suburb",
+    "are",
+    "dropping",
+    ",",
+    "which",
+    "is",
+    "good",
+    "news",
+    "for",
+    "families",
+    "."
+   ],
+   "normalized": "Crime rate in our suburb are dropping , which is good news for family .",
+   "scores": {
+    "neg": 0.201,
+    "neu": 0.632,
+    "pos": 0.167,
+    "compound": -0.1531
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.201,
+    "neu": 0.632,
+    "pos": 0.167,
+    "compound": -0.1531
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "\"Best day ever,\" she said. \"Truly wonderful.\"",
+   "cleaned": "\"Best day ever,\" she said. \"Truly wonderful.\"",
+   "sentences": [
+    "\"Best day ever,\" she said.",
+    "\"Truly wonderful.\""
+   ],
+   "tokens": [
+    "``",
+    "Best",
+    "day",
+    "ever",
+    ",",
+    "''",
+    "she",
+    "said",
+    ".",
+    "``",
+    "Truly",
+    "wonderful",
+    ".",
+    "''"
+   ],
+   "normalized": "`` Best day ever , '' she said . `` Truly wonderful . ''",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.426,
+    "pos": 0.574,
+    "compound": 0.8957
+   },
+   "bucket": 9,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.413,
+    "pos": 0.587,
+    "compound": 0.7964
+   },
+   "description": "Extremely Positive"
+  },
+  {
+   "text": "The strike at the port means shipping costs will rise. Wages are stuck.",
+   "cleaned": "The strike at the port means shipping costs will rise. Wages are stuck.",
+   "sentences": [
+    "The strike at the port means shipping costs will rise.",
+    "Wages are stuck."
+   ],
+   "tokens": [
+    "The",
+    "strike",
+    "at",
+    "the",
+    "port",
+    "means",
+    "shipping",
+    "costs",
+    "will",
+    "rise",
+    ".",
+    "Wages",
+    "are",
+    "stuck",
+    "."
+   ],
+   "normalized": "The strike at the port mean shipping cost will rise . Wages are stuck .",
+   "scores": {
+    "neg": 0.241,
+    "neu": 0.759,
+    "pos": 0.0,
+    "compound": -0.3612
+   },
+   "bucket": 4,
+   "rawScores": {
+    "neg": 0.241,
+    "neu": 0.759,
+    "pos": 0.0,
+    "compound": -0.3612
+   },
+   "description": "Negative"
+  },
+  {
+   "text": "I'm sooo tired of this weather.",
+   "cleaned": "I'm sooo tired of this weather.",
+   "sentences": [
+    "I'm sooo tired of this weather."
+   ],
+   "tokens": [
+    "I",
+    "'m",
+    "sooo",
+    "tired",
+    "of",
+    "this",
+    "weather",
+    "."
+   ],
+   "normalized": "I 'm sooo tired of this weather .",
+   "scores": {
+    "neg": 0.367,
+    "neu": 0.633,
+    "pos": 0.0,
+    "compound": -0.4404
+   },
+   "bucket": 3,
+   "rawScores": {
+    "neg": 0.367,
+    "neu": 0.633,
+    "pos": 0.0,
+    "compound": -0.4404
+   },
+   "description": "Strongly Negative"
+  },
+  {
+   "text": "Sort of okay, I guess... not great.",
+   "cleaned": "Sort of okay, I guess... not great.",
+   "sentences": [
+    "Sort of okay, I guess... not great."
+   ],
+   "tokens": [
+    "Sort",
+    "of",
+    "okay",
+    ",",
+    "I",
+    "guess",
+    "...",
+    "not",
+    "great",
+    "."
+   ],
+   "normalized": "Sort of okay , I guess ... not great .",
+   "scores": {
+    "neg": 0.323,
+    "neu": 0.49,
+    "pos": 0.186,
+    "compound": -0.3387
+   },
+   "bucket": 4,
+   "rawScores": {
+    "neg": 0.358,
+    "neu": 0.435,
+    "pos": 0.207,
+    "compound": -0.3387
+   },
+   "description": "Negative"
+  },
+  {
+   "text": "The U.S. economy and the A.U. dollar both moved today.",
+   "cleaned": "The U.S. economy and the A.U. dollar both moved today.",
+   "sentences": [
+    "The U.S. economy and the A.U.",
+    "dollar both moved today."
+   ],
+   "tokens": [
+    "The",
+    "U.S.",
+    "economy",
+    "and",
+    "the",
+    "A.U",
+    ".",
+    "dollar",
+    "both",
+    "moved",
+    "today",
+    "."
+   ],
+   "normalized": "The U.S. economy and the A.U . dollar both moved today .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "Yeah right, like that's going to happen",
+   "cleaned": "Yeah right, like that's going to happen",
+   "sentences": [
+    "Yeah right, like that's going to happen"
+   ],
+   "tokens": [
+    "Yeah",
+    "right",
+    ",",
+    "like",
+    "that",
+    "'s",
+    "going",
+    "to",
+    "happen"
+   ],
+   "normalized": "Yeah right , like that 's going to happen",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.561,
+    "pos": 0.439,
+    "compound": 0.5719
+   },
+   "bucket": 7,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.515,
+    "pos": 0.485,
+    "compound": 0.5719
+   },
+   "description": "Strongly Positive"
+  },
+  {
+   "text": "He has 3.5 kids and $2,000 in the bank (approx.) - lol",
+   "cleaned": "He has 3.5 kids and $2,000 in the bank (approx.) - lol",
+   "sentences": [
+    "He has 3.5 kids and $2,000 in the bank (approx.)",
+    "- lol"
+   ],
+   "tokens": [
+    "He",
+    "has",
+    "3.5",
+    "kids",
+    "and",
+    "$",
+    "2,000",
+    "in",
+    "the",
+    "bank",
+    "(",
+    "approx",
+    ".",
+    ")",
+    "-",
+    "lol"
+   ],
+   "normalized": "He ha 3.5 kid and $ 2,000 in the bank ( approx . ) - lol",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.634,
+    "pos": 0.366,
+    "compound": 0.6369
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.781,
+    "pos": 0.219,
+    "compound": 0.4215
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "They kidnapped the plot halfway through the movie. Terrible writing!",
+   "cleaned": "They kidnapped the plot halfway through the movie. Terrible writing!",
+   "sentences": [
+    "They kidnapped the plot halfway through the movie.",
+    "Terrible writing!"
+   ],
+   "tokens": [
+    "They",
+    "kidnapped",
+    "the",
+    "plot",
+    "halfway",
+    "through",
+    "the",
+    "movie",
+    ".",
+    "Terrible",
+    "writing",
+    "!"
+   ],
+   "normalized": "They kidnapped the plot halfway through the movie . Terrible writing !",
+   "scores": {
+    "neg": 0.274,
+    "neu": 0.726,
+    "pos": 0.0,
+    "compound": -0.5255
+   },
+   "bucket": 3,
+   "rawScores": {
+    "neg": 0.274,
+    "neu": 0.726,
+    "pos": 0.0,
+    "compound": -0.5255
+   },
+   "description": "Strongly Negative"
+  },
+  {
+   "text": "Financial stress is real: debt, rent, bills. Help!",
+   "cleaned": "Financial stress is real: debt, rent, bills. Help!",
+   "sentences": [
+    "Financial stress is real: debt, rent, bills.",
+    "Help!"
+   ],
+   "tokens": [
+    "Financial",
+    "stress",
+    "is",
+    "real",
+    ":",
+    "debt",
+    ",",
+    "rent",
+    ",",
+    "bills",
+    ".",
+    "Help",
+    "!"
+   ],
+   "normalized": "Financial stress is real : debt , rent , bill . Help !",
+   "scores": {
+    "neg": 0.421,
+    "neu": 0.376,
+    "pos": 0.203,
+    "compound": -0.4389
+   },
+   "bucket": 3,
+   "rawScores": {
+    "neg": 0.421,
+    "neu": 0.376,
+    "pos": 0.203,
+    "compound": -0.4389
+   },
+   "description": "Strongly Negative"
+  },
+  {
+   "text": "Wow wow wow!!! Amazing fireworks over the Yarra tonight",
+   "cleaned": "Wow wow wow!!! Amazing fireworks over the Yarra tonight",
+   "sentences": [
+    "Wow wow wow!!!",
+    "Amazing fireworks over the Yarra tonight"
+   ],
+   "tokens": [
+    "Wow",
+    "wow",
+    "wow",
+    "!",
+    "!",
+    "!",
+    "Amazing",
+    "fireworks",
+    "over",
+    "the",
+    "Yarra",
+    "tonight"
+   ],
+   "normalized": "Wow wow wow ! ! ! Amazing firework over the Yarra tonight",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.237,
+    "pos": 0.763,
+    "compound": 0.9522
+   },
+   "bucket": 9,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.237,
+    "pos": 0.763,
+    "compound": 0.9522
+   },
+   "description": "Extremely Positive"
+  },
+  {
+   "text": "The government announced a new fairness review for wages",
+   "cleaned": "The government announced a new fairness review for wages",
+   "sentences": [
+    "The government announced a new fairness review for wages"
+   ],
+   "tokens": [
+    "The",
+    "government",
+    "announced",
+    "a",
+    "new",
+    "fairness",
+    "review",
+    "for",
+    "wages"
+   ],
+   "normalized": "The government announced a new fairness review for wage",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "Smiling faces everywhere at the market. Feeling grateful :D",
+   "cleaned": "Smiling faces everywhere at the market. Feeling grateful :D",
+   "sentences": [
+    "Smiling faces everywhere at the market.",
+    "Feeling grateful :D"
+   ],
+   "tokens": [
+    "Smiling",
+    "faces",
+    "everywhere",
+    "at",
+    "the",
+    "market",
+    ".",
+    "Feeling",
+    "grateful",
+    ":",
+    "D"
+   ],
+   "normalized": "Smiling face everywhere at the market . Feeling grateful : D",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.4,
+    "pos": 0.6,
+    "compound": 0.7579
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.302,
+    "pos": 0.698,
+    "compound": 0.8893
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "Homicide squad investigating the incident in the CBD; no arrests yet.",
+   "cleaned": "Homicide squad investigating the incident in the CBD; no arrests yet.",
+   "sentences": [
+    "Homicide squad investigating the incident in the CBD; no arrests yet."
+   ],
+   "tokens": [
+    "Homicide",
+    "squad",
+    "investigating",
+    "the",
+    "incident",
+    "in",
+    "the",
+    "CBD",
+    ";",
+    "no",
+    "arrests",
+    "yet",
+    "."
+   ],
+   "normalized": "Homicide squad investigating the incident in the CBD ; no arrest yet .",
+   "scores": {
+    "neg": 0.338,
+    "neu": 0.662,
+    "pos": 0.0,
+    "compound": -0.5574
+   },
+   "bucket": 3,
+   "rawScores": {
+    "neg": 0.362,
+    "neu": 0.638,
+    "pos": 0.0,
+    "compound": -0.6249
+   },
+   "description": "Strongly Negative"
+  },
+  {
+   "text": "I don't hate it. I don't love it either.",
+   "cleaned": "I don't hate it. I don't love it either.",
+   "sentences": [
+    "I don't hate it.",
+    "I don't love it either."
+   ],
+   "tokens": [
+    "I",
+    "do",
+    "n't",
+    "hate",
+    "it",
+    ".",
+    "I",
+    "do",
+    "n't",
+    "love",
+    "it",
+    "either",
+    "."
+   ],
+   "normalized": "I do n't hate it . I do n't love it either .",
+   "scores": {
+    "neg": 0.252,
+    "neu": 0.524,
+    "pos": 0.224,
+    "compound": -0.0951
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.296,
+    "neu": 0.44,
+    "pos": 0.264,
+    "compound": -0.0951
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "Luxury apartments everywhere but nobody can afford them",
+   "cleaned": "Luxury apartments everywhere but nobody can afford them",
+   "sentences": [
+    "Luxury apartments everywhere but nobody can afford them"
+   ],
+   "tokens": [
+    "Luxury",
+    "apartments",
+    "everywhere",
+    "but",
+    "nobody",
+    "can",
+    "afford",
+    "them"
+   ],
+   "normalized": "Luxury apartment everywhere but nobody can afford them",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "Volunteers helped clean the beach. What a lovely community effort.",
+   "cleaned": "Volunteers helped clean the beach. What a lovely community effort.",
+   "sentences": [
+    "Volunteers helped clean the beach.",
+    "What a lovely community effort."
+   ],
+   "tokens": [
+    "Volunteers",
+    "helped",
+    "clean",
+    "the",
+    "beach",
+    ".",
+    "What",
+    "a",
+    "lovely",
+    "community",
+    "effort",
+    "."
+   ],
+   "normalized": "Volunteers helped clean the beach . What a lovely community effort .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.519,
+    "pos": 0.481,
+    "compound": 0.7579
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.519,
+    "pos": 0.481,
+    "compound": 0.7579
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "This is the shit, honestly the best burger in town",
+   "cleaned": "This is the shit, honestly the best burger in town",
+   "sentences": [
+    "This is the shit, honestly the best burger in town"
+   ],
+   "tokens": [
+    "This",
+    "is",
+    "the",
+    "shit",
+    ",",
+    "honestly",
+    "the",
+    "best",
+    "burger",
+    "in",
+    "town"
+   ],
+   "normalized": "This is the shit , honestly the best burger in town",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.365,
+    "pos": 0.635,
+    "compound": 0.9217
+   },
+   "bucket": 9,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.365,
+    "pos": 0.635,
+    "compound": 0.9217
+   },
+   "description": "Extremely Positive"
+  },
+  {
+   "text": "The kiss of death for the project was the budget cut.",
+   "cleaned": "The kiss of death for the project was the budget cut.",
+   "sentences": [
+    "The kiss of death for the project was the budget cut."
+   ],
+   "tokens": [
+    "The",
+    "kiss",
+    "of",
+    "death",
+    "for",
+    "the",
+    "project",
+    "was",
+    "the",
+    "budget",
+    "cut",
+    "."
+   ],
+   "normalized": "The kiss of death for the project wa the budget cut .",
+   "scores": {
+    "neg": 0.299,
+    "neu": 0.519,
+    "pos": 0.182,
+    "compound": -0.2023
+   },
+   "bucket": 4,
+   "rawScores": {
+    "neg": 0.299,
+    "neu": 0.519,
+    "pos": 0.182,
+    "compound": -0.2023
+   },
+   "description": "Negative"
+  },
+  {
+   "text": "Women and men queued for hours; the geese at the lake were calmer.",
+   "cleaned": "Women and men queued for hours; the geese at the lake were calmer.",
+   "sentences": [
+    "Women and men queued for hours; the geese at the lake were calmer."
+   ],
+   "tokens": [
+    "Women",
+    "and",
+    "men",
+    "queued",
+    "for",
+    "hours",
+    ";",
+    "the",
+    "geese",
+    "at",
+    "the",
+    "lake",
+    "were",
+    "calmer",
+    "."
+   ],
+   "normalized": "Women and men queued for hour ; the goose at the lake were calmer .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.828,
+    "pos": 0.172,
+    "compound": 0.3612
+   },
+   "bucket": 6,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.828,
+    "pos": 0.172,
+    "compound": 0.3612
+   },
+   "description": "Positive"
+  },
+  {
+   "text": "Absolutely NOT okay. Terrible, horrible, no good, very bad day.",
+   "cleaned": "Absolutely NOT okay. Terrible, horrible, no good, very bad day.",
+   "sentences": [
+    "Absolutely NOT okay.",
+    "Terrible, horrible, no good, very bad day."
+   ],
+   "tokens": [
+    "Absolutely",
+    "NOT",
+    "okay",
+    ".",
+    "Terrible",
+    ",",
+    "horrible",
+    ",",
+    "no",
+    "good",
+    ",",
+    "very",
+    "bad",
+    "day",
+    "."
+   ],
+   "normalized": "Absolutely NOT okay . Terrible , horrible , no good , very bad day .",
+   "scores": {
+    "neg": 0.387,
+    "neu": 0.195,
+    "pos": 0.418,
+    "compound": 0.1606
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.387,
+    "neu": 0.195,
+    "pos": 0.418,
+    "compound": 0.1606
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "Ok. Fine. Whatever.",
+   "cleaned": "Ok. Fine. Whatever.",
+   "sentences": [
+    "Ok. Fine.",
+    "Whatever."
+   ],
+   "tokens": [
+    "Ok.",
+    "Fine",
+    ".",
+    "Whatever",
+    "."
+   ],
+   "normalized": "Ok. Fine . Whatever .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.2,
+    "pos": 0.8,
+    "compound": 0.4588
+   },
+   "bucket": 7,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.2,
+    "pos": 0.8,
+    "compound": 0.4588
+   },
+   "description": "Strongly Positive"
+  },
+  {
+   "text": "Back from Ballarat. Lovely weekend, very relaxing.",
+   "cleaned": "Back from Ballarat. Lovely weekend, very relaxing.",
+   "sentences": [
+    "Back from Ballarat.",
+    "Lovely weekend, very relaxing."
+   ],
+   "tokens": [
+    "Back",
+    "from",
+    "Ballarat",
+    ".",
+    "Lovely",
+    "weekend",
+    ",",
+    "very",
+    "relaxing",
+    "."
+   ],
+   "normalized": "Back from Ballarat . Lovely weekend , very relaxing .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.407,
+    "pos": 0.593,
+    "compound": 0.807
+   },
+   "bucket": 9,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.407,
+    "pos": 0.593,
+    "compound": 0.807
+   },
+   "description": "Extremely Positive"
+  },
+  {
+   "text": "The quick brown fox jumps over the lazy dog.",
+   "cleaned": "The quick brown fox jumps over the lazy dog.",
+   "sentences": [
+    "The quick brown fox jumps over the lazy dog."
+   ],
+   "tokens": [
+    "The",
+    "quick",
+    "brown",
+    "fox",
+    "jumps",
+    "over",
+    "the",
+    "lazy",
+    "dog",
+    "."
+   ],
+   "normalized": "The quick brown fox jump over the lazy dog .",
+   "scores": {
+    "neg": 0.238,
+    "neu": 0.762,
+    "pos": 0.0,
+    "compound": -0.3612
+   },
+   "bucket": 4,
+   "rawScores": {
+    "neg": 0.238,
+    "neu": 0.762,
+    "pos": 0.0,
+    "compound": -0.3612
+   },
+   "description": "Negative"
+  },
+  {
+   "text": "\"Don't you dare,\" he said. 'Seriously.'",
+   "cleaned": "\"Don't you dare,\" he said. 'Seriously.'",
+   "sentences": [
+    "\"Don't you dare,\" he said.",
+    "'Seriously.'"
+   ],
+   "tokens": [
+    "``",
+    "Do",
+    "n't",
+    "you",
+    "dare",
+    ",",
+    "''",
+    "he",
+    "said",
+    ".",
+    "'Seriously",
+    ".",
+    "'"
+   ],
+   "normalized": "`` Do n't you dare , '' he said . 'Seriously . '",
+   "scores": {
+    "neg": 0.175,
+    "neu": 0.825,
+    "pos": 0.0,
+    "compound": -0.1779
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "She said “this is wonderful” and left ‘quietly’.",
+   "cleaned": "She said “this is wonderful” and left ‘quietly’.",
+   "sentences": [
+    "She said “this is wonderful” and left ‘quietly’."
+   ],
+   "tokens": [
+    "She",
+    "said",
+    "“",
+    "this",
+    "is",
+    "wonderful",
+    "”",
+    "and",
+    "left",
+    "‘",
+    "quietly",
+    "’",
+    "."
+   ],
+   "normalized": "She said “ this is wonderful ” and left ‘ quietly ’ .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.654,
+    "pos": 0.346,
+    "compound": 0.5719
+   },
+   "bucket": 7,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Strongly Positive"
+  },
+  {
+   "text": "«Bonjour» means hello – and it’s lovely.",
+   "cleaned": "«Bonjour» means hello – and it’s lovely.",
+   "sentences": [
+    "«Bonjour» means hello – and it’s lovely."
+   ],
+   "tokens": [
+    "«",
+    "Bonjour",
+    "»",
+    "means",
+    "hello",
+    "–",
+    "and",
+    "it",
+    "’",
+    "s",
+    "lovely",
+    "."
+   ],
+   "normalized": "« Bonjour » mean hello – and it ’ s lovely .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.568,
+    "pos": 0.432,
+    "compound": 0.5859
+   },
+   "bucket": 7,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.568,
+    "pos": 0.432,
+    "compound": 0.5859
+   },
+   "description": "Strongly Positive"
+  },
+  {
+   "text": "I can not believe it. We cannot go. You gonna come? I wanna see.",
+   "cleaned": "I can not believe it. We cannot go. You gonna come? I wanna see.",
+   "sentences": [
+    "I can not believe it.",
+    "We cannot go.",
+    "You gonna come?",
+    "I wanna see."
+   ],
+   "tokens": [
+    "I",
+    "can",
+    "not",
+    "believe",
+    "it",
+    ".",
+    "We",
+    "can",
+    "not",
+    "go",
+    ".",
+    "You",
+    "gon",
+    "na",
+    "come",
+    "?",
+    "I",
+    "wan",
+    "na",
+    "see",
+    "."
+   ],
+   "normalized": "I can not believe it . We can not go . You gon na come ? I wan na see .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "'Tis the season to be jolly, 'twas the night before.",
+   "cleaned": "'Tis the season to be jolly, 'twas the night before.",
+   "sentences": [
+    "'Tis the season to be jolly, 'twas the night before."
+   ],
+   "tokens": [
+    "'T",
+    "is",
+    "the",
+    "season",
+    "to",
+    "be",
+    "jolly",
+    ",",
+    "'t",
+    "was",
+    "the",
+    "night",
+    "before",
+    "."
+   ],
+   "normalized": "'T is the season to be jolly , 't wa the night before .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.769,
+    "pos": 0.231,
+    "compound": 0.5106
+   },
+   "bucket": 7,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.732,
+    "pos": 0.268,
+    "compound": 0.5106
+   },
+   "description": "Strongly Positive"
+  },
+  {
+   "text": "Gimme a break, lemme think, gotta go.",
+   "cleaned": "Gimme a break, lemme think, gotta go.",
+   "sentences": [
+    "Gimme a break, lemme think, gotta go."
+   ],
+   "tokens": [
+    "Gim",
+    "me",
+    "a",
+    "break",
+    ",",
+    "lem",
+    "me",
+    "think",
+    ",",
+    "got",
+    "ta",
+    "go",
+    "."
+   ],
+   "normalized": "Gim me a break , lem me think , got ta go .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "He's here, she'd left, we'll see, they've gone, I'm done, you're late.",
+   "cleaned": "He's here, she'd left, we'll see, they've gone, I'm done, you're late.",
+   "sentences": [
+    "He's here, she'd left, we'll see, they've gone, I'm done, you're late."
+   ],
+   "tokens": [
+    "He",
+    "'s",
+    "here",
+    ",",
+    "she",
+    "'d",
+    "left",
+    ",",
+    "we",
+    "'ll",
+    "see",
+    ",",
+    "they",
+    "'ve",
+    "gone",
+    ",",
+    "I",
+    "'m",
+    "done",
+    ",",
+    "you",
+    "'re",
+    "late",
+    "."
+   ],
+   "normalized": "He 's here , she 'd left , we 'll see , they 've gone , I 'm done , you 're late .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "It costs $3.88 (roughly 3,36 euros) in New York.  Please buy me two of them. Thanks.",
+   "cleaned": "It costs $3.88 (roughly 3,36 euros) in New York.  Please buy me two of them. Thanks.",
+   "sentences": [
+    "It costs $3.88 (roughly 3,36 euros) in New York.",
+    "Please buy me two of them.",
+    "Thanks."
+   ],
+   "tokens": [
+    "It",
+    "costs",
+    "$",
+    "3.88",
+    "(",
+    "roughly",
+    "3,36",
+    "euros",
+    ")",
+    "in",
+    "New",
+    "York",
+    ".",
+    "Please",
+    "buy",
+    "me",
+    "two",
+    "of",
+    "them",
+    ".",
+    "Thanks",
+    "."
+   ],
+   "normalized": "It cost $ 3.88 ( roughly 3,36 euro ) in New York . Please buy me two of them . Thanks .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.729,
+    "pos": 0.271,
+    "compound": 0.6369
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.729,
+    "pos": 0.271,
+    "compound": 0.6369
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "The meeting is at 10:30, not 11:00, ok?",
+   "cleaned": "The meeting is at 10:30, not 11:00, ok?",
+   "sentences": [
+    "The meeting is at 10:30, not 11:00, ok?"
+   ],
+   "tokens": [
+    "The",
+    "meeting",
+    "is",
+    "at",
+    "10:30",
+    ",",
+    "not",
+    "11:00",
+    ",",
+    "ok",
+    "?"
+   ],
+   "normalized": "The meeting is at 10:30 , not 11:00 , ok ?",
+   "scores": {
+    "neg": 0.212,
+    "neu": 0.788,
+    "pos": 0.0,
+    "compound": -0.2235
+   },
+   "bucket": 4,
+   "rawScores": {
+    "neg": 0.212,
+    "neu": 0.788,
+    "pos": 0.0,
+    "compound": -0.2235
+   },
+   "description": "Negative"
+  },
+  {
+   "text": "Prices rose 5.5% this year -- unbelievable -- and wages didn't.",
+   "cleaned": "Prices rose 5.5% this year -- unbelievable -- and wages didn't.",
+   "sentences": [
+    "Prices rose 5.5% this year -- unbelievable -- and wages didn't."
+   ],
+   "tokens": [
+    "Prices",
+    "rose",
+    "5.5",
+    "%",
+    "this",
+    "year",
+    "--",
+    "unbelievable",
+    "--",
+    "and",
+    "wages",
+    "did",
+    "n't",
+    "."
+   ],
+   "normalized": "Prices rose 5.5 % this year -- unbelievable -- and wage did n't .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.859,
+    "pos": 0.141,
+    "compound": 0.2023
+   },
+   "bucket": 6,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.847,
+    "pos": 0.153,
+    "compound": 0.2023
+   },
+   "description": "Positive"
+  },
+  {
+   "text": "Visit www.example.com or email someone at example dot com.",
+   "cleaned": "Visit www.example.com or email someone at example dot com.",
+   "sentences": [
+    "Visit www.example.com or email someone at example dot com."
+   ],
+   "tokens": [
+    "Visit",
+    "www.example.com",
+    "or",
+    "email",
+    "someone",
+    "at",
+    "example",
+    "dot",
+    "com",
+    "."
+   ],
+   "normalized": "Visit www.example.com or email someone at example dot com .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "J. R. R. Tolkien wrote books. They are good.",
+   "cleaned": "J. R. R. Tolkien wrote books. They are good.",
+   "sentences": [
+    "J. R. R. Tolkien wrote books.",
+    "They are good."
+   ],
+   "tokens": [
+    "J.",
+    "R.",
+    "R.",
+    "Tolkien",
+    "wrote",
+    "books",
+    ".",
+    "They",
+    "are",
+    "good",
+    "."
+   ],
+   "normalized": "J. R. R. Tolkien wrote book . They are good .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.734,
+    "pos": 0.266,
+    "compound": 0.4404
+   },
+   "bucket": 7,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.734,
+    "pos": 0.266,
+    "compound": 0.4404
+   },
+   "description": "Strongly Positive"
+  },
+  {
+   "text": "The 3rd. of May was a Wednesday. It rained.",
+   "cleaned": "The 3rd. of May was a Wednesday. It rained.",
+   "sentences": [
+    "The 3rd.",
+    "of May was a Wednesday.",
+    "It rained."
+   ],
+   "tokens": [
+    "The",
+    "3rd",
+    ".",
+    "of",
+    "May",
+    "was",
+    "a",
+    "Wednesday",
+    ".",
+    "It",
+    "rained",
+    "."
+   ],
+   "normalized": "The 3rd . of May wa a Wednesday . It rained .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "Mr. and Mrs. Smith arrived at 5 p.m. on Jan. 5. The party started.",
+   "cleaned": "Mr. and Mrs. Smith arrived at 5 p.m. on Jan. 5. The party started.",
+   "sentences": [
+    "Mr. and Mrs. Smith arrived at 5 p.m. on Jan. 5.",
+    "The party started."
+   ],
+   "tokens": [
+    "Mr.",
+    "and",
+    "Mrs.",
+    "Smith",
+    "arrived",
+    "at",
+    "5",
+    "p.m.",
+    "on",
+    "Jan.",
+    "5",
+    ".",
+    "The",
+    "party",
+    "started",
+    "."
+   ],
+   "normalized": "Mr. and Mrs. Smith arrived at 5 p.m. on Jan. 5 . The party started .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.803,
+    "pos": 0.197,
+    "compound": 0.4019
+   },
+   "bucket": 7,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.816,
+    "pos": 0.184,
+    "compound": 0.4019
+   },
+   "description": "Strongly Positive"
+  },
+  {
+   "text": "We met in the U.K. last year. It was fun.",
+   "cleaned": "We met in the U.K. last year. It was fun.",
+   "sentences": [
+    "We met in the U.K. last year.",
+    "It was fun."
+   ],
+   "tokens": [
+    "We",
+    "met",
+    "in",
+    "the",
+    "U.K.",
+    "last",
+    "year",
+    ".",
+    "It",
+    "was",
+    "fun",
+    "."
+   ],
+   "normalized": "We met in the U.K. last year . It wa fun .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.732,
+    "pos": 0.268,
+    "compound": 0.5106
+   },
+   "bucket": 7,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.732,
+    "pos": 0.268,
+    "compound": 0.5106
+   },
+   "description": "Strongly Positive"
+  },
+  {
+   "text": "etc. etc. and so on... the end.",
+   "cleaned": "etc. etc. and so on... the end.",
+   "sentences": [
+    "etc.",
+    "etc.",
+    "and so on... the end."
+   ],
+   "tokens": [
+    "etc",
+    ".",
+    "etc",
+    ".",
+    "and",
+    "so",
+    "on",
+    "...",
+    "the",
+    "end",
+    "."
+   ],
+   "normalized": "etc . etc . and so on ... the end .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "Is this real?! Are you sure?!? No way!!!",
+   "cleaned": "Is this real?! Are you sure?!? No way!!!",
+   "sentences": [
+    "Is this real?!",
+    "Are you sure?!?",
+    "No way!!",
+    "!"
+   ],
+   "tokens": [
+    "Is",
+    "this",
+    "real",
+    "?",
+    "!",
+    "Are",
+    "you",
+    "sure",
+    "?",
+    "!",
+    "?",
+    "No",
+    "way",
+    "!",
+    "!",
+    "!"
+   ],
+   "normalized": "Is this real ? ! Are you sure ? ! ? No way ! ! !",
+   "scores": {
+    "neg": 0.18,
+    "neu": 0.491,
+    "pos": 0.328,
+    "compound": 0.423
+   },
+   "bucket": 7,
+   "rawScores": {
+    "neg": 0.18,
+    "neu": 0.491,
+    "pos": 0.328,
+    "compound": 0.423
+   },
+   "description": "Strongly Positive"
+  },
+  {
+   "text": "What??? Why???? How?",
+   "cleaned": "What??? Why???? How?",
+   "sentences": [
+    "What???",
+    "Why????",
+    "How?"
+   ],
+   "tokens": [
+    "What",
+    "?",
+    "?",
+    "?",
+    "Why",
+    "?",
+    "?",
+    "?",
+    "?",
+    "How",
+    "?"
+   ],
+   "normalized": "What ? ? ? Why ? ? ? ? How ?",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "Hmm... I guess... maybe?",
+   "cleaned": "Hmm... I guess... maybe?",
+   "sentences": [
+    "Hmm...",
+    "I guess... maybe?"
+   ],
+   "tokens": [
+    "Hmm",
+    "...",
+    "I",
+    "guess",
+    "...",
+    "maybe",
+    "?"
+   ],
+   "normalized": "Hmm ... I guess ... maybe ?",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "LOL that was HILARIOUS",
+   "cleaned": "LOL that was HILARIOUS",
+   "sentences": [
+    "LOL that was HILARIOUS"
+   ],
+   "tokens": [
+    "LOL",
+    "that",
+    "was",
+    "HILARIOUS"
+   ],
+   "normalized": "LOL that wa HILARIOUS",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.223,
+    "pos": 0.777,
+    "compound": 0.7885
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.223,
+    "pos": 0.777,
+    "compound": 0.7885
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "I am VERY happy today",
+   "cleaned": "I am VERY happy today",
+   "sentences": [
+    "I am VERY happy today"
+   ],
+   "tokens": [
+    "I",
+    "am",
+    "VERY",
+    "happy",
+    "today"
+   ],
+   "normalized": "I am VERY happy today",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.388,
+    "pos": 0.612,
+    "compound": 0.6933
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.388,
+    "pos": 0.612,
+    "compound": 0.6933
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "I am very HAPPY today",
+   "cleaned": "I am very HAPPY today",
+   "sentences": [
+    "I am very HAPPY today"
+   ],
+   "tokens": [
+    "I",
+    "am",
+    "very",
+    "HAPPY",
+    "today"
+   ],
+   "normalized": "I am very HAPPY today",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.388,
+    "pos": 0.612,
+    "compound": 0.6933
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.388,
+    "pos": 0.612,
+    "compound": 0.6933
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "the movie was not bad at all",
+   "cleaned": "the movie was not bad at all",
+   "sentences": [
+    "the movie was not bad at all"
+   ],
+   "tokens": [
+    "the",
+    "movie",
+    "was",
+    "not",
+    "bad",
+    "at",
+    "all"
+   ],
+   "normalized": "the movie wa not bad at all",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.678,
+    "pos": 0.322,
+    "compound": 0.431
+   },
+   "bucket": 7,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.678,
+    "pos": 0.322,
+    "compound": 0.431
+   },
+   "description": "Strongly Positive"
+  },
+  {
+   "text": "the movie was not good at all",
+   "cleaned": "the movie was not good at all",
+   "sentences": [
+    "the movie was not good at all"
+   ],
+   "tokens": [
+    "the",
+    "movie",
+    "was",
+    "not",
+    "good",
+    "at",
+    "all"
+   ],
+   "normalized": "the movie wa not good at all",
+   "scores": {
+    "neg": 0.286,
+    "neu": 0.714,
+    "pos": 0.0,
+    "compound": -0.3412
+   },
+   "bucket": 4,
+   "rawScores": {
+    "neg": 0.286,
+    "neu": 0.714,
+    "pos": 0.0,
+    "compound": -0.3412
+   },
+   "description": "Negative"
+  },
+  {
+   "text": "It was the least helpful answer",
+   "cleaned": "It was the least helpful answer",
+   "sentences": [
+    "It was the least helpful answer"
+   ],
+   "tokens": [
+    "It",
+    "was",
+    "the",
+    "least",
+    "helpful",
+    "answer"
+   ],
+   "normalized": "It wa the least helpful answer",
+   "scores": {
+    "neg": 0.318,
+    "neu": 0.682,
+    "pos": 0.0,
+    "compound": -0.3252
+   },
+   "bucket": 4,
+   "rawScores": {
+    "neg": 0.318,
+    "neu": 0.682,
+    "pos": 0.0,
+    "compound": -0.3252
+   },
+   "description": "Negative"
+  },
+  {
+   "text": "At least it was not terrible",
+   "cleaned": "At least it was not terrible",
+   "sentences": [
+    "At least it was not terrible"
+   ],
+   "tokens": [
+    "At",
+    "least",
+    "it",
+    "was",
+    "not",
+    "terrible"
+   ],
+   "normalized": "At least it wa not terrible",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.662,
+    "pos": 0.338,
+    "compound": 0.3724
+   },
+   "bucket": 6,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.662,
+    "pos": 0.338,
+    "compound": 0.3724
+   },
+   "description": "Positive"
+  },
+  {
+   "text": "very least of my worries is the cost",
+   "cleaned": "very least of my worries is the cost",
+   "sentences": [
+    "very least of my worries is the cost"
+   ],
+   "tokens": [
+    "very",
+    "least",
+    "of",
+    "my",
+    "worries",
+    "is",
+    "the",
+    "cost"
+   ],
+   "normalized": "very least of my worry is the cost",
+   "scores": {
+    "neg": 0.293,
+    "neu": 0.707,
+    "pos": 0.0,
+    "compound": -0.4404
+   },
+   "bucket": 3,
+   "rawScores": {
+    "neg": 0.286,
+    "neu": 0.714,
+    "pos": 0.0,
+    "compound": -0.4215
+   },
+   "description": "Strongly Negative"
+  },
+  {
+   "text": "Never so happy in my life",
+   "cleaned": "Never so happy in my life",
+   "sentences": [
+    "Never so happy in my life"
+   ],
+   "tokens": [
+    "Never",
+    "so",
+    "happy",
+    "in",
+    "my",
+    "life"
+   ],
+   "normalized": "Never so happy in my life",
+   "scores": {
+    "neg": 0.391,
+    "neu": 0.609,
+    "pos": 0.0,
+    "compound": -0.4964
+   },
+   "bucket": 3,
+   "rawScores": {
+    "neg": 0.391,
+    "neu": 0.609,
+    "pos": 0.0,
+    "compound": -0.4964
+   },
+   "description": "Strongly Negative"
+  },
+  {
+   "text": "never this good before",
+   "cleaned": "never this good before",
+   "sentences": [
+    "never this good before"
+   ],
+   "tokens": [
+    "never",
+    "this",
+    "good",
+    "before"
+   ],
+   "normalized": "never this good before",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.438,
+    "pos": 0.562,
+    "compound": 0.5927
+   },
+   "bucket": 7,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.438,
+    "pos": 0.562,
+    "compound": 0.5927
+   },
+   "description": "Strongly Positive"
+  },
+  {
+   "text": "The food was kind of good but the service was terrible",
+   "cleaned": "The food was kind of good but the service was terrible",
+   "sentences": [
+    "The food was kind of good but the service was terrible"
+   ],
+   "tokens": [
+    "The",
+    "food",
+    "was",
+    "kind",
+    "of",
+    "good",
+    "but",
+    "the",
+    "service",
+    "was",
+    "terrible"
+   ],
+   "normalized": "The food wa kind of good but the service wa terrible",
+   "scores": {
+    "neg": 0.278,
+    "neu": 0.602,
+    "pos": 0.121,
+    "compound": -0.5182
+   },
+   "bucket": 3,
+   "rawScores": {
+    "neg": 0.278,
+    "neu": 0.602,
+    "pos": 0.121,
+    "compound": -0.5182
+   },
+   "description": "Strongly Negative"
+  },
+  {
+   "text": "The plan is sort of okay",
+   "cleaned": "The plan is sort of okay",
+   "sentences": [
+    "The plan is sort of okay"
+   ],
+   "tokens": [
+    "The",
+    "plan",
+    "is",
+    "sort",
+    "of",
+    "okay"
+   ],
+   "normalized": "The plan is sort of okay",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.757,
+    "pos": 0.243,
+    "compound": 0.1548
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.757,
+    "pos": 0.243,
+    "compound": 0.1548
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "Yeah right, that will cut the mustard for sure",
+   "cleaned": "Yeah right, that will cut the mustard for sure",
+   "sentences": [
+    "Yeah right, that will cut the mustard for sure"
+   ],
+   "tokens": [
+    "Yeah",
+    "right",
+    ",",
+    "that",
+    "will",
+    "cut",
+    "the",
+    "mustard",
+    "for",
+    "sure"
+   ],
+   "normalized": "Yeah right , that will cut the mustard for sure",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.444,
+    "pos": 0.556,
+    "compound": 0.7579
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.444,
+    "pos": 0.556,
+    "compound": 0.7579
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "We live hand to mouth these days",
+   "cleaned": "We live hand to mouth these days",
+   "sentences": [
+    "We live hand to mouth these days"
+   ],
+   "tokens": [
+    "We",
+    "live",
+    "hand",
+    "to",
+    "mouth",
+    "these",
+    "days"
+   ],
+   "normalized": "We live hand to mouth these day",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.652,
+    "pos": 0.348,
+    "compound": 0.4939
+   },
+   "bucket": 7,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.652,
+    "pos": 0.348,
+    "compound": 0.4939
+   },
+   "description": "Strongly Positive"
+  },
+  {
+   "text": "That bad ass bike is the bomb",
+   "cleaned": "That bad ass bike is the bomb",
+   "sentences": [
+    "That bad ass bike is the bomb"
+   ],
+   "tokens": [
+    "That",
+    "bad",
+    "ass",
+    "bike",
+    "is",
+    "the",
+    "bomb"
+   ],
+   "normalized": "That bad as bike is the bomb",
+   "scores": {
+    "neg": 0.28,
+    "neu": 0.4,
+    "pos": 0.32,
+    "compound": 0.128
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.467,
+    "neu": 0.267,
+    "pos": 0.267,
+    "compound": -0.4588
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "I barely passed the exam",
+   "cleaned": "I barely passed the exam",
+   "sentences": [
+    "I barely passed the exam"
+   ],
+   "tokens": [
+    "I",
+    "barely",
+    "passed",
+    "the",
+    "exam"
+   ],
+   "normalized": "I barely passed the exam",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "The service was extremely slow and incredibly rude",
+   "cleaned": "The service was extremely slow and incredibly rude",
+   "sentences": [
+    "The service was extremely slow and incredibly rude"
+   ],
+   "tokens": [
+    "The",
+    "service",
+    "was",
+    "extremely",
+    "slow",
+    "and",
+    "incredibly",
+    "rude"
+   ],
+   "normalized": "The service wa extremely slow and incredibly rude",
+   "scores": {
+    "neg": 0.32,
+    "neu": 0.68,
+    "pos": 0.0,
+    "compound": -0.5095
+   },
+   "bucket": 3,
+   "rawScores": {
+    "neg": 0.32,
+    "neu": 0.68,
+    "pos": 0.0,
+    "compound": -0.5095
+   },
+   "description": "Strongly Negative"
+  },
+  {
+   "text": "Hardly a great result, but better than nothing",
+   "cleaned": "Hardly a great result, but better than nothing",
+   "sentences": [
+    "Hardly a great result, but better than nothing"
+   ],
+   "tokens": [
+    "Hardly",
+    "a",
+    "great",
+    "result",
+    ",",
+    "but",
+    "better",
+    "than",
+    "nothing"
+   ],
+   "normalized": "Hardly a great result , but better than nothing",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.444,
+    "pos": 0.556,
+    "compound": 0.7394
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.444,
+    "pos": 0.556,
+    "compound": 0.7394
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "Nothing is wrong, nothing at all",
+   "cleaned": "Nothing is wrong, nothing at all",
+   "sentences": [
+    "Nothing is wrong, nothing at all"
+   ],
+   "tokens": [
+    "Nothing",
+    "is",
+    "wrong",
+    ",",
+    "nothing",
+    "at",
+    "all"
+   ],
+   "normalized": "Nothing is wrong , nothing at all",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.662,
+    "pos": 0.338,
+    "compound": 0.3724
+   },
+   "bucket": 6,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.662,
+    "pos": 0.338,
+    "compound": 0.3724
+   },
+   "description": "Positive"
+  },
+  {
+   "text": "without doubt the best",
+   "cleaned": "without doubt the best",
+   "sentences": [
+    "without doubt the best"
+   ],
+   "tokens": [
+    "without",
+    "doubt",
+    "the",
+    "best"
+   ],
+   "normalized": "without doubt the best",
+   "scores": {
+    "neg": 0.45,
+    "neu": 0.267,
+    "pos": 0.282,
+    "compound": -0.3089
+   },
+   "bucket": 4,
+   "rawScores": {
+    "neg": 0.45,
+    "neu": 0.267,
+    "pos": 0.282,
+    "compound": -0.3089
+   },
+   "description": "Negative"
+  },
+  {
+   "text": "despite the rain we had a great time",
+   "cleaned": "despite the rain we had a great time",
+   "sentences": [
+    "despite the rain we had a great time"
+   ],
+   "tokens": [
+    "despite",
+    "the",
+    "rain",
+    "we",
+    "had",
+    "a",
+    "great",
+    "time"
+   ],
+   "normalized": "despite the rain we had a great time",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.594,
+    "pos": 0.406,
+    "compound": 0.6249
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.594,
+    "pos": 0.406,
+    "compound": 0.6249
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "He seldom smiles",
+   "cleaned": "He seldom smiles",
+   "sentences": [
+    "He seldom smiles"
+   ],
+   "tokens": [
+    "He",
+    "seldom",
+    "smiles"
+   ],
+   "normalized": "He seldom smile",
+   "scores": {
+    "neg": 0.513,
+    "neu": 0.487,
+    "pos": 0.0,
+    "compound": -0.2755
+   },
+   "bucket": 4,
+   "rawScores": {
+    "neg": 0.561,
+    "neu": 0.439,
+    "pos": 0.0,
+    "compound": -0.3724
+   },
+   "description": "Negative"
+  },
+  {
+   "text": "Uh-uh, not happy, nope",
+   "cleaned": "Uh-uh, not happy, nope",
+   "sentences": [
+    "Uh-uh, not happy, nope"
+   ],
+   "tokens": [
+    "Uh-uh",
+    ",",
+    "not",
+    "happy",
+    ",",
+    "nope"
+   ],
+   "normalized": "Uh-uh , not happy , nope",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.548,
+    "pos": 0.452,
+    "compound": 0.3566
+   },
+   "bucket": 6,
+   "rawScores": {
+    "neg": 0.5,
+    "neu": 0.5,
+    "pos": 0.0,
+    "compound": -0.4585
+   },
+   "description": "Positive"
+  },
+  {
+   "text": "She ain't happy and he isn't either",
+   "cleaned": "She ain't happy and he isn't either",
+   "sentences": [
+    "She ain't happy and he isn't either"
+   ],
+   "tokens": [
+    "She",
+    "ai",
+    "n't",
+    "happy",
+    "and",
+    "he",
+    "is",
+    "n't",
+    "either"
+   ],
+   "normalized": "She ai n't happy and he is n't either",
+   "scores": {
+    "neg": 0.273,
+    "neu": 0.727,
+    "pos": 0.0,
+    "compound": -0.4585
+   },
+   "bucket": 3,
+   "rawScores": {
+    "neg": 0.333,
+    "neu": 0.667,
+    "pos": 0.0,
+    "compound": -0.4585
+   },
+   "description": "Strongly Negative"
+  },
+  {
+   "text": "The kids can't stop laughing :-) :P <3",
+   "cleaned": "The kids can't stop laughing :-) :P <3",
+   "sentences": [
+    "The kids can't stop laughing :-) :P <3"
+   ],
+   "tokens": [
+    "The",
+    "kids",
+    "ca",
+    "n't",
+    "stop",
+    "laughing",
+    ":",
+    "-",
+    ")",
+    ":",
+    "P",
+    "<",
+    "3"
+   ],
+   "normalized": "The kid ca n't stop laughing : - ) : P < 3",
+   "scores": {
+    "neg": 0.309,
+    "neu": 0.47,
+    "pos": 0.222,
+    "compound": -0.1877
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.296,
+    "neu": 0.193,
+    "pos": 0.511,
+    "compound": 0.5157
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "I feel :( today and :'( yesterday",
+   "cleaned": "I feel :( today and :'( yesterday",
+   "sentences": [
+    "I feel :( today and :'( yesterday"
+   ],
+   "tokens": [
+    "I",
+    "feel",
+    ":",
+    "(",
+    "today",
+    "and",
+    ":",
+    "'",
+    "(",
+    "yesterday"
+   ],
+   "normalized": "I feel : ( today and : ' ( yesterday",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.604,
+    "neu": 0.396,
+    "pos": 0.0,
+    "compound": -0.7269
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "Great job!! :) :) :)",
+   "cleaned": "Great job!! :) :) :)",
+   "sentences": [
+    "Great job!!",
+    ":) :) :)"
+   ],
+   "tokens": [
+    "Great",
+    "job",
+    "!",
+    "!",
+    ":",
+    ")",
+    ":",
+    ")",
+    ":",
+    ")"
+   ],
+   "normalized": "Great job ! ! : ) : ) : )",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.176,
+    "pos": 0.824,
+    "compound": 0.6892
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.068,
+    "pos": 0.932,
+    "compound": 0.9285
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "Bad bad bad bad bad",
+   "cleaned": "Bad bad bad bad bad",
+   "sentences": [
+    "Bad bad bad bad bad"
+   ],
+   "tokens": [
+    "Bad",
+    "bad",
+    "bad",
+    "bad",
+    "bad"
+   ],
+   "normalized": "Bad bad bad bad bad",
+   "scores": {
+    "neg": 1.0,
+    "neu": 0.0,
+    "pos": 0.0,
+    "compound": -0.9552
+   },
+   "bucket": 1,
+   "rawScores": {
+    "neg": 1.0,
+    "neu": 0.0,
+    "pos": 0.0,
+    "compound": -0.9552
+   },
+   "description": "Extremely Negative"
+  },
+  {
+   "text": "Good good good good good",
+   "cleaned": "Good good good good good",
+   "sentences": [
+    "Good good good good good"
+   ],
+   "tokens": [
+    "Good",
+    "good",
+    "good",
+    "good",
+    "good"
+   ],
+   "normalized": "Good good good good good",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.0,
+    "pos": 1.0,
+    "compound": 0.926
+   },
+   "bucket": 9,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.0,
+    "pos": 1.0,
+    "compound": 0.926
+   },
+   "description": "Extremely Positive"
+  },
+  {
+   "text": "BIG NEWS: WE WON THE GRAND FINAL",
+   "cleaned": "BIG NEWS: WE WON THE GRAND FINAL",
+   "sentences": [
+    "BIG NEWS: WE WON THE GRAND FINAL"
+   ],
+   "tokens": [
+    "BIG",
+    "NEWS",
+    ":",
+    "WE",
+    "WON",
+    "THE",
+    "GRAND",
+    "FINAL"
+   ],
+   "normalized": "BIG NEWS : WE WON THE GRAND FINAL",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.427,
+    "pos": 0.573,
+    "compound": 0.7717
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.427,
+    "pos": 0.573,
+    "compound": 0.7717
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "small win but still a win",
+   "cleaned": "small win but still a win",
+   "sentences": [
+    "small win but still a win"
+   ],
+   "tokens": [
+    "small",
+    "win",
+    "but",
+    "still",
+    "a",
+    "win"
+   ],
+   "normalized": "small win but still a win",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.283,
+    "pos": 0.717,
+    "compound": 0.8225
+   },
+   "bucket": 9,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.283,
+    "pos": 0.717,
+    "compound": 0.8225
+   },
+   "description": "Extremely Positive"
+  },
+  {
+   "text": "The rent is too damn high!",
+   "cleaned": "The rent is too damn high!",
+   "sentences": [
+    "The rent is too damn high!"
+   ],
+   "tokens": [
+    "The",
+    "rent",
+    "is",
+    "too",
+    "damn",
+    "high",
+    "!"
+   ],
+   "normalized": "The rent is too damn high !",
+   "scores": {
+    "neg": 0.374,
+    "neu": 0.626,
+    "pos": 0.0,
+    "compound": -0.4574
+   },
+   "bucket": 3,
+   "rawScores": {
+    "neg": 0.374,
+    "neu": 0.626,
+    "pos": 0.0,
+    "compound": -0.4574
+   },
+   "description": "Strongly Negative"
+  },
+  {
+   "text": "Housing affordability is a real crisis in Melbourne.",
+   "cleaned": "Housing affordability is a real crisis in Melbourne.",
+   "sentences": [
+    "Housing affordability is a real crisis in Melbourne."
+   ],
+   "tokens": [
+    "Housing",
+    "affordability",
+    "is",
+    "a",
+    "real",
+    "crisis",
+    "in",
+    "Melbourne",
+    "."
+   ],
+   "normalized": "Housing affordability is a real crisis in Melbourne .",
+   "scores": {
+    "neg": 0.406,
+    "neu": 0.594,
+    "pos": 0.0,
+    "compound": -0.6249
+   },
+   "bucket": 2,
+   "rawScores": {
+    "neg": 0.406,
+    "neu": 0.594,
+    "pos": 0.0,
+    "compound": -0.6249
+   },
+   "description": "Very Strongly Negative"
+  },
+  {
+   "text": "Mortgage stress and debt are rising; financial counselling demand is up.",
+   "cleaned": "Mortgage stress and debt are rising; financial counselling demand is up.",
+   "sentences": [
+    "Mortgage stress and debt are rising; financial counselling demand is up."
+   ],
+   "tokens": [
+    "Mortgage",
+    "stress",
+    "and",
+    "debt",
+    "are",
+    "rising",
+    ";",
+    "financial",
+    "counselling",
+    "demand",
+    "is",
+    "up",
+    "."
+   ],
+   "normalized": "Mortgage stress and debt are rising ; financial counselling demand is up .",
+   "scores": {
+    "neg": 0.459,
+    "neu": 0.541,
+    "pos": 0.0,
+    "compound": -0.7003
+   },
+   "bucket": 2,
+   "rawScores": {
+    "neg": 0.459,
+    "neu": 0.541,
+    "pos": 0.0,
+    "compound": -0.7003
+   },
+   "description": "Very Strongly Negative"
+  },
+  {
+   "text": "Strike action continues as workers demand fairer pay.",
+   "cleaned": "Strike action continues as workers demand fairer pay.",
+   "sentences": [
+    "Strike action continues as workers demand fairer pay."
+   ],
+   "tokens": [
+    "Strike",
+    "action",
+    "continues",
+    "as",
+    "workers",
+    "demand",
+    "fairer",
+    "pay",
+    "."
+   ],
+   "normalized": "Strike action continues a worker demand fairer pay .",
+   "scores": {
+    "neg": 0.524,
+    "neu": 0.476,
+    "pos": 0.0,
+    "compound": -0.34
+   },
+   "bucket": 4,
+   "rawScores": {
+    "neg": 0.468,
+    "neu": 0.532,
+    "pos": 0.0,
+    "compound": -0.34
+   },
+   "description": "Negative"
+  },
+  {
+   "text": "My job is great, my salary is not.",
+   "cleaned": "My job is great, my salary is not.",
+   "sentences": [
+    "My job is great, my salary is not."
+   ],
+   "tokens": [
+    "My",
+    "job",
+    "is",
+    "great",
+    ",",
+    "my",
+    "salary",
+    "is",
+    "not",
+    "."
+   ],
+   "normalized": "My job is great , my salary is not .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.631,
+    "pos": 0.369,
+    "compound": 0.6249
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.631,
+    "pos": 0.369,
+    "compound": 0.6249
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "Police say the robbery suspect was arrested near Flinders St Station.",
+   "cleaned": "Police say the robbery suspect was arrested near Flinders St Station.",
+   "sentences": [
+    "Police say the robbery suspect was arrested near Flinders St Station."
+   ],
+   "tokens": [
+    "Police",
+    "say",
+    "the",
+    "robbery",
+    "suspect",
+    "was",
+    "arrested",
+    "near",
+    "Flinders",
+    "St",
+    "Station",
+    "."
+   ],
+   "normalized": "Police say the robbery suspect wa arrested near Flinders St Station .",
+   "scores": {
+    "neg": 0.371,
+    "neu": 0.629,
+    "pos": 0.0,
+    "compound": -0.6486
+   },
+   "bucket": 2,
+   "rawScores": {
+    "neg": 0.371,
+    "neu": 0.629,
+    "pos": 0.0,
+    "compound": -0.6486
+   },
+   "description": "Very Strongly Negative"
+  },
+  {
+   "text": "Violence in the city centre has residents worried about safety.",
+   "cleaned": "Violence in the city centre has residents worried about safety.",
+   "sentences": [
+    "Violence in the city centre has residents worried about safety."
+   ],
+   "tokens": [
+    "Violence",
+    "in",
+    "the",
+    "city",
+    "centre",
+    "has",
+    "residents",
+    "worried",
+    "about",
+    "safety",
+    "."
+   ],
+   "normalized": "Violence in the city centre ha resident worried about safety .",
+   "scores": {
+    "neg": 0.36,
+    "neu": 0.343,
+    "pos": 0.297,
+    "compound": -0.2732
+   },
+   "bucket": 4,
+   "rawScores": {
+    "neg": 0.391,
+    "neu": 0.435,
+    "pos": 0.174,
+    "compound": -0.5423
+   },
+   "description": "Negative"
+  },
+  {
+   "text": "The thief stole my bike!! Again!!!",
+   "cleaned": "The thief stole my bike!! Again!!!",
+   "sentences": [
+    "The thief stole my bike!!",
+    "Again!!",
+    "!"
+   ],
+   "tokens": [
+    "The",
+    "thief",
+    "stole",
+    "my",
+    "bike",
+    "!",
+    "!",
+    "Again",
+    "!",
+    "!",
+    "!"
+   ],
+   "normalized": "The thief stole my bike ! ! Again ! ! !",
+   "scores": {
+    "neg": 0.477,
+    "neu": 0.523,
+    "pos": 0.0,
+    "compound": -0.6776
+   },
+   "bucket": 2,
+   "rawScores": {
+    "neg": 0.477,
+    "neu": 0.523,
+    "pos": 0.0,
+    "compound": -0.6776
+   },
+   "description": "Very Strongly Negative"
+  },
+  {
+   "text": "Murder mystery night was so much fun",
+   "cleaned": "Murder mystery night was so much fun",
+   "sentences": [
+    "Murder mystery night was so much fun"
+   ],
+   "tokens": [
+    "Murder",
+    "mystery",
+    "night",
+    "was",
+    "so",
+    "much",
+    "fun"
+   ],
+   "normalized": "Murder mystery night wa so much fun",
+   "scores": {
+    "neg": 0.354,
+    "neu": 0.377,
+    "pos": 0.269,
+    "compound": -0.2782
+   },
+   "bucket": 4,
+   "rawScores": {
+    "neg": 0.354,
+    "neu": 0.377,
+    "pos": 0.269,
+    "compound": -0.2782
+   },
+   "description": "Negative"
+  },
+  {
+   "text": "Smuggling ring busted at the port, police confirm.",
+   "cleaned": "Smuggling ring busted at the port, police confirm.",
+   "sentences": [
+    "Smuggling ring busted at the port, police confirm."
+   ],
+   "tokens": [
+    "Smuggling",
+    "ring",
+    "busted",
+    "at",
+    "the",
+    "port",
+    ",",
+    "police",
+    "confirm",
+    "."
+   ],
+   "normalized": "Smuggling ring busted at the port , police confirm .",
+   "scores": {
+    "neg": 0.307,
+    "neu": 0.693,
+    "pos": 0.0,
+    "compound": -0.4767
+   },
+   "bucket": 3,
+   "rawScores": {
+    "neg": 0.307,
+    "neu": 0.693,
+    "pos": 0.0,
+    "compound": -0.4767
+   },
+   "description": "Strongly Negative"
+  },
+  {
+   "text": "Money laundering charges laid against three men.",
+   "cleaned": "Money laundering charges laid against three men.",
+   "sentences": [
+    "Money laundering charges laid against three men."
+   ],
+   "tokens": [
+    "Money",
+    "laundering",
+    "charges",
+    "laid",
+    "against",
+    "three",
+    "men",
+    "."
+   ],
+   "normalized": "Money laundering charge laid against three men .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.259,
+    "neu": 0.741,
+    "pos": 0.0,
+    "compound": -0.2732
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "The offence carries a maximum penalty of five years.",
+   "cleaned": "The offence carries a maximum penalty of five years.",
+   "sentences": [
+    "The offence carries a maximum penalty of five years."
+   ],
+   "tokens": [
+    "The",
+    "offence",
+    "carries",
+    "a",
+    "maximum",
+    "penalty",
+    "of",
+    "five",
+    "years",
+    "."
+   ],
+   "normalized": "The offence carry a maximum penalty of five year .",
+   "scores": {
+    "neg": 0.464,
+    "neu": 0.536,
+    "pos": 0.0,
+    "compound": -0.6369
+   },
+   "bucket": 2,
+   "rawScores": {
+    "neg": 0.464,
+    "neu": 0.536,
+    "pos": 0.0,
+    "compound": -0.6369
+   },
+   "description": "Very Strongly Negative"
+  },
+  {
+   "text": "Criminal behaviour should never be tolLerated",
+   "cleaned": "Criminal behaviour should never be tolLerated",
+   "sentences": [
+    "Criminal behaviour should never be tolLerated"
+   ],
+   "tokens": [
+    "Criminal",
+    "behaviour",
+    "should",
+    "never",
+    "be",
+    "tolLerated"
+   ],
+   "normalized": "Criminal behaviour should never be tolLerated",
+   "scores": {
+    "neg": 0.405,
+    "neu": 0.595,
+    "pos": 0.0,
+    "compound": -0.5267
+   },
+   "bucket": 3,
+   "rawScores": {
+    "neg": 0.405,
+    "neu": 0.595,
+    "pos": 0.0,
+    "compound": -0.5267
+   },
+   "description": "Strongly Negative"
+  },
+  {
+   "text": "crime crime crime everywhere",
+   "cleaned": "crime crime crime everywhere",
+   "sentences": [
+    "crime crime crime everywhere"
+   ],
+   "tokens": [
+    "crime",
+    "crime",
+    "crime",
+    "everywhere"
+   ],
+   "normalized": "crime crime crime everywhere",
+   "scores": {
+    "neg": 0.913,
+    "neu": 0.087,
+    "pos": 0.0,
+    "compound": -0.8885
+   },
+   "bucket": 1,
+   "rawScores": {
+    "neg": 0.913,
+    "neu": 0.087,
+    "pos": 0.0,
+    "compound": -0.8885
+   },
+   "description": "Extremely Negative"
+  },
+  {
+   "text": "Children's books, teachers' pay, the boss's office",
+   "cleaned": "Children's books, teachers' pay, the boss's office",
+   "sentences": [
+    "Children's books, teachers' pay, the boss's office"
+   ],
+   "tokens": [
+    "Children",
+    "'s",
+    "books",
+    ",",
+    "teachers",
+    "'",
+    "pay",
+    ",",
+    "the",
+    "boss",
+    "'s",
+    "office"
+   ],
+   "normalized": "Children 's book , teacher ' pay , the bos 's office",
+   "scores": {
+    "neg": 0.149,
+    "neu": 0.851,
+    "pos": 0.0,
+    "compound": -0.1027
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.189,
+    "neu": 0.811,
+    "pos": 0.0,
+    "compound": -0.1027
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "The cats' toys and the dogs' bowls were everywhere.",
+   "cleaned": "The cats' toys and the dogs' bowls were everywhere.",
+   "sentences": [
+    "The cats' toys and the dogs' bowls were everywhere."
+   ],
+   "tokens": [
+    "The",
+    "cats",
+    "'",
+    "toys",
+    "and",
+    "the",
+    "dogs",
+    "'",
+    "bowls",
+    "were",
+    "everywhere",
+    "."
+   ],
+   "normalized": "The cat ' toy and the dog ' bowl were everywhere .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "analyses of the crises show the series of species",
+   "cleaned": "analyses of the crises show the series of species",
+   "sentences": [
+    "analyses of the crises show the series of species"
+   ],
+   "tokens": [
+    "analyses",
+    "of",
+    "the",
+    "crises",
+    "show",
+    "the",
+    "series",
+    "of",
+    "species"
+   ],
+   "normalized": "analysis of the crisis show the series of specie",
+   "scores": {
+    "neg": 0.339,
+    "neu": 0.661,
+    "pos": 0.0,
+    "compound": -0.6249
+   },
+   "bucket": 2,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Very Strongly Negative"
+  },
+  {
+   "text": "Wolves, knives, leaves, lives, wives, halves, calves",
+   "cleaned": "Wolves, knives, leaves, lives, wives, halves, calves",
+   "sentences": [
+    "Wolves, knives, leaves, lives, wives, halves, calves"
+   ],
+   "tokens": [
+    "Wolves",
+    ",",
+    "knives",
+    ",",
+    "leaves",
+    ",",
+    "lives",
+    ",",
+    "wives",
+    ",",
+    "halves",
+    ",",
+    "calves"
+   ],
+   "normalized": "Wolves , knife , leaf , life , wife , half , calf",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "buses, boxes, quizzes, churches, dishes, babies, ladies",
+   "cleaned": "buses, boxes, quizzes, churches, dishes, babies, ladies",
+   "sentences": [
+    "buses, boxes, quizzes, churches, dishes, babies, ladies"
+   ],
+   "tokens": [
+    "buses",
+    ",",
+    "boxes",
+    ",",
+    "quizzes",
+    ",",
+    "churches",
+    ",",
+    "dishes",
+    ",",
+    "babies",
+    ",",
+    "ladies"
+   ],
+   "normalized": "bus , box , quiz , church , dish , baby , lady",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "data, criteria, phenomena, alumni, cacti, fungi",
+   "cleaned": "data, criteria, phenomena, alumni, cacti, fungi",
+   "sentences": [
+    "data, criteria, phenomena, alumni, cacti, fungi"
+   ],
+   "tokens": [
+    "data",
+    ",",
+    "criteria",
+    ",",
+    "phenomena",
+    ",",
+    "alumni",
+    ",",
+    "cacti",
+    ",",
+    "fungi"
+   ],
+   "normalized": "data , criterion , phenomenon , alumnus , cactus , fungi",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "geese mice teeth feet people oxen",
+   "cleaned": "geese mice teeth feet people oxen",
+   "sentences": [
+    "geese mice teeth feet people oxen"
+   ],
+   "tokens": [
+    "geese",
+    "mice",
+    "teeth",
+    "feet",
+    "people",
+    "oxen"
+   ],
+   "normalized": "goose mouse teeth foot people ox",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "Ballarat's footy club won; Bendigo's lost.",
+   "cleaned": "Ballarat's footy club won; Bendigo's lost.",
+   "sentences": [
+    "Ballarat's footy club won; Bendigo's lost."
+   ],
+   "tokens": [
+    "Ballarat",
+    "'s",
+    "footy",
+    "club",
+    "won",
+    ";",
+    "Bendigo",
+    "'s",
+    "lost",
+    "."
+   ],
+   "normalized": "Ballarat 's footy club won ; Bendigo 's lost .",
+   "scores": {
+    "neg": 0.192,
+    "neu": 0.5,
+    "pos": 0.308,
+    "compound": 0.34
+   },
+   "bucket": 6,
+   "rawScores": {
+    "neg": 0.23,
+    "neu": 0.4,
+    "pos": 0.37,
+    "compound": 0.34
+   },
+   "description": "Positive"
+  },
+  {
+   "text": "@a @b @c",
+   "cleaned": "",
+   "sentences": [],
+   "tokens": [],
+   "normalized": "",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "https://only.a.link/here",
+   "cleaned": "",
+   "sentences": [],
+   "tokens": [],
+   "normalized": "",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "\tTabs\tand   multiple   spaces\teverywhere  ",
+   "cleaned": "\tTabs\tand   multiple   spaces\teverywhere  ",
+   "sentences": [
+    "\tTabs\tand   multiple   spaces\teverywhere"
+   ],
+   "tokens": [
+    "Tabs",
+    "and",
+    "multiple",
+    "spaces",
+    "everywhere"
+   ],
+   "normalized": "Tabs and multiple space everywhere",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "Line one",
+   "cleaned": "Line one",
+   "sentences": [
+    "Line one"
+   ],
+   "tokens": [
+    "Line",
+    "one"
+   ],
+   "normalized": "Line one",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "Ends with a colon:",
+   "cleaned": "Ends with a colon:",
+   "sentences": [
+    "Ends with a colon:"
+   ],
+   "tokens": [
+    "Ends",
+    "with",
+    "a",
+    "colon",
+    ":"
+   ],
+   "normalized": "Ends with a colon :",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "Starts with a comma, then continues",
+   "cleaned": "Starts with a comma, then continues",
+   "sentences": [
+    "Starts with a comma, then continues"
+   ],
+   "tokens": [
+    "Starts",
+    "with",
+    "a",
+    "comma",
+    ",",
+    "then",
+    "continues"
+   ],
+   "normalized": "Starts with a comma , then continues",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "(Parenthetical remark.) Next sentence here.",
+   "cleaned": "(Parenthetical remark.) Next sentence here.",
+   "sentences": [
+    "(Parenthetical remark.)",
+    "Next sentence here."
+   ],
+   "tokens": [
+    "(",
+    "Parenthetical",
+    "remark",
+    ".",
+    ")",
+    "Next",
+    "sentence",
+    "here",
+    "."
+   ],
+   "normalized": "( Parenthetical remark . ) Next sentence here .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.755,
+    "pos": 0.245,
+    "compound": 0.0772
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.755,
+    "pos": 0.245,
+    "compound": 0.0772
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "[Bracketed] {braced} <angled> text",
+   "cleaned": "[Bracketed] {braced} <angled> text",
+   "sentences": [
+    "[Bracketed] {braced} <angled> text"
+   ],
+   "tokens": [
+    "[",
+    "Bracketed",
+    "]",
+    "{",
+    "braced",
+    "}",
+    "<",
+    "angled",
+    ">",
+    "text"
+   ],
+   "normalized": "[ Bracketed ] { braced } < angled > text",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "\"Quoted sentence.\" Another one.",
+   "cleaned": "\"Quoted sentence.\" Another one.",
+   "sentences": [
+    "\"Quoted sentence.\"",
+    "Another one."
+   ],
+   "tokens": [
+    "``",
+    "Quoted",
+    "sentence",
+    ".",
+    "''",
+    "Another",
+    "one",
+    "."
+   ],
+   "normalized": "`` Quoted sentence . '' Another one .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.794,
+    "pos": 0.206,
+    "compound": 0.0772
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "He said \"wow\". She said 'ok'.",
+   "cleaned": "He said \"wow\". She said 'ok'.",
+   "sentences": [
+    "He said \"wow\".",
+    "She said 'ok'."
+   ],
+   "tokens": [
+    "He",
+    "said",
+    "``",
+    "wow",
+    "''",
+    ".",
+    "She",
+    "said",
+    "'ok",
+    "'",
+    "."
+   ],
+   "normalized": "He said `` wow '' . She said 'ok ' .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.5,
+    "pos": 0.5,
+    "compound": 0.7184
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "It's 5 o'clock somewhere... cheers!",
+   "cleaned": "It's 5 o'clock somewhere... cheers!",
+   "sentences": [
+    "It's 5 o'clock somewhere... cheers!"
+   ],
+   "tokens": [
+    "It",
+    "'s",
+    "5",
+    "o'clock",
+    "somewhere",
+    "...",
+    "cheers",
+    "!"
+   ],
+   "normalized": "It 's 5 o'clock somewhere ... cheer !",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.582,
+    "pos": 0.418,
+    "compound": 0.5562
+   },
+   "bucket": 7,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.469,
+    "pos": 0.531,
+    "compound": 0.5255
+   },
+   "description": "Strongly Positive"
+  },
+  {
+   "text": "The end. ",
+   "cleaned": "The end. ",
+   "sentences": [
+    "The end."
+   ],
+   "tokens": [
+    "The",
+    "end",
+    "."
+   ],
+   "normalized": "The end .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "description": "Neutral"
+  },
+  {
+   "text": "Line one\nLine two is great\n\nLine four. Done",
+   "cleaned": "Line one\nLine two is great\n\nLine four. Done",
+   "sentences": [
+    "Line one\nLine two is great\n\nLine four.",
+    "Done"
+   ],
+   "tokens": [
+    "Line",
+    "one",
+    "Line",
+    "two",
+    "is",
+    "great",
+    "Line",
+    "four",
+    ".",
+    "Done"
+   ],
+   "normalized": "Line one Line two is great Line four . Done",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.661,
+    "pos": 0.339,
+    "compound": 0.6249
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.661,
+    "pos": 0.339,
+    "compound": 0.6249
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "Good muffins cost $3.88\nin New York.  Please buy me\ntwo of them.\nThanks.",
+   "cleaned": "Good muffins cost $3.88\nin New York.  Please buy me\ntwo of them.\nThanks.",
+   "sentences": [
+    "Good muffins cost $3.88\nin New York.",
+    "Please buy me\ntwo of them.",
+    "Thanks."
+   ],
+   "tokens": [
+    "Good",
+    "muffins",
+    "cost",
+    "$",
+    "3.88",
+    "in",
+    "New",
+    "York",
+    ".",
+    "Please",
+    "buy",
+    "me",
+    "two",
+    "of",
+    "them",
+    ".",
+    "Thanks",
+    "."
+   ],
+   "normalized": "Good muffin cost $ 3.88 in New York . Please buy me two of them . Thanks .",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.576,
+    "pos": 0.424,
+    "compound": 0.7964
+   },
+   "bucket": 8,
+   "rawScores": {
+    "neg": 0.0,
+    "neu": 0.576,
+    "pos": 0.424,
+    "compound": 0.7964
+   },
+   "description": "Very Strongly Positive"
+  },
+  {
+   "text": "I love it.\nI hate it.",
+   "cleaned": "I love it.\nI hate it.",
+   "sentences": [
+    "I love it.",
+    "I hate it."
+   ],
+   "tokens": [
+    "I",
+    "love",
+    "it",
+    ".",
+    "I",
+    "hate",
+    "it",
+    "."
+   ],
+   "normalized": "I love it . I hate it .",
+   "scores": {
+    "neg": 0.374,
+    "neu": 0.202,
+    "pos": 0.424,
+    "compound": 0.128
+   },
+   "bucket": 5,
+   "rawScores": {
+    "neg": 0.374,
+    "neu": 0.202,
+    "pos": 0.424,
+    "compound": 0.128
+   },
+   "description": "Neutral"
+  }
+ ],
+ "toots": [
+  {
+   "html": "Feeling #blessed and #happy today",
+   "text": "Feeling #blessed and #happy today",
+   "tokens": [
+    "Feeling",
+    "#",
+    "blessed",
+    "and",
+    "#",
+    "happy",
+    "today"
+   ],
+   "normalized": "Feeling # blessed and # happy today",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.18,
+    "pos": 0.82,
+    "compound": 0.8442
+   },
+   "bucket": 9
+  },
+  {
+   "html": "Worst week ever #fail #sad",
+   "text": "Worst week ever #fail #sad",
+   "tokens": [
+    "Worst",
+    "week",
+    "ever",
+    "#",
+    "fail",
+    "#",
+    "sad"
+   ],
+   "normalized": "Worst week ever # fail # sad",
+   "scores": {
+    "neg": 0.843,
+    "neu": 0.157,
+    "pos": 0.0,
+    "compound": -0.8934
+   },
+   "bucket": 1
+  },
+  {
+   "html": "@jerk you are awful",
+   "text": "@jerk you are awful",
+   "tokens": [
+    "@",
+    "jerk",
+    "you",
+    "are",
+    "awful"
+   ],
+   "normalized": "@ jerk you are awful",
+   "scores": {
+    "neg": 0.73,
+    "neu": 0.27,
+    "pos": 0.0,
+    "compound": -0.6597
+   },
+   "bucket": 2
+  },
+  {
+   "html": "<p>Feeling <a href=\"https://mastodon.social/tags/blessed\" class=\"mention hashtag\" rel=\"tag\">#<span>blessed</span></a> and <a href=\"https://mastodon.social/tags/happy\" class=\"mention hashtag\" rel=\"tag\">#<span>happy</span></a> today</p>",
+   "text": "Feeling #blessed and #happy today",
+   "tokens": [
+    "Feeling",
+    "#",
+    "blessed",
+    "and",
+    "#",
+    "happy",
+    "today"
+   ],
+   "normalized": "Feeling # blessed and # happy today",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.18,
+    "pos": 0.82,
+    "compound": 0.8442
+   },
+   "bucket": 9
+  },
+  {
+   "html": "<p><span class=\"h-card\"><a href=\"https://mastodon.au/@someone\" class=\"u-url mention\">@<span>someone</span></a></span> you are awful</p>",
+   "text": "@someone you are awful",
+   "tokens": [
+    "@",
+    "someone",
+    "you",
+    "are",
+    "awful"
+   ],
+   "normalized": "@ someone you are awful",
+   "scores": {
+    "neg": 0.5,
+    "neu": 0.5,
+    "pos": 0.0,
+    "compound": -0.4588
+   },
+   "bucket": 3
+  },
+  {
+   "html": "<p>Worst week ever <a href=\"https://tictoc.social/tags/fail\" class=\"mention hashtag\" rel=\"tag\">#<span>fail</span></a></p>",
+   "text": "Worst week ever #fail",
+   "tokens": [
+    "Worst",
+    "week",
+    "ever",
+    "#",
+    "fail"
+   ],
+   "normalized": "Worst week ever # fail",
+   "scores": {
+    "neg": 0.792,
+    "neu": 0.208,
+    "pos": 0.0,
+    "compound": -0.8225
+   },
+   "bucket": 1
+  },
+  {
+   "html": "<p>First line</p><p>Second line, still good</p>",
+   "text": "First lineSecond line, still good",
+   "tokens": [
+    "First",
+    "lineSecond",
+    "line",
+    ",",
+    "still",
+    "good"
+   ],
+   "normalized": "First lineSecond line , still good",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.58,
+    "pos": 0.42,
+    "compound": 0.4404
+   },
+   "bucket": 7
+  },
+  {
+   "html": "<p>Line one<br>line two<br />line three</p>",
+   "text": "Line oneline twoline three",
+   "tokens": [
+    "Line",
+    "oneline",
+    "twoline",
+    "three"
+   ],
+   "normalized": "Line oneline twoline three",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5
+  },
+  {
+   "html": "<p>Read this: <a href=\"https://example.org/a-long/path?x=1&amp;y=2\" rel=\"nofollow noopener noreferrer\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"ellipsis\">example.org/a-long/pa</span><span class=\"invisible\">th?x=1&amp;y=2</span></a> it is terrible</p>",
+   "text": "Read this: https://example.org/a-long/path?x=1&y=2 it is terrible",
+   "tokens": [
+    "Read",
+    "this",
+    ":",
+    "https",
+    ":",
+    "//example.org/a-long/path",
+    "?",
+    "x=1",
+    "&",
+    "y=2",
+    "it",
+    "is",
+    "terrible"
+   ],
+   "normalized": "Read this : http : //example.org/a-long/path ? x=1 & y=2 it is terrible",
+   "scores": {
+    "neg": 0.279,
+    "neu": 0.721,
+    "pos": 0.0,
+    "compound": -0.4767
+   },
+   "bucket": 3
+  },
+  {
+   "html": "<p>Tom &amp; Jerry &lt;3 &quot;love&quot; it&#39;s great</p>",
+   "text": "Tom & Jerry <3 \"love\" it's great",
+   "tokens": [
+    "Tom",
+    "&",
+    "Jerry",
+    "<",
+    "3",
+    "``",
+    "love",
+    "''",
+    "it",
+    "'s",
+    "great"
+   ],
+   "normalized": "Tom & Jerry < 3 `` love '' it 's great",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.42,
+    "pos": 0.58,
+    "compound": 0.8519
+   },
+   "bucket": 9
+  },
+  {
+   "html": "<p>&hellip; and &mdash; then &nbsp;nothing &copy; 2023</p>",
+   "text": "… and — then  nothing © 2023",
+   "tokens": [
+    "…",
+    "and",
+    "—",
+    "then",
+    "nothing",
+    "©",
+    "2023"
+   ],
+   "normalized": "… and — then nothing © 2023",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5
+  },
+  {
+   "html": "<p>AT&amp;T is down again, so annoying</p>",
+   "text": "AT&T is down again, so annoying",
+   "tokens": [
+    "AT",
+    "&",
+    "T",
+    "is",
+    "down",
+    "again",
+    ",",
+    "so",
+    "annoying"
+   ],
+   "normalized": "AT & T is down again , so annoying",
+   "scores": {
+    "neg": 0.411,
+    "neu": 0.589,
+    "pos": 0.0,
+    "compound": -0.541
+   },
+   "bucket": 3
+  },
+  {
+   "html": "<p>I &lt;3 this, a &lt; b &gt; c</p>",
+   "text": "I <3 this, a < b > c",
+   "tokens": [
+    "I",
+    "<",
+    "3",
+    "this",
+    ",",
+    "a",
+    "<",
+    "b",
+    ">",
+    "c"
+   ],
+   "normalized": "I < 3 this , a < b > c",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5
+  },
+  {
+   "html": "Plain text toot with no markup at all, pretty nice",
+   "text": "Plain text toot with no markup at all, pretty nice",
+   "tokens": [
+    "Plain",
+    "text",
+    "toot",
+    "with",
+    "no",
+    "markup",
+    "at",
+    "all",
+    ",",
+    "pretty",
+    "nice"
+   ],
+   "normalized": "Plain text toot with no markup at all , pretty nice",
+   "scores": {
+    "neg": 0.145,
+    "neu": 0.461,
+    "pos": 0.395,
+    "compound": 0.5859
+   },
+   "bucket": 7
+  },
+  {
+   "html": "Die Sonne war hell und der Tag war schön.",
+   "text": "Die Sonne war hell und der Tag war schön.",
+   "tokens": [
+    "Die",
+    "Sonne",
+    "war",
+    "hell",
+    "und",
+    "der",
+    "Tag",
+    "war",
+    "schön",
+    "."
+   ],
+   "normalized": "Die Sonne war hell und der Tag war schön .",
+   "scores": {
+    "neg": 0.765,
+    "neu": 0.235,
+    "pos": 0.0,
+    "compound": -0.9538
+   },
+   "bucket": 1
+  },
+  {
+   "html": "<p>Die Sonne war hell und der Tag war schön.</p>",
+   "text": "Die Sonne war hell und der Tag war schön.",
+   "tokens": [
+    "Die",
+    "Sonne",
+    "war",
+    "hell",
+    "und",
+    "der",
+    "Tag",
+    "war",
+    "schön",
+    "."
+   ],
+   "normalized": "Die Sonne war hell und der Tag war schön .",
+   "scores": {
+    "neg": 0.765,
+    "neu": 0.235,
+    "pos": 0.0,
+    "compound": -0.9538
+   },
+   "bucket": 1
+  },
+  {
+   "html": "<p>Mixed feelings :) but the rent is killing me</p>",
+   "text": "Mixed feelings :) but the rent is killing me",
+   "tokens": [
+    "Mixed",
+    "feelings",
+    ":",
+    ")",
+    "but",
+    "the",
+    "rent",
+    "is",
+    "killing",
+    "me"
+   ],
+   "normalized": "Mixed feeling : ) but the rent is killing me",
+   "scores": {
+    "neg": 0.457,
+    "neu": 0.449,
+    "pos": 0.094,
+    "compound": -0.7814
+   },
+   "bucket": 2
+  },
+  {
+   "html": "<p>Emoji only 🎉🎉🎉</p>",
+   "text": "Emoji only 🎉🎉🎉",
+   "tokens": [
+    "Emoji",
+    "only",
+    "🎉🎉🎉"
+   ],
+   "normalized": "Emoji only 🎉🎉🎉",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5
+  },
+  {
+   "html": "<p></p>",
+   "text": "",
+   "tokens": [],
+   "normalized": "",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5
+  },
+  {
+   "html": "<p><a href=\"https://mastodon.social/tags/auspol\" class=\"mention hashtag\" rel=\"tag\">#<span>auspol</span></a></p>",
+   "text": "#auspol",
+   "tokens": [
+    "#",
+    "auspol"
+   ],
+   "normalized": "# auspol",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5
+  },
+  {
+   "html": "&#150; dash &#8217;quote&#8217; &#x1F600; smile",
+   "text": "– dash ’quote’ 😀 smile",
+   "tokens": [
+    "–",
+    "dash",
+    "’",
+    "quote",
+    "’",
+    "😀",
+    "smile"
+   ],
+   "normalized": "– dash ’ quote ’ 😀 smile",
+   "scores": {
+    "neg": 0.0,
+    "neu": 0.444,
+    "pos": 0.556,
+    "compound": 0.3612
+   },
+   "bucket": 6
+  },
+  {
+   "html": "<p>unknown &foo; entity and AT&T rocks</p>",
+   "text": "unknown &foo entity and AT&T rocks",
+   "tokens": [
+    "unknown",
+    "&",
+    "foo",
+    "entity",
+    "and",
+    "AT",
+    "&",
+    "T",
+    "rocks"
+   ],
+   "normalized": "unknown & foo entity and AT & T rock",
+   "scores": {
+    "neg": 0.0,
+    "neu": 1.0,
+    "pos": 0.0,
+    "compound": 0.0
+   },
+   "bucket": 5
+  },
+  {
+   "html": "<p>So good  <a href=\"https://mastodon.social/tags/one\" class=\"mention hashtag\" rel=\"tag\">#<span>one</span></a>  <a href=\"https://mastodon.social/tags/two\" class=\"mention hashtag\" rel=\"tag\">#<span>two</span></a> <br>next line, terrible</p>",
+   "text": "So good  #one #two next line, terrible",
+   "tokens": [
+    "So",
+    "good",
+    "#",
+    "one",
+    "#",
+    "two",
+    "next",
+    "line",
+    ",",
+    "terrible"
+   ],
+   "normalized": "So good # one # two next line , terrible",
+   "scores": {
+    "neg": 0.275,
+    "neu": 0.443,
+    "pos": 0.283,
+    "compound": 0.024
+   },
+   "bucket": 5
+  }
+ ],
+ "lemmas": [
+  [
+   "dogs",
+   "dog"
+  ],
+  [
+   "churches",
+   "church"
+  ],
+  [
+   "aardwolves",
+   "aardwolf"
+  ],
+  [
+   "abaci",
+   "abacus"
+  ],
+  [
+   "hardrock",
+   "hardrock"
+  ],
+  [
+   "geese",
+   "goose"
+  ],
+  [
+   "women",
+   "woman"
+  ],
+  [
+   "men",
+   "men"
+  ],
+  [
+   "feet",
+   "foot"
+  ],
+  [
+   "glasses",
+   "glass"
+  ],
+  [
+   "boxes",
+   "box"
+  ],
+  [
+   "buzzes",
+   "buzz"
+  ],
+  [
+   "wishes",
+   "wish"
+  ],
+  [
+   "cities",
+   "city"
+  ],
+  [
+   "Dogs",
+   "Dogs"
+  ],
+  [
+   "running",
+   "running"
+  ],
+  [
+   "was",
+   "wa"
+  ],
+  [
+   "has",
+   "ha"
+  ],
+  [
+   "news",
+   "news"
+  ],
+  [
+   "species",
+   "specie"
+  ],
+  [
+   "series",
+   "series"
+  ],
+  [
+   "lmao",
+   "lmao"
+  ],
+  [
+   "!",
+   "!"
+  ],
+  [
+   "...",
+   "..."
+  ],
+  [
+   "cats.",
+   "cats."
+  ],
+  [
+   "knives",
+   "knife"
+  ],
+  [
+   "wolves",
+   "wolf"
+  ],
+  [
+   "mice",
+   "mouse"
+  ],
+  [
+   "children",
+   "child"
+  ],
+  [
+   "teeth",
+   "teeth"
+  ],
+  [
+   "analyses",
+   "analysis"
+  ],
+  [
+   "crises",
+   "crisis"
+  ],
+  [
+   "rates",
+   "rate"
+  ],
+  [
+   "bills",
+   "bill"
+  ]
+ ],
+ "locations": [
+  {
+   "input": "Melbourne, Victoria",
+   "normalised": "melbourne vic",
+   "ngrams": [
+    "melbourne",
+    "vic",
+    "melbourne vic"
+   ],
+   "matched": "melbourne",
+   "sal": "21640"
+  },
+  {
+   "input": "Carlton, Victoria",
+   "normalised": "carlton vic",
+   "ngrams": [
+    "carlton",
+    "vic",
+    "carlton vic"
+   ],
+   "matched": "carlton vic",
+   "sal": "20495"
+  },
+  {
+   "input": "Ballarat, Victoria",
+   "normalised": "ballarat vic",
+   "ngrams": [
+    "ballarat",
+    "vic",
+    "ballarat vic"
+   ],
+   "matched": "ballarat",
+   "sal": "20111"
+  },
+  {
+   "input": "Geelong, Victoria",
+   "normalised": "geelong vic",
+   "ngrams": [
+    "geelong",
+    "vic",
+    "geelong vic"
+   ],
+   "matched": "geelong",
+   "sal": "20973"
+  },
+  {
+   "input": "Brunswick East, Victoria",
+   "normalised": "brunswick east vic",
+   "ngrams": [
+    "brunswick",
+    "east",
+    "vic",
+    "brunswick east",
+    "brunswick vic",
+    "east vic",
+    "brunswick east vic"
+   ],
+   "matched": "brunswick east",
+   "sal": "20362"
+  },
+  {
+   "input": "Sydney, New South Wales",
+   "normalised": "sydney nsw",
+   "ngrams": [
+    "sydney",
+    "nsw",
+    "sydney nsw"
+   ],
+   "matched": "sydney",
+   "sal": "13730"
+  },
+  {
+   "input": "Hobart, Tasmania",
+   "normalised": "hobart tas",
+   "ngrams": [
+    "hobart",
+    "tas",
+    "hobart tas"
+   ],
+   "matched": "hobart",
+   "sal": "60276"
+  },
+  {
+   "input": "Perth, Western Australia",
+   "normalised": "perth wa",
+   "ngrams": [
+    "perth",
+    "wa",
+    "perth wa"
+   ],
+   "matched": "perth",
+   "sal": "51230"
+  },
+  {
+   "input": "Footscray, Melbourne",
+   "normalised": "footscray melbourne",
+   "ngrams": [
+    "footscray",
+    "melbourne",
+    "footscray melbourne"
+   ],
+   "matched": "footscray",
+   "sal": "20935"
+  },
+  {
+   "input": "St Kilda, Victoria",
+   "normalised": "st kilda vic",
+   "ngrams": [
+    "st",
+    "kilda",
+    "vic",
+    "st kilda",
+    "st vic",
+    "kilda vic",
+    "st kilda vic"
+   ],
+   "matched": "st kilda",
+   "sal": "41371"
+  },
+  {
+   "input": "Box Hill, Victoria",
+   "normalised": "box hill vic",
+   "ngrams": [
+    "box",
+    "hill",
+    "vic",
+    "box hill",
+    "box vic",
+    "hill vic",
+    "box hill vic"
+   ],
+   "matched": "box hill",
+   "sal": "20316"
+  },
+  {
+   "input": "Melbourne",
+   "normalised": "melbourne",
+   "ngrams": [
+    "melbourne"
+   ],
+   "matched": "melbourne",
+   "sal": "21640"
+  },
+  {
+   "input": "Victoria, Australia",
+   "normalised": "vic australia",
+   "ngrams": [
+    "vic",
+    "australia",
+    "vic australia"
+   ],
+   "matched": null,
+   "sal": null
+  },
+  {
+   "input": "Australia",
+   "normalised": "australia",
+   "ngrams": [
+    "australia"
+   ],
+   "matched": null,
+   "sal": null
+  },
+  {
+   "input": "Mount Waverley, Victoria",
+   "normalised": "mount waverley vic",
+   "ngrams": [
+    "mount",
+    "waverley",
+    "vic",
+    "mount waverley",
+    "mount vic",
+    "waverley vic",
+    "mount waverley vic"
+   ],
+   "matched": "mount waverley",
+   "sal": "21816"
+  }
+ ],
+ "punkt": [
+  [
+   "Dr. Smith said the clinic will open at 9 a.m. tomorrow. Great news.",
+   [
+    "Dr. Smith said the clinic will open at 9 a.m. tomorrow.",
+    "Great news."
+   ],
+   [
+    "Dr.",
+    "Smith",
+    "said",
+    "the",
+    "clinic",
+    "will",
+    "open",
+    "at",
+    "9",
+    "a.m.",
+    "tomorrow",
+    ".",
+    "Great",
+    "news",
+    "."
+   ]
+  ],
+  [
+   "Wait... what? The footy was cancelled?? Ugh.",
+   [
+    "Wait... what?",
+    "The footy was cancelled??",
+    "Ugh."
+   ],
+   [
+    "Wait",
+    "...",
+    "what",
+    "?",
+    "The",
+    "footy",
+    "was",
+    "cancelled",
+    "?",
+    "?",
+    "Ugh",
+    "."
+   ]
+  ],
+  [
+   "The U.S. economy and the A.U. dollar both moved today.",
+   [
+    "The U.S. economy and the A.U.",
+    "dollar both moved today."
+   ],
+   [
+    "The",
+    "U.S.",
+    "economy",
+    "and",
+    "the",
+    "A.U",
+    ".",
+    "dollar",
+    "both",
+    "moved",
+    "today",
+    "."
+   ]
+  ],
+  [
+   "I paid $3.50. It was cheap. Mr. Jones agreed.",
+   [
+    "I paid $3.50.",
+    "It was cheap.",
+    "Mr. Jones agreed."
+   ],
+   [
+    "I",
+    "paid",
+    "$",
+    "3.50",
+    ".",
+    "It",
+    "was",
+    "cheap",
+    ".",
+    "Mr.",
+    "Jones",
+    "agreed",
+    "."
+   ]
+  ],
+  [
+   "(It was late.) Then we left.",
+   [
+    "(It was late.)",
+    "Then we left."
+   ],
+   [
+    "(",
+    "It",
+    "was",
+    "late",
+    ".",
+    ")",
+    "Then",
+    "we",
+    "left",
+    "."
+   ]
+  ],
+  [
+   "Version 2. Released today! See you at 5 p.m. in St. Kilda.",
+   [
+    "Version 2.",
+    "Released today!",
+    "See you at 5 p.m. in St. Kilda."
+   ],
+   [
+    "Version",
+    "2",
+    ".",
+    "Released",
+    "today",
+    "!",
+    "See",
+    "you",
+    "at",
+    "5",
+    "p.m.",
+    "in",
+    "St.",
+    "Kilda",
+    "."
+   ]
+  ]
+ ]
+}

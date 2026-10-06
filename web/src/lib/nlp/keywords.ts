@@ -1,0 +1,38 @@
+/** CouchDB MapReduce keyword views, verbatim from coursework/.../MapReduce (mapIncome.js, mapCrimeV2.js). */
+export const INCOME_WORDS = [
+  "salary",
+  "income",
+  "housing",
+  "mortgage",
+  "liability",
+  "debt",
+  "expensive",
+  "afford",
+  "job",
+  "work",
+  "strike",
+  "compensation",
+  "luxur",
+  "finance",
+  "financial",
+  "equality",
+  "fairness",
+  "inequal",
+  "unfair",
+] as const;
+
+export const CRIME_WORDS = [
+  "crime",
+  "criminal",
+  "police",
+  "theft",
+  "robbery",
+  "smuggl",
+  "arrest",
+  "kidnap",
+  "homicide",
+  "murder",
+  "offence",
+  "violence",
+  "money laund",
+] as const;
