@@ -22,7 +22,7 @@ The team trained nothing. VADER's lexicon of roughly 7,500 words, emoticons and 
 
 - **Reproduction, not accuracy.** The TypeScript port reproduces the original Python exactly on 127 synthetic tweets and 23 synthetic toots in CI, and on 44,156 real toots locally: 0 mismatches in text, tokens, normalised text, all four VADER scores and the bucket. With 0 mismatches in 44,156 the Wilson 95% upper bound on the mismatch rate is 0.009%.
 - **Accuracy against human judgement was not measured here.** The project has no labelled sample of its own posts, so no accuracy figure is claimed. VADER's authors report strong agreement with human raters on social media text; that is their evaluation, on their data.
-- **A measured failure mode: language.** In the re-scored week of mastodon.social toots (1-9 May 2023), the share scored exactly neutral depends heavily on the declared language, because the lexicon is English (Wilson 95% intervals):
+- **A measured failure mode: language.** In the re-scored week of mastodon.social toots (2-9 May 2023), the share scored exactly neutral depends heavily on the declared language, because the lexicon is English (Wilson 95% intervals):
 
   | Declared language | Toots | Scored neutral (5) |
   | --- | ---: | --- |
