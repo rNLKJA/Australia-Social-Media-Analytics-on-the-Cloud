@@ -1,27 +1,38 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, Newsreader, Public_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
-const newsreader = Newsreader({
+// Self-hosted latin subsets from the @fontsource packages (see
+// src/app/fonts/README.md), so builds never fetch Google Fonts.
+const newsreader = localFont({
+  src: [
+    { path: "./fonts/newsreader-latin-opsz-normal.woff2", weight: "200 800", style: "normal" },
+    { path: "./fonts/newsreader-latin-opsz-italic.woff2", weight: "200 800", style: "italic" },
+  ],
   variable: "--font-newsreader",
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-  axes: ["opsz"],
+  display: "swap",
+  adjustFontFallback: "Times New Roman",
 });
 
-const publicSans = Public_Sans({
+const publicSans = localFont({
+  src: "./fonts/public-sans-latin-wght-normal.woff2",
+  weight: "100 900",
+  style: "normal",
   variable: "--font-public-sans",
-  subsets: ["latin"],
+  display: "swap",
 });
 
-const plexMono = IBM_Plex_Mono({
+const plexMono = localFont({
+  src: [
+    { path: "./fonts/ibm-plex-mono-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/ibm-plex-mono-latin-500-normal.woff2", weight: "500", style: "normal" },
+  ],
   variable: "--font-plex-mono",
-  subsets: ["latin"],
-  weight: ["400", "500"],
+  display: "swap",
 });
 
 /**
